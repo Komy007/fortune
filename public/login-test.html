@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .test-section {
+            background: #333;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .form-group {
+            margin: 10px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 200px;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #555;
+            background: #444;
+            color: white;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔐 로그인 테스트</h1>
+    
+    <div class="test-section">
+        <h2>1️⃣ 서버 연결 테스트</h2>
+        <button onclick="testServer()">서버 연결 테스트</button>
+        <div id="serverResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2️⃣ 회원가입 테스트</h2>
+        <form id="registerForm">
+            <div class="form-group">
+                <label>이름:</label>
+                <input type="text" id="regName" value="테스트사용자" required>
+            </div>
+            <div class="form-group">
+                <label>사용자명:</label>
+                <input type="text" id="regUsername" value="testuser" required>
+            </div>
+            <div class="form-group">
+                <label>이메일:</label>
+                <input type="email" id="regEmail" value="test@example.com" required>
+            </div>
+            <div class="form-group">
+                <label>비밀번호:</label>
+                <input type="password" id="regPassword" value="password123" required>
+            </div>
+            <div class="form-group">
+                <label>생년:</label>
+                <input type="number" id="regYear" value="1990" required>
+            </div>
+            <div class="form-group">
+                <label>생월:</label>
+                <input type="number" id="regMonth" value="6" required>
+            </div>
+            <div class="form-group">
+                <label>생일:</label>
+                <input type="number" id="regDay" value="15" required>
+            </div>
+            <div class="form-group">
+                <label>생시:</label>
+                <input type="number" id="regHour" value="12" required>
+            </div>
+            <button type="submit">회원가입</button>
+        </form>
+        <div id="registerResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3️⃣ 로그인 테스트</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label>이메일:</label>
+                <input type="email" id="loginEmail" value="test@example.com" required>
+            </div>
+            <div class="form-group">
+                <label>비밀번호:</label>
+                <input type="password" id="loginPassword" value="password123" required>
+            </div>
+            <button type="submit">로그인</button>
+        </form>
+        <div id="loginResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4️⃣ 메인 페이지로 이동</h2>
+        <button onclick="goToMain()">메인 페이지로 이동</button>
+    </div>
+    
+    <script>
+        // 서버 연결 테스트
+        async function testServer() {
+            const result = document.getElementById('serverResult');
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                result.innerHTML = `
+                    <strong>✅ 서버 연결 성공:</strong><br>
+                    ${JSON.stringify(data, null, 2)}
+                `;
+                console.log('✅ 서버 연결 성공:', data);
+            } catch (error) {
+                result.innerHTML = `
+                    <strong>❌ 서버 연결 실패:</strong><br>
+                    ${error.message}
+                `;
+                console.error('❌ 서버 연결 실패:', error);
+            }
+        }
+        
+        // 회원가입 테스트
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                name: document.getElementById('regName').value,
+                username: document.getElementById('regUsername').value,
+                email: document.getElementById('regEmail').value,
+                password: document.getElementById('regPassword').value,
+                birth_year: parseInt(document.getElementById('regYear').value),
+                birth_month: parseInt(document.getElementById('regMonth').value),
+                birth_day: parseInt(document.getElementById('regDay').value),
+                birth_hour: parseInt(document.getElementById('regHour').value)
+            };
+            
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                document.getElementById('registerResult').innerHTML = 
+                    `<strong>회원가입 결과:</strong><br>${JSON.stringify(result, null, 2)}`;
+                
+                if (result.success) {
+                    console.log('✅ 회원가입 성공:', result);
+                } else {
+                    console.log('❌ 회원가입 실패:', result.error);
+                }
+            } catch (error) {
+                document.getElementById('registerResult').innerHTML = 
+                    `<strong>회원가입 오류:</strong><br>${error.message}`;
+                console.error('❌ 회원가입 실패:', error);
+            }
+        });
+        
+        // 로그인 테스트
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                email: document.getElementById('loginEmail').value,
+                password: document.getElementById('loginPassword').value
+            };
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                document.getElementById('loginResult').innerHTML = 
+                    `<strong>로그인 결과:</strong><br>${JSON.stringify(result, null, 2)}`;
+                
+                if (result.success) {
+                    console.log('✅ 로그인 성공:', result);
+                    // localStorage에 저장
+                    localStorage.setItem('currentUser', JSON.stringify(result.user));
+                    localStorage.setItem('authToken', result.token);
+                } else {
+                    console.log('❌ 로그인 실패:', result.error);
+                }
+            } catch (error) {
+                document.getElementById('loginResult').innerHTML = 
+                    `<strong>로그인 오류:</strong><br>${error.message}`;
+                console.error('❌ 로그인 실패:', error);
+            }
+        });
+        
+        // 메인 페이지로 이동
+        function goToMain() {
+            window.location.href = '/';
+        }
+        
+        // 페이지 로드 시 서버 테스트
+        window.addEventListener('load', () => {
+            console.log('🚀 로그인 테스트 페이지 로드됨');
+            testServer();
+        });
+    </script>
+</body>
+</html>

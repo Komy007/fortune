@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>명리학 분석 테스트</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .result { margin: 10px 0; padding: 10px; background: #f0f0f0; }
+        button { padding: 10px 20px; margin: 5px; }
+        input { padding: 5px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>명리학 분석 테스트</h1>
+    
+    <div class="test-section">
+        <h2>1. 현재 사용자 정보 확인</h2>
+        <button onclick="checkCurrentUser()">사용자 정보 확인</button>
+        <div id="userInfo" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. 명리학 분석 테스트</h2>
+        <button onclick="testBaziAnalysis()">명리학 분석 실행</button>
+        <div id="baziResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. API 직접 테스트</h2>
+        <label>생년: <input type="number" id="testYear" value="1990"></label>
+        <label>생월: <input type="number" id="testMonth" value="1"></label>
+        <label>생일: <input type="number" id="testDay" value="1"></label>
+        <label>생시: <input type="number" id="testHour" value="12"></label>
+        <button onclick="testDirectAPI()">API 직접 호출</button>
+        <div id="apiResult" class="result"></div>
+    </div>
+
+    <script>
+        function checkCurrentUser() {
+            const userInfo = document.getElementById('userInfo');
+            const currentUser = localStorage.getItem('currentUser');
+            const authToken = localStorage.getItem('authToken');
+            
+            userInfo.innerHTML = `
+                <h3>localStorage 정보:</h3>
+                <p><strong>currentUser:</strong> ${currentUser || '없음'}</p>
+                <p><strong>authToken:</strong> ${authToken ? '있음' : '없음'}</p>
+                ${currentUser ? `<p><strong>파싱된 사용자:</strong> <pre>${JSON.stringify(JSON.parse(currentUser), null, 2)}</pre></p>` : ''}
+            `;
+        }
+        
+        async function testBaziAnalysis() {
+            const resultDiv = document.getElementById('baziResult');
+            resultDiv.innerHTML = '분석 중...';
+            
+            try {
+                const currentUser = localStorage.getItem('currentUser');
+                if (!currentUser) {
+                    resultDiv.innerHTML = '❌ 로그인된 사용자가 없습니다.';
+                    return;
+                }
+                
+                const user = JSON.parse(currentUser);
+                const authToken = localStorage.getItem('authToken');
+                
+                if (!authToken) {
+                    resultDiv.innerHTML = '❌ 인증 토큰이 없습니다.';
+                    return;
+                }
+                
+                const requestData = {
+                    birth_year: parseInt(user.birthYear || user.birth_year),
+                    birth_month: parseInt(user.birthMonth || user.birth_month),
+                    birth_day: parseInt(user.birthDay || user.birth_day),
+                    birth_hour: parseInt(user.birthHour || user.birth_hour) || 12
+                };
+                
+                console.log('📤 전송할 데이터:', requestData);
+                
+                const response = await fetch('http://localhost:3000/api/bazi', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                console.log('📥 응답 상태:', response.status, response.statusText);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `❌ 오류: ${response.status} - ${errorText}`;
+                    return;
+                }
+                
+                const result = await response.json();
+                resultDiv.innerHTML = `
+                    <h3>✅ 분석 성공!</h3>
+                    <pre>${JSON.stringify(result, null, 2)}</pre>
+                `;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `❌ 오류: ${error.message}`;
+                console.error('테스트 오류:', error);
+            }
+        }
+        
+        async function testDirectAPI() {
+            const resultDiv = document.getElementById('apiResult');
+            resultDiv.innerHTML = 'API 호출 중...';
+            
+            try {
+                const authToken = localStorage.getItem('authToken');
+                if (!authToken) {
+                    resultDiv.innerHTML = '❌ 인증 토큰이 없습니다.';
+                    return;
+                }
+                
+                const requestData = {
+                    birth_year: parseInt(document.getElementById('testYear').value),
+                    birth_month: parseInt(document.getElementById('testMonth').value),
+                    birth_day: parseInt(document.getElementById('testDay').value),
+                    birth_hour: parseInt(document.getElementById('testHour').value)
+                };
+                
+                console.log('📤 직접 API 전송 데이터:', requestData);
+                
+                const response = await fetch('http://localhost:3000/api/bazi/simple', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                console.log('📥 직접 API 응답 상태:', response.status, response.statusText);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `❌ 오류: ${response.status} - ${errorText}`;
+                    return;
+                }
+                
+                const result = await response.json();
+                resultDiv.innerHTML = `
+                    <h3>✅ 직접 API 성공!</h3>
+                    <pre>${JSON.stringify(result, null, 2)}</pre>
+                `;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `❌ 오류: ${error.message}`;
+                console.error('직접 API 테스트 오류:', error);
+            }
+        }
+    </script>
+</body>
+</html>

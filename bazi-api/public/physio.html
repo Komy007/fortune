@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관상학 분석 - Fortune Teller</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .upload-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .upload-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .upload-card {
+            border: 3px dashed #ddd;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .upload-card:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .upload-card.active {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        .upload-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .upload-desc {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .camera-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .camera-btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .options-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .option-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .option-group label {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .option-group select {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .option-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .analyze-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .analyze-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .result-title {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .result-summary {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .result-content {
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .result-content h2 {
+            color: #667eea;
+            margin: 30px 0 15px 0;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .result-content h3 {
+            color: #333;
+            margin: 20px 0 10px 0;
+        }
+
+        .result-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .result-content th,
+        .result-content td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .result-content th {
+            background: #f8f9ff;
+            font-weight: 600;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #ffe6e6;
+            color: #d63031;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #d63031;
+        }
+
+        .success {
+            background: #e6ffe6;
+            color: #00b894;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #00b894;
+        }
+
+        @media (max-width: 768px) {
+            .upload-grid,
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .upload-section,
+            .options-section,
+            .result-section {
+                padding: 20px;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #cameraModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .camera-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        #video {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .camera-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .camera-btn {
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .capture-btn {
+            background: #667eea;
+            color: white;
+        }
+
+        .close-btn {
+            background: #ddd;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👁️ 관상학 분석</h1>
+            <p>얼굴의 특징을 바탕으로 한 개인 맞춤형 코칭 리포트</p>
+        </div>
+
+        <div class="upload-section">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #333;">📸 사진 업로드</h2>
+            
+            <div class="upload-grid">
+                <div class="upload-card" id="frontalCard">
+                    <div class="upload-icon">📷</div>
+                    <div class="upload-title">정면 사진</div>
+                    <div class="upload-desc">얼굴이 정면을 향한 사진을 업로드하세요</div>
+                    <button class="camera-btn" onclick="openCamera('frontal')">카메라로 촬영</button>
+                    <input type="file" id="frontalInput" accept="image/*" style="display: none;" onchange="handleFileSelect('frontal', this)">
+                    <img id="frontalPreview" class="preview-image hidden">
+                </div>
+
+                <div class="upload-card" id="profileCard">
+                    <div class="upload-icon">📷</div>
+                    <div class="upload-title">측면 사진</div>
+                    <div class="upload-desc">얼굴이 측면을 향한 사진을 업로드하세요</div>
+                    <button class="camera-btn" onclick="openCamera('profile')">카메라로 촬영</button>
+                    <input type="file" id="profileInput" accept="image/*" style="display: none;" onchange="handleFileSelect('profile', this)">
+                    <img id="profilePreview" class="preview-image hidden">
+                </div>
+            </div>
+        </div>
+
+        <div class="options-section">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #333;">⚙️ 분석 옵션</h2>
+            
+            <div class="options-grid">
+                <div class="option-group">
+                    <label for="goalSelect">목표 분야</label>
+                    <select id="goalSelect">
+                        <option value="career">경력 발전</option>
+                        <option value="finance">재정 관리</option>
+                        <option value="relationship">인간관계</option>
+                        <option value="health">건강 관리</option>
+                    </select>
+                </div>
+
+                <div class="option-group">
+                    <label for="langSelect">언어</label>
+                    <select id="langSelect">
+                        <option value="ko">한국어</option>
+                        <option value="en">English</option>
+                        <option value="km">ភាសាខ្មែរ</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="analyze-btn" id="analyzeBtn" onclick="performAnalysis()" disabled>
+                🔍 관상학 분석 시작
+            </button>
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <div class="result-header">
+                <h2 class="result-title">📊 분석 결과</h2>
+                <p class="result-summary" id="resultSummary"></p>
+            </div>
+            
+            <div class="result-content" id="resultContent"></div>
+        </div>
+    </div>
+
+    <!-- 카메라 모달 -->
+    <div id="cameraModal">
+        <div class="camera-container">
+            <h3 id="cameraTitle">카메라 촬영</h3>
+            <video id="video" autoplay></video>
+            <canvas id="canvas" style="display: none;"></canvas>
+            <div class="camera-controls">
+                <button class="camera-btn capture-btn" onclick="capturePhoto()">촬영</button>
+                <button class="camera-btn close-btn" onclick="closeCamera()">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCamera = null;
+        let stream = null;
+        let frontalImage = null;
+        let profileImage = null;
+
+        // 파일 선택 처리
+        function handleFileSelect(type, input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageData = e.target.result;
+                    if (type === 'frontal') {
+                        frontalImage = imageData;
+                        document.getElementById('frontalPreview').src = imageData;
+                        document.getElementById('frontalPreview').classList.remove('hidden');
+                        document.getElementById('frontalCard').classList.add('active');
+                    } else {
+                        profileImage = imageData;
+                        document.getElementById('profilePreview').src = imageData;
+                        document.getElementById('profilePreview').classList.remove('hidden');
+                        document.getElementById('profileCard').classList.add('active');
+                    }
+                    checkAnalysisReady();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 카메라 열기
+        async function openCamera(type) {
+            currentCamera = type;
+            document.getElementById('cameraTitle').textContent = type === 'frontal' ? '정면 사진 촬영' : '측면 사진 촬영';
+            
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'user',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    } 
+                });
+                
+                const video = document.getElementById('video');
+                video.srcObject = stream;
+                document.getElementById('cameraModal').style.display = 'flex';
+                
+            } catch (error) {
+                console.error('카메라 접근 오류:', error);
+                alert('카메라에 접근할 수 없습니다. 파일 업로드를 사용해주세요.');
+            }
+        }
+
+        // 사진 촬영
+        function capturePhoto() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const context = canvas.getContext('2d');
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0);
+            
+            const imageData = canvas.toDataURL('image/jpeg', 0.8);
+            
+            if (currentCamera === 'frontal') {
+                frontalImage = imageData;
+                document.getElementById('frontalPreview').src = imageData;
+                document.getElementById('frontalPreview').classList.remove('hidden');
+                document.getElementById('frontalCard').classList.add('active');
+            } else {
+                profileImage = imageData;
+                document.getElementById('profilePreview').src = imageData;
+                document.getElementById('profilePreview').classList.remove('hidden');
+                document.getElementById('profileCard').classList.add('active');
+            }
+            
+            closeCamera();
+            checkAnalysisReady();
+        }
+
+        // 카메라 닫기
+        function closeCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            document.getElementById('cameraModal').style.display = 'none';
+        }
+
+        // 분석 준비 상태 확인
+        function checkAnalysisReady() {
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            if (frontalImage && profileImage) {
+                analyzeBtn.disabled = false;
+                analyzeBtn.textContent = '🔍 관상학 분석 시작';
+            } else {
+                analyzeBtn.disabled = true;
+                analyzeBtn.textContent = '정면과 측면 사진을 모두 업로드해주세요';
+            }
+        }
+
+        // 관상학 분석 수행
+        async function performAnalysis() {
+            if (!frontalImage || !profileImage) {
+                alert('정면과 측면 사진을 모두 업로드해주세요.');
+                return;
+            }
+
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const resultSection = document.getElementById('resultSection');
+            
+            analyzeBtn.disabled = true;
+            analyzeBtn.textContent = '분석 중...';
+            
+            // 로딩 표시
+            resultSection.style.display = 'block';
+            resultSection.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <h3>관상학 분석 중...</h3>
+                    <p>얼굴 랜드마크를 추출하고 분석하고 있습니다.</p>
+                </div>
+            `;
+
+            try {
+                const goal = document.getElementById('goalSelect').value;
+                const lang = document.getElementById('langSelect').value;
+
+                const response = await fetch('/api/physio/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        frontalImageBase64: frontalImage,
+                        profileImageBase64: profileImage,
+                        goal: goal,
+                        lang: lang
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayResult(data.result);
+                } else {
+                    throw new Error(data.message || '분석에 실패했습니다.');
+                }
+
+            } catch (error) {
+                console.error('분석 오류:', error);
+                resultSection.innerHTML = `
+                    <div class="error">
+                        <h3>❌ 분석 오류</h3>
+                        <p>${error.message}</p>
+                        <button class="camera-btn" onclick="performAnalysis()">다시 시도</button>
+                    </div>
+                `;
+            } finally {
+                analyzeBtn.disabled = false;
+                analyzeBtn.textContent = '🔍 관상학 분석 시작';
+            }
+        }
+
+        // 결과 표시
+        function displayResult(result) {
+            const resultSection = document.getElementById('resultSection');
+            const resultSummary = document.getElementById('resultSummary');
+            const resultContent = document.getElementById('resultContent');
+
+            resultSummary.textContent = result.summary;
+
+            // 마크다운을 HTML로 변환 (간단한 변환)
+            let html = result.reportMarkdown
+                .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/\n/g, '<br>')
+                .replace(/\|(.*?)\|/g, (match, content) => {
+                    const cells = content.split('|').map(cell => `<td>${cell.trim()}</td>`).join('');
+                    return `<tr>${cells}</tr>`;
+                })
+                .replace(/(<tr>.*<\/tr>)/g, '<table>$1</table>');
+
+            resultContent.innerHTML = html;
+            resultSection.style.display = 'block';
+        }
+
+        // 파일 업로드 카드 클릭 이벤트
+        document.getElementById('frontalCard').addEventListener('click', function(e) {
+            if (e.target.tagName !== 'BUTTON') {
+                document.getElementById('frontalInput').click();
+            }
+        });
+
+        document.getElementById('profileCard').addEventListener('click', function(e) {
+            if (e.target.tagName !== 'BUTTON') {
+                document.getElementById('profileInput').click();
+            }
+        });
+
+        // 초기 상태 설정
+        checkAnalysisReady();
+    </script>
+</body>
+</html>
+
+
+
+

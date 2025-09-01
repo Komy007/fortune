@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>간단한 로그인 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .test-container {
+            background: #333;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        input, button {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+        }
+        input {
+            background: #555;
+            color: white;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover { background: #0056b3; }
+        .result {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔐 로그인 테스트</h1>
+        
+        <h3>1. 회원가입</h3>
+        <input type="text" id="regName" placeholder="이름" value="테스트사용자">
+        <input type="text" id="regUsername" placeholder="사용자명" value="testuser">
+        <input type="email" id="regEmail" placeholder="이메일" value="test@example.com">
+        <input type="password" id="regPassword" placeholder="비밀번호" value="password123">
+        <input type="number" id="regYear" placeholder="출생년도" value="1990">
+        <input type="number" id="regMonth" placeholder="출생월" value="6">
+        <input type="number" id="regDay" placeholder="출생일" value="15">
+        <input type="number" id="regHour" placeholder="출생시간" value="12">
+        <button onclick="testRegister()">회원가입 테스트</button>
+        <div id="registerResult" class="result"></div>
+        
+        <h3>2. 로그인</h3>
+        <input type="email" id="loginEmail" placeholder="이메일" value="test@example.com">
+        <input type="password" id="loginPassword" placeholder="비밀번호" value="password123">
+        <button onclick="testLogin()">로그인 테스트</button>
+        <div id="loginResult" class="result"></div>
+        
+        <h3>3. 사용자 정보 확인</h3>
+        <button onclick="testUserInfo()">사용자 정보 확인</button>
+        <div id="userResult" class="result"></div>
+    </div>
+    
+    <script>
+        let currentToken = null;
+        
+        async function testRegister() {
+            const result = document.getElementById('registerResult');
+            result.innerHTML = '회원가입 중...\n';
+            
+            try {
+                const data = {
+                    name: document.getElementById('regName').value,
+                    username: document.getElementById('regUsername').value,
+                    email: document.getElementById('regEmail').value,
+                    password: document.getElementById('regPassword').value,
+                    birth_year: parseInt(document.getElementById('regYear').value),
+                    birth_month: parseInt(document.getElementById('regMonth').value),
+                    birth_day: parseInt(document.getElementById('regDay').value),
+                    birth_hour: parseInt(document.getElementById('regHour').value)
+                };
+                
+                console.log('회원가입 데이터:', data);
+                
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const responseData = await response.json();
+                console.log('회원가입 응답:', responseData);
+                
+                if (response.ok && responseData.success) {
+                    result.innerHTML = `✅ 회원가입 성공!
+사용자: ${responseData.user.name}
+이메일: ${responseData.user.email}
+토큰: ${responseData.token ? '발급됨' : '없음'}`;
+                    result.className = 'result success';
+                    currentToken = responseData.token;
+                } else {
+                    result.innerHTML = `❌ 회원가입 실패: ${responseData.error || responseData.message}`;
+                    result.className = 'result error';
+                }
+                
+            } catch (error) {
+                result.innerHTML = `❌ 오류: ${error.message}`;
+                result.className = 'result error';
+            }
+        }
+        
+        async function testLogin() {
+            const result = document.getElementById('loginResult');
+            result.innerHTML = '로그인 중...\n';
+            
+            try {
+                const data = {
+                    email: document.getElementById('loginEmail').value,
+                    password: document.getElementById('loginPassword').value
+                };
+                
+                console.log('로그인 데이터:', data);
+                
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const responseData = await response.json();
+                console.log('로그인 응답:', responseData);
+                
+                if (response.ok && responseData.success) {
+                    result.innerHTML = `✅ 로그인 성공!
+사용자: ${responseData.user.name}
+이메일: ${responseData.user.email}
+토큰: ${responseData.token ? '발급됨' : '없음'}`;
+                    result.className = 'result success';
+                    currentToken = responseData.token;
+                } else {
+                    result.innerHTML = `❌ 로그인 실패: ${responseData.error || responseData.message}`;
+                    result.className = 'result error';
+                }
+                
+            } catch (error) {
+                result.innerHTML = `❌ 오류: ${error.message}`;
+                result.className = 'result error';
+            }
+        }
+        
+        async function testUserInfo() {
+            const result = document.getElementById('userResult');
+            result.innerHTML = '사용자 정보 확인 중...\n';
+            
+            if (!currentToken) {
+                result.innerHTML = '❌ 토큰이 없습니다. 먼저 로그인해주세요.';
+                result.className = 'result error';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/user', {
+                    headers: {
+                        'Authorization': `Bearer ${currentToken}`
+                    }
+                });
+                
+                const responseData = await response.json();
+                console.log('사용자 정보 응답:', responseData);
+                
+                if (response.ok && responseData.user) {
+                    result.innerHTML = `✅ 사용자 정보:
+이름: ${responseData.user.name}
+이메일: ${responseData.user.email}
+사용자명: ${responseData.user.username}
+생년월일: ${responseData.user.birth_year}-${responseData.user.birth_month}-${responseData.user.birth_day}
+출생시간: ${responseData.user.birth_hour}시`;
+                    result.className = 'result success';
+                } else {
+                    result.innerHTML = `❌ 사용자 정보 조회 실패: ${responseData.error}`;
+                    result.className = 'result error';
+                }
+                
+            } catch (error) {
+                result.innerHTML = `❌ 오류: ${error.message}`;
+                result.className = 'result error';
+            }
+        }
+        
+        // 페이지 로드 시 서버 상태 확인
+        window.addEventListener('load', async () => {
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                console.log('서버 상태:', data);
+            } catch (error) {
+                console.error('서버 연결 실패:', error);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./data/app.db"
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  displayName  String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Relations
+  prefs UserPrefs?
+  birthData BirthData?
+
+  @@map("users")
+}
+
+model UserPrefs {
+  id                           String   @id @default(cuid())
+  userId                       String   @unique
+  language                     String   @default("ko")
+  reportTimezone               String   @default("Asia/Phnom_Penh")
+  notificationEmailOptIn       Boolean  @default(false)
+  termsAcceptedAt              String?
+  privacyAcceptedAt            String?
+  consentProcessingBirthData   Boolean  @default(false)
+  
+  // 권장 정보
+  currentResidenceCity         String?
+  occupation                   String?
+  role                         String?
+  goals                        String?
+  constraints                  String?
+  interpretationExperience     String? // "business" | "emotional"
+  interpretationTone           String? // "business" | "emotional"
+  
+  // 관심 주제 (JSON 배열로 저장)
+  interests                    String? // JSON: ["재물/투자", "직업/사업", "관계/배우자", "건강", "타이밍"]
+  
+  // 의사결정 시계열
+  decisionTimeline             String? // "thisMonth" | "3m" | "6m" | "12m"
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_prefs")
+}
+
+model BirthData {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  
+  // 필수 정보
+  birthDate             String   // YYYY-MM-DD (양력)
+  birthTime             String   // HH:mm (분 단위 필수)
+  birthPlace            String   // 도시명
+  birthCountry          String   // 국가명
+  birthTimezone         String   // IANA 타임존 (예: Asia/Phnom_Penh)
+  sexAtBirth            String   // "male" | "female"
+  
+  // 시간 정밀도
+  timeAccuracy          String   // "exact" | "about" | "unknown"
+  timeSource            String?  // "hospital_record" | "family_memory" | "other"
+  
+  // 정확도 보정용 사건 앵커 (JSON 배열로 저장)
+  rectificationAnchors  String?  // JSON: [{"event": "첫 직장", "date": "2020-03"}, ...]
+  
+  // 추가 정보
+  notes                  String?  // 기타 메모
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("birth_data")
+}

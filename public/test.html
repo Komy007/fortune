@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .test-section {
+            background: #333;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 JavaScript 테스트 페이지</h1>
+    
+    <div class="test-section">
+        <h2>1️⃣ 기본 JavaScript 테스트</h2>
+        <button onclick="testBasicJS()">기본 JavaScript 테스트</button>
+        <div id="basicResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2️⃣ DOM 요소 테스트</h2>
+        <button onclick="testDOM()">DOM 요소 찾기 테스트</button>
+        <div id="domResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3️⃣ 메인 페이지로 이동</h2>
+        <button onclick="goToMain()">메인 페이지로 이동</button>
+    </div>
+    
+    <script>
+        // 기본 JavaScript 테스트
+        function testBasicJS() {
+            const result = document.getElementById('basicResult');
+            result.innerHTML = `
+                <strong>✅ JavaScript 작동 확인:</strong><br>
+                • 현재 시간: ${new Date().toLocaleString('ko-KR')}<br>
+                • 브라우저: ${navigator.userAgent}<br>
+                • JavaScript 버전: ES6+ 지원됨<br>
+                • 콘솔 로그: 개발자 도구에서 확인 가능
+            `;
+            console.log('✅ 기본 JavaScript 테스트 성공');
+        }
+        
+        // DOM 요소 테스트
+        function testDOM() {
+            const result = document.getElementById('domResult');
+            let html = '<strong>🔍 DOM 요소 테스트:</strong><br>';
+            
+            // 주요 요소들 확인
+            const elements = [
+                'languageSelect', 'navToggle', 'baziForm', 'loginForm', 
+                'registerForm', 'loginModal', 'registerModal'
+            ];
+            
+            elements.forEach(id => {
+                const element = document.getElementById(id);
+                html += `• ${id}: ${element ? '✅ 찾음' : '❌ 없음'}<br>`;
+            });
+            
+            result.innerHTML = html;
+            console.log('🔍 DOM 요소 테스트 완료');
+        }
+        
+        // 메인 페이지로 이동
+        function goToMain() {
+            window.location.href = '/';
+        }
+        
+        // 페이지 로드 시 자동 테스트
+        window.addEventListener('load', () => {
+            console.log('🚀 테스트 페이지 로드됨');
+            testBasicJS();
+            setTimeout(testDOM, 500);
+        });
+    </script>
+</body>
+</html>

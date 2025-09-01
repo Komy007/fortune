@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bazi API - 정밀 회원가입 테스트</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f7fafc;
+        }
+        .test-section h2 {
+            color: #2d3748;
+            margin-top: 0;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s;
+            margin: 5px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success {
+            background: #c6f6d5;
+            border: 1px solid #68d391;
+            color: #22543d;
+        }
+        .error {
+            background: #fed7d7;
+            border: 1px solid #fc8181;
+            color: #742a2a;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+        .required {
+            color: #e53e3e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Bazi API - 정밀 회원가입 테스트</h1>
+        
+        <!-- 완전한 회원가입 테스트 -->
+        <div class="test-section">
+            <h2>🚀 완전한 회원가입 (정밀 사주 분석용)</h2>
+            <form id="completeSignupForm">
+                <!-- 1단계: 기본 정보 -->
+                <h3>📝 1단계: 기본 정보</h3>
+                <div class="form-group">
+                    <label for="email">이메일 <span class="required">*</span></label>
+                    <input type="email" id="email" value="test@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">비밀번호 <span class="required">*</span> (8자 이상)</label>
+                    <input type="password" id="password" value="password123" required>
+                </div>
+                <div class="form-group">
+                    <label for="displayName">표시명 <span class="required">*</span> (2~40자)</label>
+                    <input type="text" id="displayName" value="테스트사용자" required>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="termsAccepted" required>
+                    <label for="termsAccepted">이용약관 동의 <span class="required">*</span></label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="privacyAccepted" required>
+                    <label for="privacyAccepted">개인정보처리방침 동의 <span class="required">*</span></label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="consentProcessingBirthData" required>
+                    <label for="consentProcessingBirthData">생년월일시 데이터 처리 동의 <span class="required">*</span></label>
+                </div>
+
+                <!-- 2단계: 출생 정보 (정밀도 필수) -->
+                <h3>🎂 2단계: 출생 정보 (정밀도 필수)</h3>
+                <div class="form-group">
+                    <label for="birthDate">출생일자 <span class="required">*</span> (YYYY-MM-DD, 양력)</label>
+                    <input type="date" id="birthDate" value="1990-01-01" required>
+                </div>
+                <div class="form-group">
+                    <label for="birthTime">출생시각 <span class="required">*</span> (HH:mm, 분 단위 필수)</label>
+                    <input type="time" id="birthTime" value="12:00" required>
+                </div>
+                <div class="form-group">
+                    <label for="birthPlace">출생지(도시) <span class="required">*</span></label>
+                    <input type="text" id="birthPlace" value="서울" required>
+                </div>
+                <div class="form-group">
+                    <label for="birthCountry">국가 <span class="required">*</span></label>
+                    <input type="text" id="birthCountry" value="대한민국" required>
+                </div>
+                <div class="form-group">
+                    <label for="birthTimezone">시간대 <span class="required">*</span></label>
+                    <select id="birthTimezone" required>
+                        <option value="Asia/Phnom_Penh">Asia/Phnom_Penh (권장)</option>
+                        <option value="Asia/Seoul">Asia/Seoul</option>
+                        <option value="UTC">UTC</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sexAtBirth">성별(출생 시점) <span class="required">*</span></label>
+                    <select id="sexAtBirth" required>
+                        <option value="male">남성</option>
+                        <option value="female">여성</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="timeAccuracy">시간 정밀도 <span class="required">*</span></label>
+                    <select id="timeAccuracy" required>
+                        <option value="exact">정확함 (exact)</option>
+                        <option value="about">대략적 (about, ±30분)</option>
+                        <option value="unknown">모름 (unknown)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="timeSource">시간 소스</label>
+                    <select id="timeSource">
+                        <option value="hospital_record">병원 기록</option>
+                        <option value="family_memory">가족 기억</option>
+                        <option value="other">기타</option>
+                    </select>
+                </div>
+
+                <!-- 3단계: 사용자 설정 (권장사항) -->
+                <h3>⚙️ 3단계: 사용자 설정 (권장사항)</h3>
+                <div class="form-group">
+                    <label for="language">언어</label>
+                    <select id="language">
+                        <option value="ko">한국어 (ko)</option>
+                        <option value="en">English (en)</option>
+                        <option value="km">ភាសាខ្មែរ (km)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="reportTimezone">보고 시간대</label>
+                    <select id="reportTimezone">
+                        <option value="Asia/Phnom_Penh">Asia/Phnom_Penh (권장)</option>
+                        <option value="Asia/Seoul">Asia/Seoul</option>
+                        <option value="UTC">UTC</option>
+                    </select>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="notificationEmailOptIn">
+                    <label for="notificationEmailOptIn">이메일 알림 수신 동의</label>
+                </div>
+                <div class="form-group">
+                    <label for="currentResidenceCity">현재 거주 도시</label>
+                    <input type="text" id="currentResidenceCity" placeholder="현재 거주하는 도시">
+                </div>
+                <div class="form-group">
+                    <label for="occupation">직업/업종</label>
+                    <input type="text" id="occupation" placeholder="직업이나 업종">
+                </div>
+                <div class="form-group">
+                    <label for="interpretationTone">해석 톤</label>
+                    <select id="interpretationTone">
+                        <option value="">선택 안함</option>
+                        <option value="business">비즈니스형 (액션 중심)</option>
+                        <option value="emotional">감성형 (서사·격려형)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="decisionTimeline">의사결정 시계열</label>
+                    <select id="decisionTimeline">
+                        <option value="">선택 안함</option>
+                        <option value="thisMonth">이번 달</option>
+                        <option value="3m">3개월</option>
+                        <option value="6m">6개월</option>
+                        <option value="12m">12개월</option>
+                    </select>
+                </div>
+
+                <button type="submit">완전한 회원가입 실행</button>
+            </form>
+            <div id="completeResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- 로그인 테스트 -->
+        <div class="test-section">
+            <h2>🔑 로그인 테스트</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">이메일</label>
+                    <input type="email" id="loginEmail" value="test@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">비밀번호</label>
+                    <input type="password" id="loginPassword" value="password123" required>
+                </div>
+                <button type="submit">로그인</button>
+            </form>
+            <div id="loginResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentToken = null;
+
+        // 완전한 회원가입
+        document.getElementById('completeSignupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const resultDiv = document.getElementById('completeResult');
+            
+            try {
+                const data = {
+                    // 1단계 데이터
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value,
+                    displayName: document.getElementById('displayName').value,
+                    termsAccepted: document.getElementById('termsAccepted').checked,
+                    privacyAccepted: document.getElementById('privacyAccepted').checked,
+                    consentProcessingBirthData: document.getElementById('consentProcessingBirthData').checked,
+                    
+                    // 2단계 데이터
+                    birthDate: document.getElementById('birthDate').value,
+                    birthTime: document.getElementById('birthTime').value,
+                    birthPlace: document.getElementById('birthPlace').value,
+                    birthCountry: document.getElementById('birthCountry').value,
+                    birthTimezone: document.getElementById('birthTimezone').value,
+                    sexAtBirth: document.getElementById('sexAtBirth').value,
+                    timeAccuracy: document.getElementById('timeAccuracy').value,
+                    timeSource: document.getElementById('timeSource').value,
+                    
+                    // 3단계 데이터
+                    language: document.getElementById('language').value,
+                    reportTimezone: document.getElementById('reportTimezone').value,
+                    notificationEmailOptIn: document.getElementById('notificationEmailOptIn').checked,
+                    currentResidenceCity: document.getElementById('currentResidenceCity').value,
+                    occupation: document.getElementById('occupation').value,
+                    interpretationTone: document.getElementById('interpretationTone').value,
+                    decisionTimeline: document.getElementById('decisionTimeline').value
+                };
+
+                const response = await fetch('/api/auth/signup/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    currentToken = result.token;
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ 완전한 회원가입 성공!\n\n${JSON.stringify(result, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ 완전한 회원가입 실패\n\n${JSON.stringify(result, null, 2)}`;
+                }
+                
+                resultDiv.style.display = 'block';
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ 오류 발생\n\n${error.message}`;
+                resultDiv.style.display = 'block';
+            }
+        });
+
+        // 로그인
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const resultDiv = document.getElementById('loginResult');
+            
+            try {
+                const data = {
+                    email: document.getElementById('loginEmail').value,
+                    password: document.getElementById('loginPassword').value
+                };
+
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    currentToken = result.token;
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ 로그인 성공!\n\n${JSON.stringify(result, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ 로그인 실패\n\n${JSON.stringify(result, null, 2)}`;
+                }
+                
+                resultDiv.style.display = 'block';
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ 오류 발생\n\n${error.message}`;
+                resultDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

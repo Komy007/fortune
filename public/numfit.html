@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>명리학 기반 숫자 택일 서비스 - Fortune Teller</title>
+    <link rel="stylesheet" href="css/numfit.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-magic"></i> 명리학 기반 숫자 택일 서비스</h1>
+                <p>사주를 기반으로 한 전화번호, 차량번호, 개인숫자 길흉 분석 및 택일 서비스</p>
+            </div>
+        </header>
+
+        <!-- 네비게이션 -->
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-tab="lucky-numbers">
+                <i class="fas fa-star"></i> 길한 숫자
+            </button>
+            <button class="nav-tab" data-tab="phone-analysis">
+                <i class="fas fa-phone"></i> 전화번호 분석
+            </button>
+            <button class="nav-tab" data-tab="car-analysis">
+                <i class="fas fa-car"></i> 차량번호 분석
+            </button>
+            <button class="nav-tab" data-tab="personal-analysis">
+                <i class="fas fa-user"></i> 개인숫자 분석
+                </button>
+            <button class="nav-tab" data-tab="date-selection">
+                <i class="fas fa-calendar"></i> 택일 서비스
+                </button>
+            <button class="nav-tab" data-tab="comprehensive">
+                <i class="fas fa-chart-line"></i> 종합 분석
+                </button>
+        </nav>
+
+        <!-- 메인 콘텐츠 -->
+        <main class="main-content">
+            <!-- 길한 숫자 섹션 -->
+            <section id="lucky-numbers" class="tab-content active">
+                <div class="card">
+                    <h2><i class="fas fa-star"></i> 길한 숫자 분석</h2>
+                    <p>생년월일을 입력하시면 사주를 기반으로 한 길한 숫자를 추천해드립니다.</p>
+                    
+                    <form id="luckyNumbersForm" class="form">
+                        <div class="form-group">
+                            <label for="birthYear">생년</label>
+                            <input type="number" id="birthYear" name="birthYear" min="1900" max="2030" required>
+                        </div>
+                    <div class="form-group">
+                            <label for="birthMonth">생월</label>
+                            <input type="number" id="birthMonth" name="birthMonth" min="1" max="12" required>
+                    </div>
+                    <div class="form-group">
+                            <label for="birthDay">생일</label>
+                            <input type="number" id="birthDay" name="birthDay" min="1" max="31" required>
+                    </div>
+                    <div class="form-group">
+                            <label for="birthHour">생시 (선택)</label>
+                            <input type="number" id="birthHour" name="birthHour" min="0" max="23" placeholder="0-23">
+                    </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> 길한 숫자 분석
+                        </button>
+                    </form>
+
+                    <div id="luckyNumbersResult" class="result-section" style="display: none;">
+                        <h3>분석 결과</h3>
+                        <div class="result-grid">
+                            <div class="result-card">
+                                <h4><i class="fas fa-star"></i> 길한 숫자</h4>
+                                <div id="luckyNumbersList" class="number-list"></div>
+                            </div>
+                            <div class="result-card">
+                                <h4><i class="fas fa-palette"></i> 길한 색상</h4>
+                                <div id="luckyColorsList" class="color-list"></div>
+                            </div>
+                            <div class="result-card">
+                                <h4><i class="fas fa-compass"></i> 길한 방향</h4>
+                                <div id="luckyDirectionsList" class="direction-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 전화번호 분석 섹션 -->
+            <section id="phone-analysis" class="tab-content">
+                <div class="card">
+                    <h2><i class="fas fa-phone"></i> 전화번호 길흉 분석</h2>
+                    <p>전화번호의 각 자릿수를 사주와 연관하여 길흉을 분석해드립니다.</p>
+                    
+                    <form id="phoneAnalysisForm" class="form">
+                        <div class="form-group">
+                            <label for="phoneNumber">전화번호</label>
+                            <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="01012345678" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="phoneBirthYear">생년</label>
+                                <input type="number" id="phoneBirthYear" name="birthYear" min="1900" max="2030" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phoneBirthMonth">생월</label>
+                                <input type="number" id="phoneBirthMonth" name="birthMonth" min="1" max="12" required>
+                        </div>
+                            <div class="form-group">
+                                <label for="phoneBirthDay">생일</label>
+                                <input type="number" id="phoneBirthDay" name="birthDay" min="1" max="31" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phoneBirthHour">생시 (선택)</label>
+                                <input type="number" id="phoneBirthHour" name="birthHour" min="0" max="23" placeholder="0-23">
+                                        </div>
+                                    </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> 전화번호 분석
+                        </button>
+                    </form>
+
+                    <div id="phoneAnalysisResult" class="result-section" style="display: none;">
+                        <h3>분석 결과</h3>
+                        <div class="score-display">
+                            <div class="score-circle">
+                                <span id="phoneScore">0</span>점
+                                        </div>
+                            <div class="score-info">
+                                <h4>등급: <span id="phoneGrade">-</span></h4>
+                                <p id="phoneRecommendation">-</p>
+                                    </div>
+                                        </div>
+                        <div class="digit-analysis">
+                            <h4>자릿수별 분석</h4>
+                            <div id="phoneDigitAnalysis" class="digit-grid"></div>
+                                    </div>
+                                </div>
+                            </div>
+            </section>
+
+            <!-- 차량번호 분석 섹션 -->
+            <section id="car-analysis" class="tab-content">
+                <div class="card">
+                    <h2><i class="fas fa-car"></i> 차량번호 길흉 분석</h2>
+                    <p>차량번호의 길흉을 분석하여 안전 운전에 도움을 드립니다.</p>
+                    
+                    <form id="carAnalysisForm" class="form">
+                        <div class="form-group">
+                            <label for="carNumber">차량번호</label>
+                            <input type="text" id="carNumber" name="carNumber" placeholder="12가3456" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="carBirthYear">생년</label>
+                                <input type="number" id="carBirthYear" name="birthYear" min="1900" max="2030" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="carBirthMonth">생월</label>
+                                <input type="number" id="carBirthMonth" name="birthMonth" min="1" max="12" required>
+                                        </div>
+                            <div class="form-group">
+                                <label for="carBirthDay">생일</label>
+                                <input type="number" id="carBirthDay" name="birthDay" min="1" max="31" required>
+                                    </div>
+                            <div class="form-group">
+                                <label for="carBirthHour">생시 (선택)</label>
+                                <input type="number" id="carBirthHour" name="birthHour" min="0" max="23" placeholder="0-23">
+                                        </div>
+                                    </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> 차량번호 분석
+                        </button>
+                    </form>
+
+                    <div id="carAnalysisResult" class="result-section" style="display: none;">
+                        <h3>분석 결과</h3>
+                        <div class="score-display">
+                            <div class="score-circle">
+                                <span id="carScore">0</span>점
+                                        </div>
+                            <div class="score-info">
+                                <h4>등급: <span id="carGrade">-</span></h4>
+                                <p id="carRecommendation">-</p>
+                                    </div>
+                                        </div>
+                        <div class="digit-analysis">
+                            <h4>자릿수별 분석</h4>
+                            <div id="carDigitAnalysis" class="digit-grid"></div>
+                                    </div>
+                                </div>
+                            </div>
+            </section>
+
+            <!-- 개인숫자 분석 섹션 -->
+            <section id="personal-analysis" class="tab-content">
+                <div class="card">
+                    <h2><i class="fas fa-user"></i> 개인숫자 길흉 분석</h2>
+                    <p>자주 사용하는 개인 숫자의 길흉을 분석해드립니다.</p>
+                    
+                    <form id="personalAnalysisForm" class="form">
+                        <div class="form-group">
+                            <label for="personalNumber">개인숫자</label>
+                            <input type="text" id="personalNumber" name="personalNumber" placeholder="1234" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="personalBirthYear">생년</label>
+                                <input type="number" id="personalBirthYear" name="birthYear" min="1900" max="2030" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="personalBirthMonth">생월</label>
+                                <input type="number" id="personalBirthMonth" name="birthMonth" min="1" max="12" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="personalBirthDay">생일</label>
+                                <input type="number" id="personalBirthDay" name="birthDay" min="1" max="31" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="personalBirthHour">생시 (선택)</label>
+                                <input type="number" id="personalBirthHour" name="birthHour" min="0" max="23" placeholder="0-23">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> 개인숫자 분석
+                        </button>
+                    </form>
+
+                    <div id="personalAnalysisResult" class="result-section" style="display: none;">
+                        <h3>분석 결과</h3>
+                        <div class="score-display">
+                            <div class="score-circle">
+                                <span id="personalScore">0</span>점
+                            </div>
+                            <div class="score-info">
+                                <h4>등급: <span id="personalGrade">-</span></h4>
+                                <p id="personalRecommendation">-</p>
+                                </div>
+                            </div>
+                        <div class="digit-analysis">
+                            <h4>자릿수별 분석</h4>
+                            <div id="personalDigitAnalysis" class="digit-grid"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 택일 서비스 섹션 -->
+            <section id="date-selection" class="tab-content">
+                <div class="card">
+                    <h2><i class="fas fa-calendar"></i> 택일 서비스</h2>
+                    <p>목적에 맞는 길한 날짜를 추천해드립니다.</p>
+                    
+                    <form id="dateSelectionForm" class="form">
+                    <div class="form-group">
+                            <label for="purpose">목적</label>
+                            <select id="purpose" name="purpose" required>
+                                <option value="">목적을 선택하세요</option>
+                                <option value="미팅">미팅</option>
+                                <option value="계약">계약</option>
+                                <option value="이사">이사</option>
+                                <option value="결혼">결혼</option>
+                                <option value="사업">사업</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                                <label for="dateBirthYear">생년</label>
+                                <input type="number" id="dateBirthYear" name="birthYear" min="1900" max="2030" required>
+                        </div>
+                        <div class="form-group">
+                                <label for="dateBirthMonth">생월</label>
+                                <input type="number" id="dateBirthMonth" name="birthMonth" min="1" max="12" required>
+                        </div>
+                            <div class="form-group">
+                                <label for="dateBirthDay">생일</label>
+                                <input type="number" id="dateBirthDay" name="birthDay" min="1" max="31" required>
+                    </div>
+                    <div class="form-group">
+                                <label for="dateBirthHour">생시 (선택)</label>
+                                <input type="number" id="dateBirthHour" name="birthHour" min="0" max="23" placeholder="0-23">
+                        </div>
+                    </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="startDate">시작일</label>
+                                <input type="date" id="startDate" name="startDate">
+                            </div>
+                    <div class="form-group">
+                                <label for="days">분석 기간 (일)</label>
+                                <input type="number" id="days" name="days" min="7" max="90" value="30">
+                        </div>
+                    </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> 택일 분석
+                    </button>
+                    </form>
+
+                    <div id="dateSelectionResult" class="result-section" style="display: none;">
+                        <h3>추천 날짜</h3>
+                        <div id="dateRecommendations" class="date-grid"></div>
+                </div>
+            </div>
+            </section>
+
+            <!-- 종합 분석 섹션 -->
+            <section id="comprehensive" class="tab-content">
+                <div class="card">
+                    <h2><i class="fas fa-chart-line"></i> 종합 숫자 운세 분석</h2>
+                    <p>모든 숫자 정보를 종합적으로 분석하여 전체적인 운세를 제공합니다.</p>
+                    
+                    <form id="comprehensiveForm" class="form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="compPhoneNumber">전화번호 (선택)</label>
+                                <input type="tel" id="compPhoneNumber" name="phoneNumber" placeholder="01012345678">
+                            </div>
+                            <div class="form-group">
+                                <label for="compCarNumber">차량번호 (선택)</label>
+                                <input type="text" id="compCarNumber" name="carNumber" placeholder="12가3456">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="compPersonalNumber">개인숫자 (선택)</label>
+                            <input type="text" id="compPersonalNumber" name="personalNumber" placeholder="1234">
+                        </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                <label for="compBirthYear">생년</label>
+                                <input type="number" id="compBirthYear" name="birthYear" min="1900" max="2030" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="compBirthMonth">생월</label>
+                                <input type="number" id="compBirthMonth" name="birthMonth" min="1" max="12" required>
+                                </div>
+                                <div class="form-group">
+                                <label for="compBirthDay">생일</label>
+                                <input type="number" id="compBirthDay" name="birthDay" min="1" max="31" required>
+                                </div>
+                            <div class="form-group">
+                                <label for="compBirthHour">생시 (선택)</label>
+                                <input type="number" id="compBirthHour" name="birthHour" min="0" max="23" placeholder="0-23">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> 종합 분석
+                    </button>
+                    </form>
+
+                    <div id="comprehensiveResult" class="result-section" style="display: none;">
+                        <h3>종합 분석 결과</h3>
+                        <div class="comprehensive-grid">
+                            <div class="comprehensive-card">
+                                <h4><i class="fas fa-star"></i> 길한 숫자</h4>
+                                <div id="compLuckyNumbers" class="number-list"></div>
+                            </div>
+                            <div class="comprehensive-card">
+                                <h4><i class="fas fa-phone"></i> 전화번호 분석</h4>
+                                <div id="compPhoneAnalysis" class="analysis-summary"></div>
+                            </div>
+                            <div class="comprehensive-card">
+                                <h4><i class="fas fa-car"></i> 차량번호 분석</h4>
+                                <div id="compCarAnalysis" class="analysis-summary"></div>
+                            </div>
+                            <div class="comprehensive-card">
+                                <h4><i class="fas fa-user"></i> 개인숫자 분석</h4>
+                                <div id="compPersonalAnalysis" class="analysis-summary"></div>
+                            </div>
+                            <div class="comprehensive-card">
+                                <h4><i class="fas fa-palette"></i> 길한 색상</h4>
+                                <div id="compLuckyColors" class="color-list"></div>
+                            </div>
+                            <div class="comprehensive-card">
+                                <h4><i class="fas fa-compass"></i> 길한 방향</h4>
+                                <div id="compLuckyDirections" class="direction-list"></div>
+                            </div>
+                </div>
+                </div>
+            </div>
+            </section>
+        </main>
+
+        <!-- 로딩 인디케이터 -->
+        <div id="loading" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>분석 중입니다...</p>
+        </div>
+    </div>
+
+    <script src="js/numfit.js"></script>
+</body>
+</html>
+
+
+
+

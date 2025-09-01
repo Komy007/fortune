@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bazi API - Auth 테스트</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f7fafc;
+        }
+        .test-section h2 {
+            color: #2d3748;
+            margin-top: 0;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success {
+            background: #c6f6d5;
+            border: 1px solid #68d391;
+            color: #22543d;
+        }
+        .error {
+            background: #fed7d7;
+            border: 1px solid #fc8181;
+            color: #742a2a;
+        }
+        .info {
+            background: #bee3f8;
+            border: 1px solid #63b3ed;
+            color: #2a4365;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+        .badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Bazi API - Auth 테스트</h1>
+        
+        <!-- 회원가입 테스트 -->
+        <div class="test-section">
+            <h2>📝 회원가입 테스트</h2>
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="signupEmail">이메일 *</label>
+                    <input type="email" id="signupEmail" value="test@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">비밀번호 * (8자 이상)</label>
+                    <input type="password" id="signupPassword" value="password123" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupDisplayName">표시명 * (2~40자)</label>
+                    <input type="text" id="signupDisplayName" value="테스트사용자" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupLanguage">언어</label>
+                    <select id="signupLanguage">
+                        <option value="ko">한국어 (ko)</option>
+                        <option value="en">English (en)</option>
+                        <option value="km">ភាសាខ្មែរ (km)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="signupTimezone">시간대</label>
+                    <select id="signupTimezone">
+                        <option value="Asia/Phnom_Penh">Asia/Phnom_Penh <span class="badge">권장</span></option>
+                        <option value="Asia/Seoul">Asia/Seoul</option>
+                        <option value="UTC">UTC</option>
+                    </select>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="signupNotification" checked>
+                    <label for="signupNotification">이메일 알림 수신 동의</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="signupTerms" required>
+                    <label for="signupTerms">이용약관 동의 *</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="signupPrivacy" required>
+                    <label for="signupPrivacy">개인정보처리방침 동의 *</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="signupConsent" required>
+                    <label for="signupConsent">생년월일시 데이터 처리 동의 *</label>
+                </div>
+                <button type="submit">회원가입</button>
+            </form>
+            <div id="signupResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- 로그인 테스트 -->
+        <div class="test-section">
+            <h2>🔑 로그인 테스트</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">이메일</label>
+                    <input type="email" id="loginEmail" value="test@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">비밀번호</label>
+                    <input type="password" id="loginPassword" value="password123" required>
+                </div>
+                <button type="submit">로그인</button>
+            </form>
+            <div id="loginResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- 사용자 정보 조회 테스트 -->
+        <div class="test-section">
+            <h2>👤 사용자 정보 조회</h2>
+            <button onclick="getUserInfo()">내 정보 조회</button>
+            <div id="userResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- 로그아웃 테스트 -->
+        <div class="test-section">
+            <h2>🚪 로그아웃 테스트</h2>
+            <button onclick="logout()">로그아웃</button>
+            <div id="logoutResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentToken = null;
+
+        // 회원가입
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const resultDiv = document.getElementById('signupResult');
+            
+            try {
+                const data = {
+                    email: document.getElementById('signupEmail').value,
+                    password: document.getElementById('signupPassword').value,
+                    displayName: document.getElementById('signupDisplayName').value,
+                    language: document.getElementById('signupLanguage').value,
+                    reportTimezone: document.getElementById('signupTimezone').value,
+                    notificationEmailOptIn: document.getElementById('signupNotification').checked,
+                    termsAccepted: document.getElementById('signupTerms').checked,
+                    privacyAccepted: document.getElementById('signupPrivacy').checked,
+                    consentProcessingBirthData: document.getElementById('signupConsent').checked
+                };
+
+                const response = await fetch('/api/auth/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    currentToken = result.token;
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ 회원가입 성공!\n\n${JSON.stringify(result, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ 회원가입 실패\n\n${JSON.stringify(result, null, 2)}`;
+                }
+                
+                resultDiv.style.display = 'block';
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ 오류 발생\n\n${error.message}`;
+                resultDiv.style.display = 'block';
+            }
+        });
+
+        // 로그인
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const resultDiv = document.getElementById('loginResult');
+            
+            try {
+                const data = {
+                    email: document.getElementById('loginEmail').value,
+                    password: document.getElementById('loginPassword').value
+                };
+
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    currentToken = result.token;
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ 로그인 성공!\n\n${JSON.stringify(result, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ 로그인 실패\n\n${JSON.stringify(result, null, 2)}`;
+                }
+                
+                resultDiv.style.display = 'block';
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ 오류 발생\n\n${error.message}`;
+                resultDiv.style.display = 'block';
+            }
+        });
+
+        // 사용자 정보 조회
+        async function getUserInfo() {
+            const resultDiv = document.getElementById('userResult');
+            
+            if (!currentToken) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ 로그인이 필요합니다. 먼저 로그인해주세요.';
+                resultDiv.style.display = 'block';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/auth/me', {
+                    headers: { 'Authorization': `Bearer ${currentToken}` }
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ 사용자 정보 조회 성공!\n\n${JSON.stringify(result, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ 사용자 정보 조회 실패\n\n${JSON.stringify(result, null, 2)}`;
+                }
+                
+                resultDiv.style.display = 'block';
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ 오류 발생\n\n${error.message}`;
+                resultDiv.style.display = 'block';
+            }
+        }
+
+        // 로그아웃
+        async function logout() {
+            const resultDiv = document.getElementById('logoutResult');
+            
+            try {
+                const response = await fetch('/api/auth/logout', {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    currentToken = null;
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ 로그아웃 성공!\n\n${JSON.stringify(result, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ 로그아웃 실패\n\n${JSON.stringify(result, null, 2)}`;
+                }
+                
+                resultDiv.style.display = 'block';
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ 오류 발생\n\n${error.message}`;
+                resultDiv.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+
+

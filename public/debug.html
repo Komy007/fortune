@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>명리학 메뉴 디버깅</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; }
+        .log { background: #f5f5f5; padding: 10px; margin: 10px 0; font-family: monospace; }
+        button { padding: 10px 20px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🔮 명리학 메뉴 디버깅</h1>
+    
+    <div class="test-section">
+        <h2>1. 서버 상태 확인</h2>
+        <button onclick="checkServers()">서버 상태 확인</button>
+        <div id="serverStatus" class="log"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. 명리학 API 테스트</h2>
+        <button onclick="testBaziAPI()">명리학 API 테스트</button>
+        <div id="baziTest" class="log"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. 관리자 API 테스트</h2>
+        <button onclick="testAdminAPI()">관리자 API 테스트</button>
+        <div id="adminTest" class="log"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. 콘솔 로그</h2>
+        <div id="consoleLog" class="log"></div>
+    </div>
+
+    <script>
+        // 콘솔 로그 캡처
+        const originalLog = console.log;
+        const originalError = console.error;
+        const logContainer = document.getElementById('consoleLog');
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            logContainer.innerHTML += '<div style="color: blue;">' + args.join(' ') + '</div>';
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            logContainer.innerHTML += '<div style="color: red;">' + args.join(' ') + '</div>';
+        };
+
+        async function checkServers() {
+            const statusDiv = document.getElementById('serverStatus');
+            statusDiv.innerHTML = '서버 상태 확인 중...';
+            
+            try {
+                // 메인 서버 확인
+                const mainResponse = await fetch('http://localhost:3000');
+                const mainStatus = mainResponse.ok ? '✅ 정상' : '❌ 오류';
+                
+                // Bazi API 서버 확인
+                const baziResponse = await fetch('http://localhost:3000/health');
+                const baziData = await baziResponse.json();
+                const baziStatus = baziResponse.ok ? '✅ 정상' : '❌ 오류';
+                
+                statusDiv.innerHTML = `
+                    <div>메인 서버 (포트 3000): ${mainStatus}</div>
+                    <div>Bazi API 서버 (포트 3000): ${baziStatus}</div>
+                    <div>Bazi API 상태: ${baziData.status}</div>
+                `;
+            } catch (error) {
+                statusDiv.innerHTML = '❌ 서버 확인 실패: ' + error.message;
+            }
+        }
+
+        async function testBaziAPI() {
+            const testDiv = document.getElementById('baziTest');
+            testDiv.innerHTML = '명리학 API 테스트 중...';
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/bazi', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        fullName: '테스트',
+                        sexAtBirth: 'male',
+                        birth: {
+                            date: '1990-01-01',
+                            time: '12:00',
+                            place: '서울'
+                        },
+                        locale: 'ko'
+                    })
+                });
+                
+                const result = await response.json();
+                testDiv.innerHTML = `
+                    <div>응답 상태: ${response.status}</div>
+                    <div>응답 데이터: ${JSON.stringify(result, null, 2)}</div>
+                `;
+            } catch (error) {
+                testDiv.innerHTML = '❌ API 테스트 실패: ' + error.message;
+            }
+        }
+
+        async function testAdminAPI() {
+            const testDiv = document.getElementById('adminTest');
+            testDiv.innerHTML = '관리자 API 테스트 중...';
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        password: 'admin123'
+                    })
+                });
+                
+                const result = await response.json();
+                testDiv.innerHTML = `
+                    <div>응답 상태: ${response.status}</div>
+                    <div>응답 데이터: ${JSON.stringify(result, null, 2)}</div>
+                `;
+            } catch (error) {
+                testDiv.innerHTML = '❌ 관리자 API 테스트 실패: ' + error.message;
+            }
+        }
+
+        // 페이지 로드 시 서버 상태 확인
+        window.onload = function() {
+            console.log('🔍 디버깅 페이지 로드됨');
+            checkServers();
+        };
+    </script>
+</body>
+</html>

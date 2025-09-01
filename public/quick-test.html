@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>빠른 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .test-box {
+            background: #333;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .result {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin-top: 10px;
+            white-space: pre-wrap;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .warning { color: #ff9800; }
+    </style>
+</head>
+<body>
+    <h1>🚀 빠른 테스트</h1>
+    
+    <div class="test-box">
+        <h2>서버 상태</h2>
+        <button onclick="testServer()">서버 테스트</button>
+        <div id="serverResult" class="result"></div>
+    </div>
+    
+    <div class="test-box">
+        <h2>회원가입 & 로그인</h2>
+        <button onclick="testAuth()">인증 테스트</button>
+        <div id="authResult" class="result"></div>
+    </div>
+    
+    <div class="test-box">
+        <h2>메인 페이지</h2>
+        <button onclick="goToMain()">메인 페이지로 이동</button>
+    </div>
+    
+    <script>
+        async function testServer() {
+            const result = document.getElementById('serverResult');
+            result.innerHTML = '서버 테스트 중...\n';
+            
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    result.innerHTML = `✅ 서버 정상 작동
+상태: ${data.status}
+시간: ${new Date(data.timestamp).toLocaleString()}
+데이터베이스: ${data.database}`;
+                    result.className = 'result success';
+                } else {
+                    result.innerHTML = `❌ 서버 오류: ${response.status}`;
+                    result.className = 'result error';
+                }
+            } catch (error) {
+                result.innerHTML = `❌ 연결 실패: ${error.message}`;
+                result.className = 'result error';
+            }
+        }
+        
+        async function testAuth() {
+            const result = document.getElementById('authResult');
+            result.innerHTML = '인증 테스트 중...\n';
+            
+            try {
+                // 1. 회원가입 테스트
+                result.innerHTML += '1️⃣ 회원가입 테스트...\n';
+                
+                const registerData = {
+                    name: '테스트사용자',
+                    username: 'testuser' + Date.now(),
+                    email: 'test' + Date.now() + '@example.com',
+                    password: 'password123',
+                    birth_year: 1990,
+                    birth_month: 6,
+                    birth_day: 15,
+                    birth_hour: 12
+                };
+                
+                const registerResponse = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(registerData)
+                });
+                
+                const registerResult = await registerResponse.json();
+                
+                if (registerResult.success) {
+                    result.innerHTML += `✅ 회원가입 성공: ${registerResult.user.name}\n`;
+                    
+                    // 2. 로그인 테스트
+                    result.innerHTML += '\n2️⃣ 로그인 테스트...\n';
+                    
+                    const loginData = {
+                        email: registerData.email,
+                        password: registerData.password
+                    };
+                    
+                    const loginResponse = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(loginData)
+                    });
+                    
+                    const loginResult = await loginResponse.json();
+                    
+                    if (loginResult.success) {
+                        result.innerHTML += `✅ 로그인 성공: ${loginResult.user.name}\n`;
+                        result.innerHTML += `🔐 토큰: ${loginResult.token ? '발급됨' : '없음'}\n`;
+                        result.className = 'result success';
+                    } else {
+                        result.innerHTML += `❌ 로그인 실패: ${loginResult.error}\n`;
+                        result.className = 'result error';
+                    }
+                    
+                } else {
+                    result.innerHTML += `❌ 회원가입 실패: ${registerResult.error}\n`;
+                    result.className = 'result error';
+                }
+                
+            } catch (error) {
+                result.innerHTML += `❌ 테스트 오류: ${error.message}\n`;
+                result.className = 'result error';
+            }
+        }
+        
+        function goToMain() {
+            window.location.href = '/';
+        }
+        
+        // 페이지 로드 시 자동 테스트
+        window.addEventListener('load', () => {
+            console.log('🚀 빠른 테스트 페이지 로드됨');
+            testServer();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,537 @@
+:root {
+  --orchid: #DA70D6;
+  --orchid-light: rgba(218, 112, 214, 0.16);
+  --orchid-border: rgba(218, 112, 214, 0.3);
+  --orchid-shadow: rgba(0, 0, 0, 0.12);
+  --text-light: #ffffff;
+  --text-dark: #2c3e50;
+  --gradient-purple: linear-gradient(135deg, rgba(218, 112, 214, 0.1) 0%, rgba(147, 112, 219, 0.1) 100%);
+}
+
+/* 전체 페이지 스타일 */
+.tarot-page {
+  min-height: 100vh;
+  background: var(--gradient-purple), url('/assets/taro.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-light);
+  overflow-x: hidden;
+}
+
+/* 오키드 글라스 효과 */
+.glass-orchid {
+  background: var(--orchid-light);
+  border: 1px solid var(--orchid-border);
+  box-shadow: 0 8px 30px var(--orchid-shadow);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 10px 0;
+}
+
+/* 헤더 */
+.tarot-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.tarot-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-light);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* 도네이션 버튼 */
+.donate-btn {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  background: var(--orchid);
+  color: var(--text-light);
+  border: none;
+  border-radius: 25px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(218, 112, 214, 0.3);
+  z-index: 1001;
+}
+
+.donate-btn:hover {
+  background: #c55ac5;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(218, 112, 214, 0.4);
+}
+
+/* 메인 컨테이너 */
+.tarot-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 100px 20px 40px;
+}
+
+/* 히어로 섹션 */
+.hero-section {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.hero-title {
+  font-size: 48px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.hero-subtitle {
+  font-size: 20px;
+  opacity: 0.9;
+  margin-bottom: 30px;
+}
+
+/* 폼 섹션 */
+.form-section {
+  margin-bottom: 40px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-light);
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--orchid-border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-light);
+  font-size: 16px;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--orchid);
+  box-shadow: 0 0 0 3px rgba(218, 112, 214, 0.2);
+}
+
+.form-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* 카드 뽑기 버튼 */
+.draw-btn {
+  width: 100%;
+  padding: 16px 24px;
+  background: var(--orchid);
+  color: var(--text-light);
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(218, 112, 214, 0.3);
+}
+
+.draw-btn:hover {
+  background: #c55ac5;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(218, 112, 214, 0.4);
+}
+
+.draw-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 로딩 스피너 */
+.loading {
+  text-align: center;
+  padding: 40px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(218, 112, 214, 0.3);
+  border-top: 4px solid var(--orchid);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 카드 그리드 */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin: 30px 0;
+}
+
+/* 카드 스타일 */
+.card {
+  aspect-ratio: 2/3;
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+.card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.card-front {
+  background: linear-gradient(135deg, var(--orchid), #c55ac5);
+  color: var(--text-light);
+  font-size: 48px;
+}
+
+.card-back {
+  background: var(--orchid-light);
+  border: 1px solid var(--orchid-border);
+  transform: rotateY(180deg);
+  color: var(--text-light);
+}
+
+.card-name {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.card-orientation {
+  font-size: 12px;
+  opacity: 0.8;
+  margin-bottom: 12px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+}
+
+.card-meaning {
+  font-size: 14px;
+  line-height: 1.4;
+  opacity: 0.9;
+}
+
+/* 결과 섹션 */
+.results-section {
+  margin-top: 40px;
+}
+
+.archetype {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--orchid);
+}
+
+.summary {
+  margin-bottom: 30px;
+}
+
+.summary p {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  opacity: 0.9;
+}
+
+.actions-section {
+  margin-bottom: 30px;
+}
+
+.actions-section h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--orchid);
+}
+
+.action-item {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.caution-section {
+  margin-bottom: 30px;
+}
+
+.caution-section h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #ffd700;
+}
+
+.caution-section p {
+  font-size: 14px;
+  opacity: 0.8;
+  line-height: 1.5;
+}
+
+/* 액션 버튼 */
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  padding: 12px 24px;
+  border: 1px solid var(--orchid-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-light);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.action-btn:hover {
+  background: var(--orchid-light);
+  border-color: var(--orchid);
+}
+
+/* 도네이션 모달 */
+.donation-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.donation-modal.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.donation-modal-content {
+  background: var(--orchid-light);
+  border: 1px solid var(--orchid-border);
+  border-radius: 16px;
+  padding: 30px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  backdrop-filter: blur(10px);
+}
+
+.donation-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.donation-modal-header h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--orchid);
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.donation-text {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 24px;
+  opacity: 0.9;
+}
+
+.donation-options {
+  display: grid;
+  gap: 20px;
+}
+
+.donation-option {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.donation-option:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.donation-option h4 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--orchid);
+}
+
+.donation-address {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  word-break: break-all;
+}
+
+.copy-btn {
+  background: var(--orchid);
+  color: var(--text-light);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.copy-btn:hover {
+  background: #c55ac5;
+}
+
+.qr-code {
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 12px 0;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .tarot-container {
+    padding: 80px 16px 20px;
+  }
+  
+  .hero-title {
+    font-size: 32px;
+  }
+  
+  .hero-subtitle {
+    font-size: 16px;
+  }
+  
+  .cards-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .donation-modal-content {
+    padding: 20px;
+    margin: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 28px;
+  }
+  
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .card {
+    max-width: 200px;
+    margin: 0 auto;
+  }
+}
+
+

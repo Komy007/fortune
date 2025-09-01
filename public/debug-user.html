@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사용자 정보 디버깅</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .debug-section {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .user-info {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .error {
+            background: #ffe8e8;
+            color: #d32f2f;
+        }
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 사용자 정보 디버깅</h1>
+    
+    <div class="debug-section">
+        <h2>📊 현재 상태</h2>
+        <div id="currentStatus">로딩 중...</div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>🔧 테스트 도구</h2>
+        <button onclick="checkLocalStorage()">localStorage 확인</button>
+        <button onclick="checkCurrentUser()">currentUser 확인</button>
+        <button onclick="testLogin()">로그인 테스트</button>
+        <button onclick="testNumerologySync()">숫자 택일 동기화 테스트</button>
+        <button onclick="clearStorage()">저장소 초기화</button>
+    </div>
+    
+    <div class="debug-section">
+        <h2>📝 결과</h2>
+        <div id="result">결과가 여기에 표시됩니다.</div>
+    </div>
+
+    <script>
+        // API 요청 함수
+        async function apiRequest(endpoint, options = {}) {
+            const defaultOptions = {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            };
+            
+            const finalOptions = { ...defaultOptions, ...options };
+            
+            try {
+                const response = await fetch(endpoint, finalOptions);
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('API 요청 오류:', error);
+                throw error;
+            }
+        }
+
+        // localStorage 확인
+        function checkLocalStorage() {
+            const result = document.getElementById('result');
+            const currentUser = localStorage.getItem('currentUser');
+            const authToken = localStorage.getItem('authToken');
+            
+            let html = '<h3>localStorage 상태:</h3>';
+            html += '<div class="user-info">';
+            html += `<p><strong>currentUser:</strong> ${currentUser ? '존재함' : '없음'}</p>`;
+            html += `<p><strong>authToken:</strong> ${authToken ? '존재함' : '없음'}</p>`;
+            
+            if (currentUser) {
+                try {
+                    const user = JSON.parse(currentUser);
+                    html += '<h4>사용자 정보:</h4>';
+                    html += `<pre>${JSON.stringify(user, null, 2)}</pre>`;
+                } catch (e) {
+                    html += '<p class="error">사용자 정보 파싱 오류</p>';
+                }
+            }
+            
+            html += '</div>';
+            result.innerHTML = html;
+        }
+
+        // currentUser 확인
+        function checkCurrentUser() {
+            const result = document.getElementById('result');
+            
+            // main.js의 currentUser 변수에 접근 시도
+            if (typeof currentUser !== 'undefined') {
+                let html = '<h3>currentUser 상태:</h3>';
+                html += '<div class="user-info">';
+                html += `<pre>${JSON.stringify(currentUser, null, 2)}</pre>`;
+                html += '</div>';
+                result.innerHTML = html;
+            } else {
+                result.innerHTML = '<p class="error">currentUser 변수를 찾을 수 없습니다.</p>';
+            }
+        }
+
+        // 로그인 테스트
+        async function testLogin() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<p>로그인 테스트 중...</p>';
+            
+            try {
+                const loginData = {
+                    email: 'cambodia.bae@gmail.com',
+                    password: '1234'
+                };
+                
+                const response = await apiRequest('/api/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify(loginData)
+                });
+                
+                let html = '<h3>로그인 테스트 결과:</h3>';
+                html += '<div class="user-info">';
+                html += `<pre>${JSON.stringify(response, null, 2)}</pre>`;
+                html += '</div>';
+                result.innerHTML = html;
+                
+                // localStorage 업데이트
+                if (response.success) {
+                    localStorage.setItem('currentUser', JSON.stringify(response.user));
+                    localStorage.setItem('authToken', response.token);
+                    result.innerHTML += '<p class="success">✅ localStorage에 사용자 정보 저장됨</p>';
+                }
+                
+            } catch (error) {
+                result.innerHTML = `<p class="error">로그인 테스트 실패: ${error.message}</p>`;
+            }
+        }
+
+        // 숫자 택일 동기화 테스트
+        function testNumerologySync() {
+            const result = document.getElementById('result');
+            
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                result.innerHTML = '<p class="error">사용자 정보가 없습니다. 먼저 로그인해주세요.</p>';
+                return;
+            }
+            
+            try {
+                const user = JSON.parse(currentUser);
+                let html = '<h3>숫자 택일 동기화 테스트:</h3>';
+                html += '<div class="user-info">';
+                html += `<p><strong>사용자:</strong> ${user.name}</p>`;
+                html += `<p><strong>생년월일:</strong> ${user.birthYear || user.birth_year}년 ${user.birthMonth || user.birth_month}월 ${user.birthDay || user.birth_day}일 ${user.birthHour || user.birth_hour}시</p>`;
+                
+                // 입력 필드 확인
+                const inputFields = [
+                    'luckyBirthYear', 'luckyBirthMonth', 'luckyBirthDay', 'luckyBirthHour',
+                    'phoneBirthYear', 'phoneBirthMonth', 'phoneBirthDay', 'phoneBirthHour',
+                    'carBirthYear', 'carBirthMonth', 'carBirthDay', 'carBirthHour',
+                    'personalBirthYear', 'personalBirthMonth', 'personalBirthDay', 'personalBirthHour',
+                    'dateBirthYear', 'dateBirthMonth', 'dateBirthDay', 'dateBirthHour',
+                    'comprehensiveBirthYear', 'comprehensiveBirthMonth', 'comprehensiveBirthDay', 'comprehensiveBirthHour'
+                ];
+                
+                html += '<h4>입력 필드 상태:</h4>';
+                inputFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field) {
+                        html += `<p>✅ ${fieldId}: ${field.value}</p>`;
+                    } else {
+                        html += `<p>❌ ${fieldId}: 찾을 수 없음</p>`;
+                    }
+                });
+                
+                html += '</div>';
+                result.innerHTML = html;
+                
+            } catch (error) {
+                result.innerHTML = `<p class="error">동기화 테스트 실패: ${error.message}</p>`;
+            }
+        }
+
+        // 저장소 초기화
+        function clearStorage() {
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('authToken');
+            document.getElementById('result').innerHTML = '<p class="success">✅ localStorage 초기화 완료</p>';
+            checkLocalStorage();
+        }
+
+        // 페이지 로드 시 현재 상태 확인
+        window.onload = function() {
+            const status = document.getElementById('currentStatus');
+            const currentUser = localStorage.getItem('currentUser');
+            const authToken = localStorage.getItem('authToken');
+            
+            if (currentUser && authToken) {
+                try {
+                    const user = JSON.parse(currentUser);
+                    status.innerHTML = `
+                        <div class="success">
+                            <h3>✅ 로그인 상태</h3>
+                            <p><strong>이름:</strong> ${user.name}</p>
+                            <p><strong>이메일:</strong> ${user.email}</p>
+                            <p><strong>생년월일:</strong> ${user.birthYear || user.birth_year}년 ${user.birthMonth || user.birth_month}월 ${user.birthDay || user.birth_day}일 ${user.birthHour || user.birth_hour}시</p>
+                        </div>
+                    `;
+                } catch (e) {
+                    status.innerHTML = '<div class="error">사용자 정보 파싱 오류</div>';
+                }
+            } else {
+                status.innerHTML = '<div class="error">❌ 로그아웃 상태</div>';
+            }
+        };
+    </script>
+</body>
+</html>
+
+
+

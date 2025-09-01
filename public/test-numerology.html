@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>숫자 택일 서비스 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 3px;
+            white-space: pre-wrap;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        input {
+            padding: 5px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔢 숫자 택일 서비스 API 테스트</h1>
+    
+    <div class="test-section">
+        <h2>길한 숫자 분석 테스트</h2>
+        <div>
+            <label>생년: <input type="number" id="birthYear" value="1990"></label>
+            <label>생월: <input type="number" id="birthMonth" value="1"></label>
+            <label>생일: <input type="number" id="birthDay" value="1"></label>
+            <label>생시: <input type="number" id="birthHour" value="12"></label>
+        </div>
+        <button onclick="testLuckyNumbers()">길한 숫자 분석 테스트</button>
+        <div id="luckyNumbersResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>전화번호 분석 테스트</h2>
+        <div>
+            <label>생년: <input type="number" id="phoneBirthYear" value="1990"></label>
+            <label>생월: <input type="number" id="phoneBirthMonth" value="1"></label>
+            <label>생일: <input type="number" id="phoneBirthDay" value="1"></label>
+            <label>생시: <input type="number" id="phoneBirthHour" value="12"></label>
+            <label>전화번호: <input type="text" id="phoneNumber" value="01012345678"></label>
+        </div>
+        <button onclick="testPhoneAnalysis()">전화번호 분석 테스트</button>
+        <div id="phoneResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>차량번호 분석 테스트</h2>
+        <div>
+            <label>생년: <input type="number" id="carBirthYear" value="1990"></label>
+            <label>생월: <input type="number" id="carBirthMonth" value="1"></label>
+            <label>생일: <input type="number" id="carBirthDay" value="1"></label>
+            <label>생시: <input type="number" id="carBirthHour" value="12"></label>
+            <label>차량번호: <input type="text" id="carNumber" value="12가3456"></label>
+        </div>
+        <button onclick="testCarAnalysis()">차량번호 분석 테스트</button>
+        <div id="carResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>개인숫자 분석 테스트</h2>
+        <div>
+            <label>생년: <input type="number" id="personalBirthYear" value="1990"></label>
+            <label>생월: <input type="number" id="personalBirthMonth" value="1"></label>
+            <label>생일: <input type="number" id="personalBirthDay" value="1"></label>
+            <label>생시: <input type="number" id="personalBirthHour" value="12"></label>
+            <label>개인숫자: <input type="text" id="personalNumber" value="12345"></label>
+        </div>
+        <button onclick="testPersonalAnalysis()">개인숫자 분석 테스트</button>
+        <div id="personalResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>택일 서비스 테스트</h2>
+        <div>
+            <label>생년: <input type="number" id="dateBirthYear" value="1990"></label>
+            <label>생월: <input type="number" id="dateBirthMonth" value="1"></label>
+            <label>생일: <input type="number" id="dateBirthDay" value="1"></label>
+            <label>생시: <input type="number" id="dateBirthHour" value="12"></label>
+            <label>목적: 
+                <select id="purpose">
+                    <option value="meeting">미팅/회의</option>
+                    <option value="contract">계약/사업</option>
+                    <option value="moving">이사/입주</option>
+                    <option value="wedding">결혼/행사</option>
+                    <option value="business">사업 시작</option>
+                </select>
+            </label>
+            <label>시작일: <input type="date" id="startDate" value="2024-01-01"></label>
+            <label>기간(일): <input type="number" id="days" value="30"></label>
+        </div>
+        <button onclick="testDateSelection()">택일 서비스 테스트</button>
+        <div id="dateResult" class="result"></div>
+    </div>
+
+    <script>
+        async function testLuckyNumbers() {
+            const data = {
+                birthYear: parseInt(document.getElementById('birthYear').value),
+                birthMonth: parseInt(document.getElementById('birthMonth').value),
+                birthDay: parseInt(document.getElementById('birthDay').value),
+                birthHour: parseInt(document.getElementById('birthHour').value)
+            };
+
+            try {
+                const response = await fetch('/api/numerology/lucky-numbers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                document.getElementById('luckyNumbersResult').textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('luckyNumbersResult').textContent = '오류: ' + error.message;
+            }
+        }
+
+        async function testPhoneAnalysis() {
+            const data = {
+                birthYear: parseInt(document.getElementById('phoneBirthYear').value),
+                birthMonth: parseInt(document.getElementById('phoneBirthMonth').value),
+                birthDay: parseInt(document.getElementById('phoneBirthDay').value),
+                birthHour: parseInt(document.getElementById('phoneBirthHour').value),
+                phoneNumber: document.getElementById('phoneNumber').value
+            };
+
+            try {
+                const response = await fetch('/api/numerology/phone-analysis', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                document.getElementById('phoneResult').textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('phoneResult').textContent = '오류: ' + error.message;
+            }
+        }
+
+        async function testCarAnalysis() {
+            const data = {
+                birthYear: parseInt(document.getElementById('carBirthYear').value),
+                birthMonth: parseInt(document.getElementById('carBirthMonth').value),
+                birthDay: parseInt(document.getElementById('carBirthDay').value),
+                birthHour: parseInt(document.getElementById('carBirthHour').value),
+                carNumber: document.getElementById('carNumber').value
+            };
+
+            try {
+                const response = await fetch('/api/numerology/car-analysis', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                document.getElementById('carResult').textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('carResult').textContent = '오류: ' + error.message;
+            }
+        }
+
+        async function testPersonalAnalysis() {
+            const data = {
+                birthYear: parseInt(document.getElementById('personalBirthYear').value),
+                birthMonth: parseInt(document.getElementById('personalBirthMonth').value),
+                birthDay: parseInt(document.getElementById('personalBirthDay').value),
+                birthHour: parseInt(document.getElementById('personalBirthHour').value),
+                personalNumber: document.getElementById('personalNumber').value
+            };
+
+            try {
+                const response = await fetch('/api/numerology/personal-analysis', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                document.getElementById('personalResult').textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('personalResult').textContent = '오류: ' + error.message;
+            }
+        }
+
+        async function testDateSelection() {
+            const data = {
+                birthYear: parseInt(document.getElementById('dateBirthYear').value),
+                birthMonth: parseInt(document.getElementById('dateBirthMonth').value),
+                birthDay: parseInt(document.getElementById('dateBirthDay').value),
+                birthHour: parseInt(document.getElementById('dateBirthHour').value),
+                purpose: document.getElementById('purpose').value,
+                startDate: document.getElementById('startDate').value,
+                days: parseInt(document.getElementById('days').value)
+            };
+
+            try {
+                const response = await fetch('/api/numerology/date-selection', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                document.getElementById('dateResult').textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('dateResult').textContent = '오류: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+

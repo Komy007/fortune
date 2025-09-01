@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>탭 디버깅</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .debug-section {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .numerology-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            font-weight: 600;
+            color: #333;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.8), rgba(210, 105, 30, 0.8));
+            color: white;
+        }
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px);
+        }
+        .tab-panel {
+            display: none;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-top: 10px;
+            border: 2px solid #007bff;
+        }
+        .tab-panel.active {
+            display: block;
+        }
+        .debug-info {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 탭 디버깅</h1>
+    
+    <div class="debug-section">
+        <h2>📊 탭 상태</h2>
+        <div id="tabStatus">로딩 중...</div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>🎯 탭 테스트</h2>
+        
+        <!-- 탭 네비게이션 -->
+        <div class="numerology-tabs">
+            <button class="tab-btn active" data-tab="lucky-numbers">
+                길한 숫자
+            </button>
+            <button class="tab-btn" data-tab="phone-analysis">
+                전화번호 분석
+            </button>
+            <button class="tab-btn" data-tab="car-analysis">
+                차량번호 분석
+            </button>
+            <button class="tab-btn" data-tab="personal-analysis">
+                개인숫자 분석
+            </button>
+            <button class="tab-btn" data-tab="date-selection">
+                택일 서비스
+            </button>
+            <button class="tab-btn" data-tab="comprehensive">
+                종합 분석
+            </button>
+        </div>
+        
+        <!-- 탭 콘텐츠 -->
+        <div id="lucky-numbers" class="tab-panel active">
+            <h3>길한 숫자 분석</h3>
+            <p>길한 숫자 분석 내용입니다.</p>
+        </div>
+        
+        <div id="phone-analysis" class="tab-panel">
+            <h3>전화번호 분석</h3>
+            <p>전화번호 분석 내용입니다.</p>
+        </div>
+        
+        <div id="car-analysis" class="tab-panel">
+            <h3>차량번호 분석</h3>
+            <p>차량번호 분석 내용입니다.</p>
+        </div>
+        
+        <div id="personal-analysis" class="tab-panel">
+            <h3>개인숫자 분석</h3>
+            <p>개인숫자 분석 내용입니다.</p>
+        </div>
+        
+        <div id="date-selection" class="tab-panel">
+            <h3>택일 서비스</h3>
+            <p>택일 서비스 내용입니다.</p>
+        </div>
+        
+        <div id="comprehensive" class="tab-panel">
+            <h3>종합 분석</h3>
+            <p>종합 분석 내용입니다.</p>
+        </div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>🔧 테스트 도구</h2>
+        <button onclick="testTabFunction()">탭 함수 테스트</button>
+        <button onclick="checkTabStatus()">탭 상태 확인</button>
+        <button onclick="resetTabs()">탭 초기화</button>
+        <button onclick="testClick()">클릭 테스트</button>
+    </div>
+    
+    <div class="debug-section">
+        <h2>📝 결과</h2>
+        <div id="result">결과가 여기에 표시됩니다.</div>
+    </div>
+
+    <script>
+        // 탭 설정 함수 (main.js와 동일한 로직)
+        function setupTestTabs() {
+            console.log('🔧 테스트 탭 설정 시작');
+            
+            const tabButtons = document.querySelectorAll('.numerology-tabs .tab-btn');
+            const tabPanels = document.querySelectorAll('.tab-panel');
+            
+            console.log('📊 찾은 탭 버튼:', tabButtons.length);
+            console.log('📊 찾은 탭 패널:', tabPanels.length);
+            
+            if (tabButtons.length === 0) {
+                console.error('❌ 탭 버튼을 찾을 수 없음');
+                return;
+            }
+            
+            // 모든 패널을 먼저 숨기기
+            tabPanels.forEach(panel => {
+                panel.style.display = 'none';
+                panel.classList.remove('active');
+            });
+            
+            // 모든 탭 버튼 비활성화
+            tabButtons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 첫 번째 탭과 패널을 기본으로 활성화
+            if (tabButtons.length > 0 && tabPanels.length > 0) {
+                const firstButton = tabButtons[0];
+                const firstPanel = tabPanels[0];
+                
+                firstButton.classList.add('active');
+                firstPanel.classList.add('active');
+                firstPanel.style.display = 'block';
+                
+                console.log('🎯 첫 번째 탭 활성화:', firstButton.getAttribute('data-tab'));
+            }
+            
+            // 각 탭 버튼에 클릭 이벤트 추가
+            tabButtons.forEach((button, index) => {
+                const tabName = button.getAttribute('data-tab');
+                console.log(`🔗 탭 ${index + 1} 설정:`, tabName);
+                
+                // 직접 클릭 이벤트 추가
+                button.onclick = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    console.log('🎯 탭 클릭됨:', tabName);
+                    
+                    // 모든 탭과 패널 비활성화
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    tabPanels.forEach(panel => {
+                        panel.classList.remove('active');
+                        panel.style.display = 'none';
+                    });
+                    
+                    // 선택된 탭과 패널 활성화
+                    this.classList.add('active');
+                    
+                    const targetPanel = document.getElementById(tabName);
+                    if (targetPanel) {
+                        targetPanel.classList.add('active');
+                        targetPanel.style.display = 'block';
+                        console.log('✅ 탭 전환 완료:', tabName);
+                        
+                        // 상태 업데이트
+                        updateTabStatus();
+                    } else {
+                        console.error('❌ 탭 패널을 찾을 수 없음:', tabName);
+                    }
+                };
+            });
+            
+            console.log('✅ 테스트 탭 설정 완료');
+            updateTabStatus();
+        }
+        
+        // 탭 상태 업데이트
+        function updateTabStatus() {
+            const status = document.getElementById('tabStatus');
+            const tabButtons = document.querySelectorAll('.numerology-tabs .tab-btn');
+            const tabPanels = document.querySelectorAll('.tab-panel');
+            
+            let html = '<div class="debug-info">';
+            html += `<p><strong>탭 버튼 수:</strong> ${tabButtons.length}</p>`;
+            html += `<p><strong>탭 패널 수:</strong> ${tabPanels.length}</p>`;
+            html += '<h4>각 탭 상태:</h4>';
+            
+            tabButtons.forEach((btn, index) => {
+                const tabName = btn.getAttribute('data-tab');
+                const isActive = btn.classList.contains('active');
+                const targetPanel = document.getElementById(tabName);
+                const panelActive = targetPanel ? targetPanel.classList.contains('active') : false;
+                const panelDisplay = targetPanel ? targetPanel.style.display : 'N/A';
+                
+                html += `<p>${index + 1}. ${tabName} - 버튼활성: ${isActive}, 패널활성: ${panelActive}, 표시: ${panelDisplay}</p>`;
+            });
+            
+            html += '</div>';
+            status.innerHTML = html;
+        }
+        
+        // 테스트 함수들
+        function testTabFunction() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<p>탭 함수 테스트 중...</p>';
+            
+            try {
+                setupTestTabs();
+                result.innerHTML = '<p style="color: green;">✅ 탭 함수 테스트 성공!</p>';
+            } catch (error) {
+                result.innerHTML = `<p style="color: red;">❌ 탭 함수 테스트 실패: ${error.message}</p>`;
+            }
+        }
+        
+        function checkTabStatus() {
+            updateTabStatus();
+            const result = document.getElementById('result');
+            result.innerHTML = '<p style="color: blue;">📊 탭 상태 확인 완료</p>';
+        }
+        
+        function resetTabs() {
+            const tabButtons = document.querySelectorAll('.numerology-tabs .tab-btn');
+            const tabPanels = document.querySelectorAll('.tab-panel');
+            
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabPanels.forEach(panel => {
+                panel.classList.remove('active');
+                panel.style.display = 'none';
+            });
+            
+            if (tabButtons.length > 0 && tabPanels.length > 0) {
+                tabButtons[0].classList.add('active');
+                tabPanels[0].classList.add('active');
+                tabPanels[0].style.display = 'block';
+            }
+            
+            updateTabStatus();
+            const result = document.getElementById('result');
+            result.innerHTML = '<p style="color: orange;">🔄 탭 초기화 완료</p>';
+        }
+        
+        function testClick() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<p style="color: purple;">🎯 클릭 이벤트 테스트 - 탭을 클릭해보세요!</p>';
+        }
+        
+        // 페이지 로드 시 탭 설정
+        window.onload = function() {
+            console.log('🚀 페이지 로드됨, 탭 설정 시작');
+            setupTestTabs();
+        };
+    </script>
+</body>
+</html>
+
+
+

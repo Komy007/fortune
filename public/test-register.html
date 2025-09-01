@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 API 테스트</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-form { margin: 20px 0; padding: 20px; border: 1px solid #ccc; }
+        .result { margin: 20px 0; padding: 20px; background: #f5f5f5; }
+        button { padding: 10px 20px; margin: 10px 0; }
+        input, select { padding: 5px; margin: 5px; width: 200px; }
+        .form-group { margin: 10px 0; }
+        label { display: inline-block; width: 100px; }
+    </style>
+</head>
+<body>
+    <h1>📝 회원가입 API 테스트</h1>
+    
+    <div class="test-form">
+        <h2>회원가입 테스트</h2>
+        <div class="form-group">
+            <label>이름:</label>
+            <input type="text" id="testName" value="테스트사용자">
+        </div>
+        <div class="form-group">
+            <label>사용자명:</label>
+            <input type="text" id="testUsername" value="testuser">
+        </div>
+        <div class="form-group">
+            <label>이메일:</label>
+            <input type="email" id="testEmail" value="test@example.com">
+        </div>
+        <div class="form-group">
+            <label>비밀번호:</label>
+            <input type="password" id="testPassword" value="12345678">
+        </div>
+        <div class="form-group">
+            <label>출생년도:</label>
+            <select id="testYear">
+                <option value="1990">1990</option>
+                <option value="1995">1995</option>
+                <option value="2000">2000</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>출생월:</label>
+            <select id="testMonth">
+                <option value="1">1</option>
+                <option value="6">6</option>
+                <option value="12">12</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>출생일:</label>
+            <select id="testDay">
+                <option value="1">1</option>
+                <option value="15">15</option>
+                <option value="31">31</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>출생시간:</label>
+            <select id="testHour">
+                <option value="0">00:00</option>
+                <option value="12">12:00</option>
+                <option value="23">23:00</option>
+            </select>
+        </div>
+        <button onclick="testRegister()">회원가입 테스트</button>
+    </div>
+    
+    <div class="result" id="testResult">
+        <h3>테스트 결과</h3>
+        <p>위 버튼을 클릭하여 회원가입 API를 테스트하세요.</p>
+    </div>
+
+    <script>
+        async function testRegister() {
+            const resultDiv = document.getElementById('testResult');
+            resultDiv.innerHTML = '<h3>테스트 결과</h3><p>회원가입 중...</p>';
+            
+            try {
+                const testData = {
+                    name: document.getElementById('testName').value,
+                    username: document.getElementById('testUsername').value,
+                    email: document.getElementById('testEmail').value,
+                    password: document.getElementById('testPassword').value,
+                    birth_year: parseInt(document.getElementById('testYear').value),
+                    birth_month: parseInt(document.getElementById('testMonth').value),
+                    birth_day: parseInt(document.getElementById('testDay').value),
+                    birth_hour: parseInt(document.getElementById('testHour').value)
+                };
+                
+                console.log('테스트 데이터:', testData);
+                
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                console.log('응답 상태:', response.status);
+                
+                const result = await response.json();
+                console.log('API 응답:', result);
+                
+                if (result.success) {
+                    resultDiv.innerHTML = `
+                        <h3>✅ 회원가입 성공!</h3>
+                        <p><strong>사용자 ID:</strong> ${result.user.id}</p>
+                        <p><strong>이름:</strong> ${result.user.name}</p>
+                        <p><strong>이메일:</strong> ${result.user.email}</p>
+                        <p><strong>생년월일:</strong> ${result.user.birth_year}년 ${result.user.birth_month}월 ${result.user.birth_day}일 ${result.user.birth_hour}시</p>
+                        <p><strong>토큰:</strong> ${result.token ? '발급됨' : '없음'}</p>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <h3>❌ 회원가입 실패</h3>
+                        <p><strong>오류:</strong> ${result.error}</p>
+                        <p><strong>메시지:</strong> ${result.message}</p>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('테스트 오류:', error);
+                resultDiv.innerHTML = `
+                    <h3>❌ 테스트 실패</h3>
+                    <p>오류: ${error.message}</p>
+                    <p>상세: ${error.stack}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+

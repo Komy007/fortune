@@ -1,0 +1,146 @@
+[
+  {
+    "name": "입춘",
+    "date": "1962-02-04T00:00:00.000+07:00",
+    "monthIndex": 0,
+    "isZhongQi": true
+  },
+  {
+    "name": "우수",
+    "date": "1962-02-19T00:00:00.000+07:00",
+    "monthIndex": 0,
+    "isZhongQi": false
+  },
+  {
+    "name": "경칩",
+    "date": "1962-03-05T00:00:00.000+07:00",
+    "monthIndex": 1,
+    "isZhongQi": true
+  },
+  {
+    "name": "춘분",
+    "date": "1962-03-20T00:00:00.000+07:00",
+    "monthIndex": 1,
+    "isZhongQi": false
+  },
+  {
+    "name": "청명",
+    "date": "1962-04-04T00:00:00.000+07:00",
+    "monthIndex": 2,
+    "isZhongQi": true
+  },
+  {
+    "name": "곡우",
+    "date": "1962-04-20T00:00:00.000+07:00",
+    "monthIndex": 2,
+    "isZhongQi": false
+  },
+  {
+    "name": "입하",
+    "date": "1962-05-05T00:00:00.000+07:00",
+    "monthIndex": 3,
+    "isZhongQi": true
+  },
+  {
+    "name": "소만",
+    "date": "1962-05-21T00:00:00.000+07:00",
+    "monthIndex": 3,
+    "isZhongQi": false
+  },
+  {
+    "name": "망종",
+    "date": "1962-06-05T00:00:00.000+07:00",
+    "monthIndex": 4,
+    "isZhongQi": true
+  },
+  {
+    "name": "하지",
+    "date": "1962-06-21T00:00:00.000+07:00",
+    "monthIndex": 4,
+    "isZhongQi": false
+  },
+  {
+    "name": "소서",
+    "date": "1962-07-06T00:00:00.000+07:00",
+    "monthIndex": 5,
+    "isZhongQi": true
+  },
+  {
+    "name": "대서",
+    "date": "1962-07-22T00:00:00.000+07:00",
+    "monthIndex": 5,
+    "isZhongQi": false
+  },
+  {
+    "name": "입추",
+    "date": "1962-08-07T00:00:00.000+07:00",
+    "monthIndex": 6,
+    "isZhongQi": true
+  },
+  {
+    "name": "처서",
+    "date": "1962-08-23T00:00:00.000+07:00",
+    "monthIndex": 6,
+    "isZhongQi": false
+  },
+  {
+    "name": "백로",
+    "date": "1962-09-07T00:00:00.000+07:00",
+    "monthIndex": 7,
+    "isZhongQi": true
+  },
+  {
+    "name": "추분",
+    "date": "1962-09-22T00:00:00.000+07:00",
+    "monthIndex": 7,
+    "isZhongQi": false
+  },
+  {
+    "name": "한로",
+    "date": "1962-10-08T00:00:00.000+07:00",
+    "monthIndex": 8,
+    "isZhongQi": true
+  },
+  {
+    "name": "상강",
+    "date": "1962-10-23T00:00:00.000+07:00",
+    "monthIndex": 8,
+    "isZhongQi": false
+  },
+  {
+    "name": "입동",
+    "date": "1962-11-07T00:00:00.000+07:00",
+    "monthIndex": 9,
+    "isZhongQi": true
+  },
+  {
+    "name": "소설",
+    "date": "1962-11-22T00:00:00.000+07:00",
+    "monthIndex": 9,
+    "isZhongQi": false
+  },
+  {
+    "name": "대설",
+    "date": "1962-12-07T00:00:00.000+07:00",
+    "monthIndex": 10,
+    "isZhongQi": true
+  },
+  {
+    "name": "동지",
+    "date": "1962-12-21T00:00:00.000+07:00",
+    "monthIndex": 10,
+    "isZhongQi": false
+  },
+  {
+    "name": "소한",
+    "date": "1963-01-05T00:00:00.000+07:00",
+    "monthIndex": 11,
+    "isZhongQi": true
+  },
+  {
+    "name": "대한",
+    "date": "1963-01-20T00:00:00.000+07:00",
+    "monthIndex": 11,
+    "isZhongQi": false
+  }
+]

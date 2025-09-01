@@ -1,0 +1,218 @@
+[
+  {
+    "name": "입춘",
+    "englishName": "Lichun",
+    "date": "2025-11-12T00:00:00.000+07:00",
+    "solarLongitude": 315,
+    "monthIndex": 0,
+    "isZhongQi": true,
+    "isJieQi": false
+  },
+  {
+    "name": "우수",
+    "englishName": "Yushui",
+    "date": "2025-11-28T00:00:00.000+07:00",
+    "solarLongitude": 330,
+    "monthIndex": 0,
+    "isZhongQi": false,
+    "isJieQi": true
+  },
+  {
+    "name": "경칩",
+    "englishName": "Jingzhe",
+    "date": "2025-12-13T00:00:00.000+07:00",
+    "solarLongitude": 345,
+    "monthIndex": 1,
+    "isZhongQi": true,
+    "isJieQi": false
+  },
+  {
+    "name": "춘분",
+    "englishName": "Chunfen",
+    "date": "2025-01-02T00:00:00.000+07:00",
+    "solarLongitude": 0,
+    "monthIndex": 1,
+    "isZhongQi": false,
+    "isJieQi": true
+  },
+  {
+    "name": "청명",
+    "englishName": "Qingming",
+    "date": "2025-01-17T00:00:00.000+07:00",
+    "solarLongitude": 15,
+    "monthIndex": 2,
+    "isZhongQi": true,
+    "isJieQi": false
+  },
+  {
+    "name": "곡우",
+    "englishName": "Guyu",
+    "date": "2025-02-02T00:00:00.000+07:00",
+    "solarLongitude": 30,
+    "monthIndex": 2,
+    "isZhongQi": false,
+    "isJieQi": true
+  },
+  {
+    "name": "입하",
+    "englishName": "Lixia",
+    "date": "2025-02-17T00:00:00.000+07:00",
+    "solarLongitude": 45,
+    "monthIndex": 3,
+    "isZhongQi": true,
+    "isJieQi": false
+  },
+  {
+    "name": "소만",
+    "englishName": "Xiaoman",
+    "date": "2025-03-04T00:00:00.000+07:00",
+    "solarLongitude": 60,
+    "monthIndex": 3,
+    "isZhongQi": false,
+    "isJieQi": true
+  },
+  {
+    "name": "망종",
+    "englishName": "Mangzhong",
+    "date": "2025-03-19T00:00:00.000+07:00",
+    "solarLongitude": 75,
+    "monthIndex": 4,
+    "isZhongQi": true,
+    "isJieQi": false
+  },
+  {
+    "name": "하지",
+    "englishName": "Xiazhi",
+    "date": "2025-04-03T00:00:00.000+07:00",
+    "solarLongitude": 90,
+    "monthIndex": 4,
+    "isZhongQi": false,
+    "isJieQi": true
+  },
+  {
+    "name": "소서",
+    "englishName": "Xiaoshu",
+    "date": "2025-04-19T00:00:00.000+07:00",
+    "solarLongitude": 105,
+    "monthIndex": 5,
+    "isZhongQi": true,
+    "isJieQi": false
+  },
+  {
+    "name": "대서",
+    "englishName": "Dashu",
+    "date": "2025-05-04T00:00:00.000+07:00",
+    "solarLongitude": 120,
+    "monthIndex": 5,
+    "isZhongQi": false,
+    "isJieQi": true
+  },
+  {
+    "name": "입추",
+    "englishName": "Liqiu",
+    "date": "2025-05-19T00:00:00.000+07:00",
+    "solarLongitude": 135,
+    "monthIndex": 6,
+    "isZhongQi": true,
+    "isJieQi": false
+  },
+  {
+    "name": "처서",
+    "englishName": "Chushu",
+    "date": "2025-06-03T00:00:00.000+07:00",
+    "solarLongitude": 150,
+    "monthIndex": 6,
+    "isZhongQi": false,
+    "isJieQi": true
+  },
+  {
+    "name": "백로",
+    "englishName": "Bailu",
+    "date": "2025-06-19T00:00:00.000+07:00",
+    "solarLongitude": 165,
+    "monthIndex": 7,
+    "isZhongQi": true,
+    "isJieQi": false
+  },
+  {
+    "name": "추분",
+    "englishName": "Qiufen",
+    "date": "2025-07-04T00:00:00.000+07:00",
+    "solarLongitude": 180,
+    "monthIndex": 7,
+    "isZhongQi": false,
+    "isJieQi": true
+  },
+  {
+    "name": "한로",
+    "englishName": "Hanlu",
+    "date": "2025-07-19T00:00:00.000+07:00",
+    "solarLongitude": 195,
+    "monthIndex": 8,
+    "isZhongQi": true,
+    "isJieQi": false
+  },
+  {
+    "name": "상강",
+    "englishName": "Shuangjiang",
+    "date": "2025-08-03T00:00:00.000+07:00",
+    "solarLongitude": 210,
+    "monthIndex": 8,
+    "isZhongQi": false,
+    "isJieQi": true
+  },
+  {
+    "name": "입동",
+    "englishName": "Lidong",
+    "date": "2025-08-18T00:00:00.000+07:00",
+    "solarLongitude": 225,
+    "monthIndex": 9,
+    "isZhongQi": true,
+    "isJieQi": false
+  },
+  {
+    "name": "소설",
+    "englishName": "Xiaoxue",
+    "date": "2025-09-03T00:00:00.000+07:00",
+    "solarLongitude": 240,
+    "monthIndex": 9,
+    "isZhongQi": false,
+    "isJieQi": true
+  },
+  {
+    "name": "대설",
+    "englishName": "Daxue",
+    "date": "2025-09-18T00:00:00.000+07:00",
+    "solarLongitude": 255,
+    "monthIndex": 10,
+    "isZhongQi": true,
+    "isJieQi": false
+  },
+  {
+    "name": "동지",
+    "englishName": "Dongzhi",
+    "date": "2025-10-03T00:00:00.000+07:00",
+    "solarLongitude": 270,
+    "monthIndex": 10,
+    "isZhongQi": false,
+    "isJieQi": true
+  },
+  {
+    "name": "소한",
+    "englishName": "Xiaohan",
+    "date": "2026-10-13T00:00:00.000+07:00",
+    "solarLongitude": 285,
+    "monthIndex": 11,
+    "isZhongQi": true,
+    "isJieQi": false
+  },
+  {
+    "name": "대한",
+    "englishName": "Dahan",
+    "date": "2026-10-28T00:00:00.000+07:00",
+    "solarLongitude": 300,
+    "monthIndex": 11,
+    "isZhongQi": false,
+    "isJieQi": true
+  }
+]
