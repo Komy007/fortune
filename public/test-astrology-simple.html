@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>점성술 서비스 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select, input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #f9f9f9;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .error {
+            color: red;
+            background: #ffe6e6;
+            border-color: #ffcccc;
+        }
+        .success {
+            color: green;
+            background: #e6ffe6;
+            border-color: #ccffcc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔮 점성술 서비스 테스트</h1>
+        
+        <form id="astrologyForm">
+            <div class="form-group">
+                <label for="year">출생년도</label>
+                <select id="year" name="year" required>
+                    <option value="">년도 선택</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="month">출생월</label>
+                <select id="month" name="month" required>
+                    <option value="">월 선택</option>
+                    <option value="1">1월</option>
+                    <option value="2">2월</option>
+                    <option value="3">3월</option>
+                    <option value="4">4월</option>
+                    <option value="5">5월</option>
+                    <option value="6">6월</option>
+                    <option value="7">7월</option>
+                    <option value="8">8월</option>
+                    <option value="9">9월</option>
+                    <option value="10">10월</option>
+                    <option value="11">11월</option>
+                    <option value="12">12월</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="day">출생일</label>
+                <select id="day" name="day" required>
+                    <option value="">일 선택</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="hour">출생시간</label>
+                <select id="hour" name="hour">
+                    <option value="0">자정 (0시)</option>
+                    <option value="1">1시</option>
+                    <option value="2">2시</option>
+                    <option value="3">3시</option>
+                    <option value="4">4시</option>
+                    <option value="5">5시</option>
+                    <option value="6">6시</option>
+                    <option value="7">7시</option>
+                    <option value="8">8시</option>
+                    <option value="9">9시</option>
+                    <option value="10">10시</option>
+                    <option value="11">11시</option>
+                    <option value="12">정오 (12시)</option>
+                    <option value="13">13시</option>
+                    <option value="14">14시</option>
+                    <option value="15">15시</option>
+                    <option value="16">16시</option>
+                    <option value="17">17시</option>
+                    <option value="18">18시</option>
+                    <option value="19">19시</option>
+                    <option value="20">20시</option>
+                    <option value="21">21시</option>
+                    <option value="22">22시</option>
+                    <option value="23">23시</option>
+                </select>
+            </div>
+            
+            <button type="submit">🔮 점성술 분석하기</button>
+            <button type="button" onclick="testAPI()">🧪 API 직접 테스트</button>
+        </form>
+        
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        // 년도 옵션 생성 (1950-2024)
+        const yearSelect = document.getElementById('year');
+        for (let year = 2024; year >= 1950; year--) {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year + '년';
+            yearSelect.appendChild(option);
+        }
+        
+        // 일 옵션 생성
+        const daySelect = document.getElementById('day');
+        for (let day = 1; day <= 31; day++) {
+            const option = document.createElement('option');
+            option.value = day;
+            option.textContent = day + '일';
+            daySelect.appendChild(option);
+        }
+        
+        // 기본값 설정 (테스트용)
+        document.getElementById('year').value = '1990';
+        document.getElementById('month').value = '3';
+        document.getElementById('day').value = '15';
+        document.getElementById('hour').value = '12';
+        
+        // 폼 제출 이벤트
+        document.getElementById('astrologyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = {
+                birth_year: parseInt(formData.get('year')),
+                birth_month: parseInt(formData.get('month')),
+                birth_day: parseInt(formData.get('day')),
+                birth_hour: parseInt(formData.get('hour') || 0)
+            };
+            
+            console.log('📋 폼 데이터:', data);
+            
+            try {
+                const response = await fetch('/api/astrology', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                const resultDiv = document.getElementById('result');
+                resultDiv.style.display = 'block';
+                
+                if (response.ok && result.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = '✅ 성공!\n\n' + JSON.stringify(result, null, 2);
+                    console.log('✅ 점성술 분석 성공:', result);
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = '❌ 실패!\n\n' + JSON.stringify(result, null, 2);
+                    console.log('❌ 점성술 분석 실패:', result);
+                }
+            } catch (error) {
+                const resultDiv = document.getElementById('result');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ 오류 발생!\n\n' + error.message;
+                console.error('❌ 점성술 분석 오류:', error);
+            }
+        });
+        
+        // API 직접 테스트
+        async function testAPI() {
+            const data = {
+                birth_year: 1990,
+                birth_month: 3,
+                birth_day: 15,
+                birth_hour: 12
+            };
+            
+            console.log('🧪 API 직접 테스트:', data);
+            
+            try {
+                const response = await fetch('/api/astrology', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                const resultDiv = document.getElementById('result');
+                resultDiv.style.display = 'block';
+                
+                if (response.ok && result.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = '✅ API 테스트 성공!\n\n' + JSON.stringify(result, null, 2);
+                    console.log('✅ API 테스트 성공:', result);
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = '❌ API 테스트 실패!\n\n' + JSON.stringify(result, null, 2);
+                    console.log('❌ API 테스트 실패:', result);
+                }
+            } catch (error) {
+                const resultDiv = document.getElementById('result');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ API 테스트 오류!\n\n' + error.message;
+                console.error('❌ API 테스트 오류:', error);
+            }
+        }
+        
+        // 페이지 로드 시 콘솔 메시지
+        console.log('🔮 점성술 테스트 페이지 로드됨');
+        console.log('📝 사용법:');
+        console.log('1. 생년월일을 입력하고 "점성술 분석하기" 클릭');
+        console.log('2. 또는 "API 직접 테스트" 클릭');
+        console.log('3. 결과를 확인하고 콘솔 로그 확인');
+    </script>
+</body>
+</html>

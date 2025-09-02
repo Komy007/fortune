@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>점성술 연결 디버깅</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .debug-section {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .debug-title {
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 10px;
+        }
+        .debug-content {
+            background: white;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .success {
+            color: #28a745;
+        }
+        .error {
+            color: #dc3545;
+        }
+        .warning {
+            color: #ffc107;
+        }
+        .info {
+            color: #17a2b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔮 점성술 연결 디버깅</h1>
+        
+        <div class="debug-section">
+            <div class="debug-title">📊 현재 상태</div>
+            <button onclick="checkCurrentState()">현재 상태 확인</button>
+            <button onclick="checkLocalStorage()">localStorage 확인</button>
+            <button onclick="checkServerSession()">서버 세션 확인</button>
+            <div id="currentState" class="debug-content">클릭하여 상태를 확인하세요...</div>
+        </div>
+        
+        <div class="debug-section">
+            <div class="debug-title">🔍 점성술 섹션 테스트</div>
+            <button onclick="testAstrologySection()">점성술 섹션 진입 테스트</button>
+            <button onclick="testUpdateAstrologyInfo()">updateAstrologyInfo 테스트</button>
+            <button onclick="testPopulateAstrologyForm()">populateAstrologyForm 테스트</button>
+            <div id="astrologyTest" class="debug-content">클릭하여 테스트를 실행하세요...</div>
+        </div>
+        
+        <div class="debug-section">
+            <div class="debug-title">👤 사용자 정보 테스트</div>
+            <button onclick="testUserData()">사용자 데이터 구조 확인</button>
+            <button onclick="testFieldNames()">필드명 매핑 테스트</button>
+            <div id="userTest" class="debug-content">클릭하여 테스트를 실행하세요...</div>
+        </div>
+        
+        <div class="debug-section">
+            <div class="debug-title">🔗 API 테스트</div>
+            <button onclick="testAstrologyAPI()">점성술 API 테스트</button>
+            <button onclick="testMeAPI()">/api/me 테스트</button>
+            <div id="apiTest" class="debug-content">클릭하여 테스트를 실행하세요...</div>
+        </div>
+    </div>
+
+    <script>
+        // 현재 상태 확인
+        function checkCurrentState() {
+            const result = {
+                currentUser: window.currentUser || null,
+                authToken: window.authToken || null,
+                localStorage: {
+                    currentUser: localStorage.getItem('currentUser'),
+                    authToken: localStorage.getItem('authToken')
+                },
+                parsedUser: null
+            };
+            
+            if (result.localStorage.currentUser) {
+                try {
+                    result.parsedUser = JSON.parse(result.localStorage.currentUser);
+                } catch (e) {
+                    result.parsedUser = 'JSON 파싱 오류: ' + e.message;
+                }
+            }
+            
+            document.getElementById('currentState').textContent = JSON.stringify(result, null, 2);
+        }
+        
+        // localStorage 확인
+        function checkLocalStorage() {
+            const result = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                result[key] = localStorage.getItem(key);
+            }
+            document.getElementById('currentState').textContent = JSON.stringify(result, null, 2);
+        }
+        
+        // 서버 세션 확인
+        async function checkServerSession() {
+            try {
+                const response = await fetch('/api/me', {
+                    credentials: 'include'
+                });
+                const result = await response.json();
+                document.getElementById('currentState').textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('currentState').textContent = '서버 세션 확인 오류: ' + error.message;
+            }
+        }
+        
+        // 점성술 섹션 진입 테스트
+        function testAstrologySection() {
+            const result = {
+                sectionId: 'astrology',
+                myAstrologyInfo: document.getElementById('myAstrologyInfo'),
+                astrologyInfoDisplay: document.querySelector('#myAstrologyInfo .astrology-info-display'),
+                astrologyForm: document.getElementById('astrologyForm'),
+                formElements: {
+                    astroYear: document.getElementById('astroYear'),
+                    astroMonth: document.getElementById('astroMonth'),
+                    astroDay: document.getElementById('astroDay'),
+                    astroHour: document.getElementById('astroHour')
+                }
+            };
+            
+            document.getElementById('astrologyTest').textContent = JSON.stringify(result, null, 2);
+        }
+        
+        // updateAstrologyInfo 테스트
+        function testUpdateAstrologyInfo() {
+            const storedUser = localStorage.getItem('currentUser');
+            let user = null;
+            
+            if (storedUser) {
+                try {
+                    user = JSON.parse(storedUser);
+                } catch (e) {
+                    document.getElementById('astrologyTest').textContent = '사용자 정보 파싱 오류: ' + e.message;
+                    return;
+                }
+            }
+            
+            const result = {
+                user: user,
+                infoDisplay: document.querySelector('#myAstrologyInfo .astrology-info-display'),
+                birthYear: user ? (user.birthYear || user.birth_year) : null,
+                birthMonth: user ? (user.birthMonth || user.birth_month) : null,
+                birthDay: user ? (user.birthDay || user.birth_day) : null,
+                birthHour: user ? (user.birthHour || user.birth_hour) : null,
+                userName: user ? (user.name || '사용자') : null
+            };
+            
+            document.getElementById('astrologyTest').textContent = JSON.stringify(result, null, 2);
+        }
+        
+        // populateAstrologyForm 테스트
+        function testPopulateAstrologyForm() {
+            const storedUser = localStorage.getItem('currentUser');
+            let user = null;
+            
+            if (storedUser) {
+                try {
+                    user = JSON.parse(storedUser);
+                } catch (e) {
+                    document.getElementById('astrologyTest').textContent = '사용자 정보 파싱 오류: ' + e.message;
+                    return;
+                }
+            }
+            
+            const result = {
+                user: user,
+                formElements: {
+                    astroYear: document.getElementById('astroYear'),
+                    astroMonth: document.getElementById('astroMonth'),
+                    astroDay: document.getElementById('astroDay'),
+                    astroHour: document.getElementById('astroHour')
+                },
+                currentValues: {
+                    astroYear: document.getElementById('astroYear')?.value,
+                    astroMonth: document.getElementById('astroMonth')?.value,
+                    astroDay: document.getElementById('astroDay')?.value,
+                    astroHour: document.getElementById('astroHour')?.value
+                },
+                userData: {
+                    birthYear: user ? (user.birthYear || user.birth_year) : null,
+                    birthMonth: user ? (user.birthMonth || user.birth_month) : null,
+                    birthDay: user ? (user.birthDay || user.birth_day) : null,
+                    birthHour: user ? (user.birthHour || user.birth_hour) : null
+                }
+            };
+            
+            document.getElementById('astrologyTest').textContent = JSON.stringify(result, null, 2);
+        }
+        
+        // 사용자 데이터 구조 확인
+        function testUserData() {
+            const storedUser = localStorage.getItem('currentUser');
+            let user = null;
+            
+            if (storedUser) {
+                try {
+                    user = JSON.parse(storedUser);
+                } catch (e) {
+                    document.getElementById('userTest').textContent = '사용자 정보 파싱 오류: ' + e.message;
+                    return;
+                }
+            }
+            
+            const result = {
+                originalUser: user,
+                normalizedUser: user ? {
+                    birthYear: user.birthYear || user.birth_year,
+                    birthMonth: user.birthMonth || user.birth_month,
+                    birthDay: user.birthDay || user.birth_day,
+                    birthHour: user.birthHour || user.birth_hour,
+                    name: user.name
+                } : null,
+                fieldMapping: {
+                    birthYear: { original: user?.birthYear, alternative: user?.birth_year },
+                    birthMonth: { original: user?.birthMonth, alternative: user?.birth_month },
+                    birthDay: { original: user?.birthDay, alternative: user?.birth_day },
+                    birthHour: { original: user?.birthHour, alternative: user?.birth_hour }
+                }
+            };
+            
+            document.getElementById('userTest').textContent = JSON.stringify(result, null, 2);
+        }
+        
+        // 필드명 매핑 테스트
+        function testFieldNames() {
+            const testUser = {
+                birthYear: 1990,
+                birthMonth: 3,
+                birthDay: 15,
+                birthHour: 12,
+                name: '테스트 사용자'
+            };
+            
+            const result = {
+                testUser: testUser,
+                mapping: {
+                    birthYear: testUser.birthYear || testUser.birth_year,
+                    birthMonth: testUser.birthMonth || testUser.birth_month,
+                    birthDay: testUser.birthDay || testUser.birth_day,
+                    birthHour: testUser.birthHour || testUser.birth_hour
+                }
+            };
+            
+            document.getElementById('userTest').textContent = JSON.stringify(result, null, 2);
+        }
+        
+        // 점성술 API 테스트
+        async function testAstrologyAPI() {
+            const storedUser = localStorage.getItem('currentUser');
+            let user = null;
+            
+            if (storedUser) {
+                try {
+                    user = JSON.parse(storedUser);
+                } catch (e) {
+                    document.getElementById('apiTest').textContent = '사용자 정보 파싱 오류: ' + e.message;
+                    return;
+                }
+            }
+            
+            if (!user) {
+                document.getElementById('apiTest').textContent = '사용자 정보가 없습니다.';
+                return;
+            }
+            
+            const birthYear = user.birthYear || user.birth_year;
+            const birthMonth = user.birthMonth || user.birth_month;
+            const birthDay = user.birthDay || user.birth_day;
+            const birthHour = user.birthHour || user.birth_hour;
+            
+            const data = {
+                birth_year: parseInt(birthYear),
+                birth_month: parseInt(birthMonth),
+                birth_day: parseInt(birthDay),
+                birth_hour: parseInt(birthHour || 0)
+            };
+            
+            try {
+                const response = await fetch('/api/astrology', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                document.getElementById('apiTest').textContent = JSON.stringify({
+                    requestData: data,
+                    responseStatus: response.status,
+                    responseData: result
+                }, null, 2);
+            } catch (error) {
+                document.getElementById('apiTest').textContent = 'API 테스트 오류: ' + error.message;
+            }
+        }
+        
+        // /api/me 테스트
+        async function testMeAPI() {
+            try {
+                const response = await fetch('/api/me', {
+                    credentials: 'include'
+                });
+                const result = await response.json();
+                
+                document.getElementById('apiTest').textContent = JSON.stringify({
+                    responseStatus: response.status,
+                    responseData: result
+                }, null, 2);
+            } catch (error) {
+                document.getElementById('apiTest').textContent = '/api/me 테스트 오류: ' + error.message;
+            }
+        }
+        
+        // 페이지 로드 시 초기 상태 확인
+        window.addEventListener('load', () => {
+            checkCurrentState();
+        });
+    </script>
+</body>
+</html>

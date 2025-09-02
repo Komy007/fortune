@@ -644,6 +644,652 @@
   }
   
   /* 정보 그리드 최적화 */
+/* 대운 분석 스타일 */
+.luck-analysis {
+  margin: 20px 0;
+}
+
+.luck-analysis .current-luck,
+.luck-analysis .next-luck,
+.luck-analysis .luck-transition {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 15px 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border-left: 4px solid var(--accent-color);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.luck-analysis h5 {
+  color: #FFD700;
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.luck-analysis p {
+  margin: 10px 0;
+  line-height: 1.7;
+  color: #FFFFFF;
+  font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.luck-analysis strong {
+  color: #FFD700;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.luck-analysis .current-luck {
+  border-left-color: #4CAF50;
+}
+
+.luck-analysis .next-luck {
+  border-left-color: #2196F3;
+}
+
+.luck-analysis .luck-transition {
+  border-left-color: #FF9800;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.7));
+}
+
+/* 구체적 가이드 섹션 스타일 */
+.luck-analysis h6 {
+  color: #FFD700;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* 빠른보기 상단 미니 버튼 */
+.mini-btn{
+  padding:6px 10px;
+  font-size:.85rem;
+  border-radius:8px;
+  border:1px solid rgba(218,112,214,0.35);
+  background: rgba(218,112,214,0.12);
+  color:#fff;
+  cursor:pointer;
+}
+.mini-btn:hover{ filter: brightness(1.05); }
+
+/* 스마트폰 명리학 섹션 스타일 - 전문가 최적화 */
+@media (max-width: 768px) {
+  /* 명리학 섹션 전체 최적화 */
+  #bazi {
+    padding: 0.8rem !important;
+    margin: 0 !important;
+  }
+  
+  #bazi .container {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  /* 섹션 제목 최적화 */
+  #bazi .section-title {
+    font-size: 1.4rem !important;
+    margin-bottom: 1.2rem !important;
+    text-align: center !important;
+    color: #2C3E50 !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+    letter-spacing: 0.5px !important;
+  }
+  
+  /* 내 사주 정보 제목 최적화 */
+  #bazi .subsection-title {
+    font-size: 1rem !important;
+    margin-bottom: 12px !important;
+    text-align: center !important;
+    color: #2C3E50 !important;
+    font-weight: 600 !important;
+    text-shadow: none !important;
+    background: rgba(255,255,255,0.8) !important;
+    padding: 8px 12px !important;
+    border-radius: 8px !important;
+    border: 1px solid rgba(44,62,80,0.3) !important;
+  }
+  
+  /* 내 사주 정보 박스 최적화 */
+  #bazi .my-bazi-info {
+    margin: 15px 0 !important;
+    background: rgba(0,0,0,0.4) !important;
+    border-radius: 12px !important;
+    padding: 15px !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+    backdrop-filter: blur(10px) !important;
+  }
+  
+  #bazi .bazi-info-display {
+    background: rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(15px) !important;
+    border-radius: 10px !important;
+    padding: 15px !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    margin: 0 !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
+  }
+  
+  /* 생년월일과 이름 텍스트 최적화 */
+  #bazi .bazi-info-display p {
+    margin: 0 0 8px 0 !important;
+    font-size: 0.95rem !important;
+    line-height: 1.5 !important;
+    color: white !important;
+    font-weight: 500 !important;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8) !important;
+  }
+  
+  #bazi .bazi-info-display p:last-child {
+    margin-bottom: 0 !important;
+  }
+  
+  /* 인연궁합 빠른 보기 최적화 */
+  #bazi .friends-quickview {
+    margin-top: 15px !important;
+    background: rgba(0,0,0,0.3) !important;
+    border-radius: 10px !important;
+    padding: 12px !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+  }
+  
+  #bazi .friends-quickview h4 {
+    font-size: 0.9rem !important;
+    margin: 0 0 10px 0 !important;
+    color: #2C3E50 !important;
+    font-weight: 600 !important;
+    text-shadow: none !important;
+  }
+  
+  #bazi .quickview-header {
+    margin-bottom: 10px !important;
+  }
+  
+  #bazi .mini-btn {
+    padding: 6px 10px !important;
+    font-size: 0.75rem !important;
+    border-radius: 6px !important;
+    background: rgba(218,112,214,0.2) !important;
+    border: 1px solid rgba(218,112,214,0.4) !important;
+    color: white !important;
+    font-weight: 500 !important;
+  }
+  
+  /* 결과 컨테이너 최적화 */
+  #bazi .result-container {
+    padding: 1.2rem !important;
+    margin: 1rem 0 !important;
+    border-radius: 15px !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    min-height: 120px !important;
+    background: rgba(0,0,0,0.5) !important;
+    backdrop-filter: blur(15px) !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4) !important;
+  }
+  
+  /* 사주 기둥 그리드 중앙 정렬 */
+  #bazi .pillars-modern {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    margin-bottom: 15px !important;
+    justify-items: center !important;
+    align-items: center !important;
+  }
+  
+  #bazi .pillar-card {
+    width: 100% !important;
+    max-width: 140px !important;
+    text-align: center !important;
+  }
+  
+  /* 7가지 질문 박스 투명화 */
+  #bazi .answers-section {
+    background: transparent !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+    border-radius: 10px !important;
+    padding: 15px !important;
+    margin: 15px 0 !important;
+  }
+  
+  #bazi .answers-section h4 {
+    font-size: 0.9rem !important;
+    color: #FFD700 !important;
+    font-weight: 600 !important;
+    margin-bottom: 10px !important;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8) !important;
+  }
+  
+  /* 7가지 질문 카드 전체 통일 */
+  #bazi .answer-card {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    margin: 8px 0 !important;
+  }
+  
+  #bazi .answer-header {
+    margin-bottom: 8px !important;
+  }
+  
+  #bazi .answer-number {
+    background: #FFD700 !important;
+    color: #000 !important;
+    font-weight: 600 !important;
+    font-size: 0.7rem !important;
+    padding: 2px 6px !important;
+    border-radius: 50% !important;
+    margin-right: 6px !important;
+  }
+  
+  #bazi .answer-topic {
+    font-size: 0.8rem !important;
+    color: #333 !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+    text-shadow: none !important;
+  }
+  
+  #bazi .answer-content {
+    margin-top: 8px !important;
+  }
+  
+  #bazi .answer-one-liner {
+    font-size: 0.75rem !important;
+    color: #333 !important;
+    font-weight: 400 !important;
+    line-height: 1.4 !important;
+    margin: 5px 0 !important;
+    text-shadow: none !important;
+  }
+  
+  /* 7가지 질문 설명 텍스트 가독성 개선 */
+  #bazi .answer-why {
+    margin: 8px 0 !important;
+    padding: 8px !important;
+    background: rgba(255, 215, 0, 0.1) !important;
+    border-radius: 6px !important;
+    border-left: 3px solid #FFD700 !important;
+    color: #333 !important;
+    font-size: 0.75rem !important;
+    font-weight: 400 !important;
+    line-height: 1.4 !important;
+    text-shadow: none !important;
+  }
+  
+  #bazi .answer-why strong {
+    color: #FFD700 !important;
+    font-weight: 600 !important;
+    font-size: 0.75rem !important;
+  }
+  
+  #bazi .answer-todo {
+    margin: 8px 0 !important;
+    padding: 8px !important;
+    background: rgba(135, 206, 235, 0.1) !important;
+    border-radius: 6px !important;
+    border-left: 3px solid #87CEEB !important;
+    color: #333 !important;
+    font-size: 0.75rem !important;
+    font-weight: 400 !important;
+    line-height: 1.4 !important;
+    text-shadow: none !important;
+  }
+  
+  #bazi .answer-todo strong {
+    color: #87CEEB !important;
+    font-weight: 600 !important;
+    font-size: 0.75rem !important;
+  }
+  
+  #bazi .answer-todo ul {
+    margin: 5px 0 0 0 !important;
+    padding-left: 15px !important;
+  }
+  
+  #bazi .answer-todo li {
+    margin-bottom: 3px !important;
+    color: #333 !important;
+    font-size: 0.7rem !important;
+    font-weight: 300 !important;
+    text-shadow: none !important;
+  }
+  
+  /* 분석 요약 제목 최적화 */
+  #bazi .summary-section {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    border-radius: 10px !important;
+    padding: 15px !important;
+    margin: 15px 0 !important;
+  }
+  
+  #bazi .summary-section h4 {
+    font-size: 0.9rem !important;
+    color: #333 !important;
+    font-weight: 600 !important;
+    margin-bottom: 10px !important;
+    text-align: center !important;
+    text-shadow: none !important;
+  }
+  
+  /* 분석 요약 설명 텍스트 */
+  #bazi .summary-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+  
+  #bazi .summary-item {
+    background: rgba(255, 215, 0, 0.05) !important;
+    border: 1px solid rgba(255, 215, 0, 0.2) !important;
+    border-radius: 6px !important;
+    padding: 8px !important;
+    text-align: left !important;
+    font-size: 0.75rem !important;
+    color: #333 !important;
+    font-weight: 400 !important;
+    line-height: 1.4 !important;
+    text-shadow: none !important;
+  }
+  
+  #bazi .summary-item strong {
+    color: #333 !important;
+    font-weight: 600 !important;
+    font-size: 0.75rem !important;
+    text-shadow: none !important;
+  }
+  
+  /* 개선 권장사항 통일 */
+  #bazi .recommendations-section {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    border-radius: 10px !important;
+    padding: 15px !important;
+    margin: 15px 0 !important;
+  }
+  
+  #bazi .recommendations-section h4 {
+    font-size: 0.9rem !important;
+    color: #333 !important;
+    font-weight: 600 !important;
+    margin-bottom: 10px !important;
+    text-align: center !important;
+    text-shadow: none !important;
+  }
+  
+  #bazi .recommendations-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+  
+  #bazi .recommendation-card {
+    background: rgba(255, 215, 0, 0.05) !important;
+    border: 1px solid rgba(255, 215, 0, 0.2) !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+  
+  #bazi .recommendation-card h5 {
+    color: #333 !important;
+    font-size: 0.8rem !important;
+    margin-bottom: 10px !important;
+    text-align: center !important;
+    font-weight: 600 !important;
+    text-shadow: none !important;
+  }
+  
+  #bazi .recommendation-content {
+    display: grid !important;
+    gap: 8px !important;
+  }
+  
+  #bazi .rec-section {
+    background: rgba(255, 255, 255, 0.5) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 6px !important;
+    padding: 8px !important;
+    font-size: 0.75rem !important;
+    color: #333 !important;
+    font-weight: 400 !important;
+    line-height: 1.4 !important;
+    text-shadow: none !important;
+  }
+  
+  #bazi .rec-section strong {
+    color: #333 !important;
+    font-weight: 600 !important;
+    font-size: 0.75rem !important;
+    text-shadow: none !important;
+  }
+  
+  #bazi .rec-section ul {
+    margin: 5px 0 0 0 !important;
+    padding-left: 15px !important;
+  }
+  
+  #bazi .rec-section li {
+    margin-bottom: 3px !important;
+    color: #333 !important;
+    font-size: 0.7rem !important;
+    font-weight: 300 !important;
+    text-shadow: none !important;
+  }
+  
+  /* 전문가 리포트 통일 */
+  #bazi .structured-report {
+    background: rgba(255, 255, 255, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    border-radius: 10px !important;
+    padding: 15px !important;
+    margin: 15px 0 !important;
+  }
+  
+  #bazi .sr-title {
+    font-size: 0.9rem !important;
+    color: #333 !important;
+    font-weight: 600 !important;
+    margin-bottom: 10px !important;
+    text-align: center !important;
+    text-shadow: none !important;
+  }
+  
+  #bazi .sr-block {
+    background: rgba(255, 215, 0, 0.05) !important;
+    border: 1px solid rgba(255, 215, 0, 0.2) !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    margin: 10px 0 !important;
+  }
+  
+  #bazi .sr-block p {
+    font-size: 0.75rem !important;
+    color: #333 !important;
+    font-weight: 400 !important;
+    line-height: 1.4 !important;
+    margin: 5px 0 !important;
+    text-shadow: none !important;
+  }
+  
+  #bazi .sr-block strong {
+    color: #333 !important;
+    font-weight: 600 !important;
+    font-size: 0.75rem !important;
+    text-shadow: none !important;
+  }
+  
+  #bazi .sr-chip {
+    display: inline-block !important;
+    background: rgba(44,62,80,0.1) !important;
+    color: #333 !important;
+    font-size: 0.7rem !important;
+    font-weight: 400 !important;
+    padding: 4px 8px !important;
+    margin: 2px !important;
+    border-radius: 4px !important;
+    border: 1px solid rgba(44,62,80,0.3) !important;
+    text-shadow: none !important;
+  }
+  
+  #bazi .sr-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    margin: 10px 0 !important;
+  }
+  
+  #bazi .sr-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin: 10px 0 !important;
+    font-size: 0.7rem !important;
+  }
+  
+  #bazi .sr-table th {
+    background: rgba(44,62,80,0.1) !important;
+    color: #333 !important;
+    font-weight: 600 !important;
+    padding: 6px !important;
+    border: 1px solid rgba(44,62,80,0.3) !important;
+    text-align: center !important;
+    text-shadow: none !important;
+  }
+  
+  #bazi .sr-table td {
+    background: rgba(255, 255, 255, 0.5) !important;
+    color: #333 !important;
+    font-weight: 400 !important;
+    padding: 6px !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    text-align: left !important;
+    text-shadow: none !important;
+  }
+  
+  #bazi .sr-block ul {
+    margin: 8px 0 !important;
+    padding-left: 15px !important;
+  }
+  
+  #bazi .sr-block li {
+    font-size: 0.7rem !important;
+    color: #333 !important;
+    font-weight: 400 !important;
+    line-height: 1.4 !important;
+    margin: 3px 0 !important;
+    text-shadow: none !important;
+  }
+  
+  /* 명식 분석 내 강조 텍스트 최적화 */
+  #bazi .sr-block strong {
+    color: #333 !important;
+    font-weight: 600 !important;
+    font-size: 0.75rem !important;
+    text-shadow: none !important;
+  }
+  
+  /* 리포트 메인 제목 검은색으로 변경 */
+  #bazi .structured-report > .sr-title {
+    font-size: 0.9rem !important;
+    color: #333 !important;
+    font-weight: 600 !important;
+    margin-bottom: 10px !important;
+    text-align: center !important;
+    text-shadow: none !important;
+  }
+  
+  /* 명식 분석 내 제목들 최적화 */
+  #bazi .sr-block .sr-title {
+    font-size: 0.9rem !important;
+    color: #333 !important;
+    font-weight: 600 !important;
+    margin-bottom: 10px !important;
+    text-align: left !important;
+    text-shadow: none !important;
+  }
+  
+  /* 향후 10년 대운 제목은 검은색으로 */
+  #bazi .sr-block .sr-title.future-luck {
+    color: #333 !important;
+    font-weight: 600 !important;
+    text-shadow: none !important;
+  }
+  
+  /* 향후 10년 대운 섹션 모든 박스 완전 투명하게 */
+  #bazi .sr-block .luck-analysis,
+  #bazi .sr-block .current-luck,
+  #bazi .sr-block .next-luck,
+  #bazi .sr-block .luck-transition {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  
+  /* 향후 10년 대운 내부 모든 박스 투명도 더 높이기 */
+  #bazi .sr-block div[style*="background: rgba(0, 0, 0, 0.5)"] {
+    background: transparent !important;
+  }
+  
+  /* 향후 10년 대운 알림 박스 투명도 더 높이기 */
+  #bazi .sr-block div[style*="background: rgba(0, 0, 0, 0.7)"] {
+    background: transparent !important;
+  }
+  
+  /* 디버그 박스 제거 */
+  #bazi .sr-block div[style*="background: #f0f0f0"] {
+    display: none !important;
+  }
+  
+  /* 향후 10년 대운 섹션 제목들 흰색으로 변경 */
+  #bazi .sr-block h5 {
+    color: white !important;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    margin-bottom: 10px !important;
+    text-shadow: none !important;
+  }
+  
+  /* 향후 10년 대운 섹션 내 모든 텍스트 흰색으로 변경 */
+  #bazi .sr-block .luck-analysis h5,
+  #bazi .sr-block .current-luck h5,
+  #bazi .sr-block .next-luck h5,
+  #bazi .sr-block .luck-transition h5 {
+    color: white !important;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    margin-bottom: 10px !important;
+    text-shadow: none !important;
+  }
+  
+  /* 종합 조언 제목은 검은색으로 */
+  #bazi .sr-block .sr-title.comprehensive-advice {
+    color: #333 !important;
+  }
+  
+  /* 결과 제목 최적화 */
+  #bazi .result-title {
+    font-size: 1.2rem !important;
+    margin-bottom: 1rem !important;
+    color: #2C3E50 !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    text-shadow: none !important;
+  }
+  
+  /* 정보 그리드 최적화 */
   #bazi .info-grid {
     display: grid !important;
     grid-template-columns: 1fr !important;
@@ -1188,8 +1834,8 @@ body {
 body[data-section="home"] {
   background: linear-gradient(135deg, rgba(11, 20, 38, 0.2) 0%, rgba(26, 26, 46, 0.2) 50%, rgba(22, 33, 62, 0.2) 100%),
               url('/img/about_us.png');
-  background-size: cover;
-  background-position: center;
+  background-size: 400%;
+  background-position: calc(left - 30px) center;
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
@@ -1242,6 +1888,24 @@ body[data-section="others"] {
 body[data-section="palmistry"] {
   background: linear-gradient(135deg, rgba(11, 20, 38, 0.2) 0%, rgba(26, 26, 46, 0.2) 50%, rgba(22, 33, 62, 0.2) 100%),
               url('/img/hands.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+body[data-section="tarot"] {
+  background: linear-gradient(135deg, rgba(11, 20, 38, 0.2) 0%, rgba(26, 26, 46, 0.2) 50%, rgba(22, 33, 62, 0.2) 100%),
+              url('/img/taro.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+body[data-section="numerology"] {
+  background: linear-gradient(135deg, rgba(11, 20, 38, 0.1) 0%, rgba(26, 26, 46, 0.1) 50%, rgba(22, 33, 62, 0.1) 100%),
+              url('/img/number.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -2672,26 +3336,57 @@ body[data-section="palmistry"] {
 
 /* ===== PHASE 2: 모바일 하단 탭 네비게이션 ===== */
 
-/* 모바일 하단 탭 네비게이션 */
-.mobile-bottom-nav {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: var(--mobile-bottom-nav-height);
-  background: rgba(0, 0, 0, 0.95);
-  backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  z-index: 1000;
-  padding: 8px 0;
+/* 스마트폰 하단 메뉴 - 절대 보호 시스템 */
+#mobileBottomNav.mobile-bottom-nav {
+  /* 기본 레이아웃 - 절대 변경 불가 */
+  display: flex !important;
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 80px !important;
+  
+  /* 시각적 스타일 - 절대 변경 불가 */
+  background: rgba(0, 0, 0, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  
+  /* 최고 우선순위 - 절대 변경 불가 */
+  z-index: 2147483647 !important;
+  
+  /* 레이아웃 속성 - 절대 변경 불가 */
+  padding: 8px 0 !important;
+  justify-content: space-around !important;
+  align-items: center !important;
+  
+  /* 가시성 보호 - 절대 변경 불가 */
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  
+  /* 변형 방지 - 절대 변경 불가 */
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  
+  /* 추가 보호 속성 */
+  overflow: visible !important;
+  clip: auto !important;
+  clip-path: none !important;
+  filter: none !important;
+  mask: none !important;
+  mask-image: none !important;
+  mask-size: auto !important;
+  mask-repeat: repeat !important;
+  mask-position: 0% 0% !important;
+  mask-clip: border-box !important;
+  mask-origin: border-box !important;
+  mask-composite: add !important;
 }
 
-.mobile-mode .mobile-bottom-nav {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 8px 20px;
+/* 모바일 하단 네비게이션 패딩 조정 */
+.mobile-bottom-nav {
+  padding: 8px 20px !important;
 }
 
 .mobile-tab-item {
@@ -2761,6 +3456,84 @@ body[data-section="palmistry"] {
   font-weight: 500;
   text-align: center;
   line-height: 1;
+}
+
+/* 언어 선택기 스타일 */
+.language-selector {
+  position: relative;
+}
+
+.language-selector.active {
+  background: rgba(218, 112, 214, 0.2);
+  border: 1px solid rgba(218, 112, 214, 0.5);
+  color: rgba(255, 255, 255, 1);
+  box-shadow: 0 0 15px rgba(218, 112, 214, 0.3);
+}
+
+/* 알림 애니메이션 */
+@keyframes slideInDown {
+  from {
+    transform: translateX(-50%) translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutUp {
+  from {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-50%) translateY(-100%);
+    opacity: 0;
+  }
+}
+
+/* 언어 드롭다운 메뉴 */
+.language-dropdown {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.98);
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  padding: 8px 0;
+  z-index: 9999;
+  min-width: 120px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+  display: none;
+}
+
+.language-option {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.language-option:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 1);
+}
+
+.language-option:first-child {
+  border-radius: 12px 12px 0 0;
+}
+
+.language-option:last-child {
+  border-radius: 0 0 12px 12px;
 }
 
 
@@ -3555,11 +4328,13 @@ body[data-section="palmistry"] {
 /* 홈페이지 상단 메뉴 스타일 */
 .home-top-menu {
   position: absolute;
-  top: 100px;
+  top: 60px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
   gap: 20px;
   background: transparent;
   border-radius: 15px;
@@ -3583,7 +4358,7 @@ body[data-section="palmistry"] {
 }
 
 .menu-icon {
-  font-size: 1.8rem;
+  font-size: 2.5rem;
   margin-bottom: 5px;
   color: white;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
@@ -3603,7 +4378,7 @@ body[data-section="palmistry"] {
 /* 모바일에서 상단 메뉴 최적화 */
 @media (max-width: 768px) {
   .home-top-menu {
-    top: 80px;
+    top: 40px;
     gap: 15px;
     padding: 12px 20px;
     border-radius: 12px;
@@ -3616,7 +4391,7 @@ body[data-section="palmistry"] {
   }
   
   .menu-icon {
-    font-size: 1.5rem;
+    font-size: 2rem;
     margin-bottom: 4px;
   }
   
@@ -3773,11 +4548,6 @@ body[data-section="palmistry"] {
 
 /* 숫자 택일 섹션 스타일 */
 #numerology {
-  background-image: url('../img/number.png');
-  background-size: 90%;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
   min-height: 100vh;
   position: relative;
 }
@@ -3789,8 +4559,8 @@ body[data-section="palmistry"] {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(2px);
+  background: transparent;
+  backdrop-filter: none;
   z-index: 1;
 }
 
@@ -4865,6 +5635,7 @@ body[data-section="palmistry"] {
   margin-bottom: 1.5rem;
   position: relative;
   text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background-color: transparent !important;
 }
 
 .section-title::after {
@@ -5530,6 +6301,324 @@ body[data-section="palmistry"] {
   font-size: 1.2rem;
   font-weight: 700;
   color: var(--secondary-color);
+}
+
+/* 점성술 모바일 최적화 */
+.my-astrology-info {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-width: 100%;
+}
+
+.astrology-info-display {
+  text-align: center;
+}
+
+.astrology-info-display p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+/* 모바일 전용 점성술 스타일 */
+@media (max-width: 768px) {
+  .my-astrology-info {
+    max-width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+  }
+  
+  .astrology-info-display {
+    font-size: 0.8rem;
+  }
+  
+  .astrology-info-display p {
+    font-size: 0.75rem;
+    line-height: 1.4;
+  }
+  
+  /* 점성술 폼 모바일 최적화 */
+  #astrologyForm .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  #astrologyForm .form-group {
+    margin-bottom: 0;
+  }
+  
+  #astrologyForm label {
+    font-size: 0.85rem;
+    margin-bottom: 0.3rem;
+  }
+  
+  #astrologyForm select {
+    font-size: 0.9rem;
+    padding: 0.6rem;
+    height: auto;
+  }
+  
+  #astrologyForm .submit-btn {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.8rem;
+    font-size: 1rem;
+  }
+  
+  /* 점성술 결과 모바일 최적화 */
+  .astrology-result-header h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .zodiac-sign {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .element-badge {
+    font-size: 0.9rem;
+    padding: 0.4rem 1rem;
+  }
+  
+  .zodiac-info {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .zodiac-info h4 {
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+    color: #FFFFFF !important;
+  }
+  
+  .characteristics {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #FFFFFF !important;
+  }
+  
+  .zodiac-traits {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+  
+  .traits-section {
+    padding: 1rem;
+  }
+  
+  .traits-section h5 {
+    font-size: 1rem;
+    margin-bottom: 0.6rem;
+    color: #FFFFFF !important;
+  }
+  
+  .traits-section p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #FFFFFF !important;
+  }
+  
+  .astrology-analysis {
+    gap: 1rem;
+  }
+  
+  .fortune-prediction {
+    font-size: 0.95rem;
+    padding: 0.8rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .fortune-advice {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .analysis-section {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255, 215, 0, 0.3) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+    padding: 1.5rem !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .analysis-section h4 {
+    color: #2C3E50 !important;
+    text-shadow: none !important;
+    font-weight: 700 !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .analysis-section p {
+    color: #2C3E50 !important;
+    text-shadow: none !important;
+    line-height: 1.6 !important;
+  }
+  
+  .career-advice, .relationship-advice {
+    background: rgba(255, 215, 0, 0.1) !important;
+    border-radius: 8px !important;
+    padding: 1rem !important;
+    margin-top: 1rem !important;
+    border-left: 4px solid #FFD700 !important;
+  }
+  
+  .career-advice strong, .relationship-advice strong {
+    color: #2C3E50 !important;
+    font-weight: 700 !important;
+  }
+  
+  /* 결과 컨테이너 최적화 */
+
+  
+  .analysis-section p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  
+  .recommendations-list li {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* 점성술 섹션 새로고침 버튼 */
+.refresh-btn {
+  background: #6c757d !important;
+  border-color: #6c757d !important;
+  transition: all 0.3s ease;
+}
+
+.refresh-btn:hover {
+  background: #5a6268 !important;
+  border-color: #545b62 !important;
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .refresh-btn {
+    width: 100%;
+    margin-top: 10px;
+  }
+}
+
+/* 점성술 섹션 사용자 정보 버튼 */
+.user-info-btn {
+  background: #28a745 !important;
+  border-color: #28a745 !important;
+}
+
+.user-info-btn:hover {
+  background: #218838 !important;
+  border-color: #1e7e34 !important;
+}
+
+@media (max-width: 768px) {
+  .user-info-btn {
+    margin-top: 10px;
+    margin-left: 0 !important;
+    width: 100%;
+  }
+}
+
+/* 점성술 결과 추가 스타일 */
+.age-info {
+  background: rgba(255, 215, 0, 0.1);
+  color: var(--accent-color);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  display: inline-block;
+}
+
+.career-advice,
+.relationship-advice {
+  background: rgba(139, 69, 19, 0.1);
+  padding: 0.8rem;
+  border-radius: 8px;
+  border-left: 3px solid var(--primary-color);
+  margin-top: 0.8rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.lucky-info {
+  background: rgba(255, 215, 0, 0.1);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.lucky-info p {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+.monthly-horoscope {
+  max-height: 300px;
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.month-item {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.month-item:last-child {
+  border-bottom: none;
+}
+
+.month-item strong {
+  color: #000000 !important;
+  margin-right: 0.5rem;
+  font-weight: 700;
+}
+
+/* 모바일 최적화 */
+@media (max-width: 768px) {
+  .age-info {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+  }
+  
+  .career-advice,
+  .relationship-advice {
+    padding: 0.6rem;
+    font-size: 0.85rem;
+  }
+  
+  .lucky-info {
+    padding: 0.8rem;
+  }
+  
+  .lucky-info p {
+    font-size: 0.9rem;
+    margin: 0.4rem 0;
+  }
+  
+  .monthly-horoscope {
+    max-height: 250px;
+    padding: 0.8rem;
+  }
+  
+  .month-item {
+    font-size: 0.85rem;
+    padding: 0.4rem 0;
+  }
 }
 
 /* 점성술 결과 헤더 */
@@ -7887,7 +8976,7 @@ body[data-section="palmistry"] {
   font-size: 12px !important; 
   opacity: 0.85 !important; 
   grid-column: 1 / -1 !important;
-  text-align: center !important;
+  text-align: center !important; 
   margin-top: 10px !important;
 }
 
@@ -7940,7 +9029,7 @@ body[data-section="palmistry"] {
 /* 타로 점 섹션 스타일 */
 #tarot {
   background-image: url('/img/taro.png');
-  background-size: cover;
+  background-size: 90%;
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -8396,12 +9485,12 @@ body[data-section="palmistry"] {
 
 /* 타로 결과 스타일 */
 #tarotResult {
-  background: rgba(218, 112, 214, 0.1); /* 오키드 투명 배경 */
+  background: transparent;
   border-radius: 15px;
-  padding: 20px;
+  padding: 20px 30px;
   margin-top: 20px;
-  box-shadow: 0 10px 30px rgba(218, 112, 214, 0.2);
-  border: 2px solid rgba(218, 112, 214, 0.3);
+  box-shadow: none;
+  border: none;
 }
 
 #tarotResult h3 {
@@ -8440,9 +9529,9 @@ body[data-section="palmistry"] {
   justify-content: center;
   margin-bottom: 30px;
   padding: 20px;
-  background: rgba(218, 112, 214, 0.1);
+  background: transparent;
   border-radius: 15px;
-  border: 2px solid rgba(218, 112, 214, 0.3);
+  border: none;
 }
 
 .tarot-card-item {
@@ -8452,8 +9541,8 @@ body[data-section="palmistry"] {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
   padding: 15px;
-  border: 2px solid rgba(255, 215, 0, 0.3);
-  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.2);
+  border: 2px solid rgba(218, 112, 214, 0.3);
+  box-shadow: 0 8px 25px rgba(218, 112, 214, 0.2);
   transition: all 0.3s ease;
   max-width: 200px;
   min-width: 180px;
@@ -8461,7 +9550,7 @@ body[data-section="palmistry"] {
 
 .tarot-card-item:hover {
   transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(255, 215, 0, 0.5);
+  box-shadow: 0 20px 40px rgba(218, 112, 214, 0.5);
 }
 
 .tarot-card-item:hover .tarot-card-visual {
@@ -8470,7 +9559,7 @@ body[data-section="palmistry"] {
     0 25px 50px rgba(0,0,0,0.5),
     0 10px 25px rgba(0,0,0,0.3),
     inset 0 1px 0 rgba(255,255,255,0.3);
-  border-color: #ffed4e;
+  border-color: #da70d6;
 }
 
 .tarot-card-visual {
@@ -8479,7 +9568,7 @@ body[data-section="palmistry"] {
   margin-bottom: 15px;
   border-radius: 20px;
   background: linear-gradient(145deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-  border: 4px solid #ffd700;
+  border: 4px solid #da70d6;
   box-shadow: 
     0 15px 35px rgba(0,0,0,0.4),
     0 5px 15px rgba(0,0,0,0.2),
@@ -8498,7 +9587,7 @@ body[data-section="palmistry"] {
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(circle at 20% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 20% 20%, rgba(218, 112, 214, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 80% 80%, rgba(218, 112, 214, 0.1) 0%, transparent 50%);
   pointer-events: none;
 }
@@ -8517,7 +9606,7 @@ body[data-section="palmistry"] {
 .tarot-card-symbol {
   font-size: 2em;
   margin-bottom: 10px;
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  text-shadow: 0 0 10px rgba(218, 112, 214, 0.5);
 }
 
 .tarot-card-title {
@@ -8538,7 +9627,7 @@ body[data-section="palmistry"] {
 .tarot-card-main-symbol {
   font-size: 2.5em;
   margin-bottom: 8px;
-  text-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+  text-shadow: 0 0 15px rgba(218, 112, 214, 0.7);
   animation: symbolGlow 2s ease-in-out infinite alternate;
 }
 
@@ -8978,6 +10067,109 @@ body[data-section="palmistry"] {
   .draw-btn {
     padding: 8px 20px; /* 패딩 더 줄임 */
     font-size: 0.9em; /* 폰트 크기 더 줄임 */
+  }
+}
+
+/* 탭 네비게이션 */
+.numerology-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.numerology-tabs .tab-btn {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 30px;
+  padding: 15px 25px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  font-weight: 600;
+  color: #333;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.numerology-tabs .tab-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.numerology-tabs .tab-btn:hover::before {
+  left: 100%;
+}
+
+.numerology-tabs .tab-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  animation: shake 0.5s ease-in-out;
+}
+
+.numerology-tabs .tab-btn.active {
+  background: linear-gradient(135deg, rgba(139, 69, 19, 0.8), rgba(210, 105, 30, 0.8));
+  color: white;
+  box-shadow: 0 8px 25px rgba(139, 69, 19, 0.4);
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateY(-3px) scale(1.05) rotate(0deg); }
+  25% { transform: translateY(-3px) scale(1.05) rotate(1deg); }
+  75% { transform: translateY(-3px) scale(1.05) rotate(-1deg); }
+}
+
+/* 모바일 전용 사주 정보 박스 스타일 */
+@media (max-width: 768px) {
+  .my-numerology-info {
+    max-width: 85% !important;
+    padding: 12px !important;
+    margin: 10px auto 15px auto !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .my-numerology-info .subsection-title {
+    font-size: 1.1rem !important;
+    margin-bottom: 8px !important;
+  }
+  
+  .numerology-info-display {
+    padding: 12px !important;
+    margin-top: 8px !important;
+    font-size: 0.85rem !important;
+    line-height: 1.4 !important;
+  }
+  
+  /* 사주 정보 내용을 2-3줄로 제한 */
+  .numerology-info-display p {
+    margin: 4px 0 !important;
+    line-height: 1.3 !important;
+  }
+  
+  .numerology-info-display .bazi-info {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 6px !important;
+    margin: 6px 0 !important;
+  }
+  
+  .numerology-info-display .bazi-item {
+    font-size: 0.8rem !important;
+    padding: 4px 6px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 6px !important;
+    text-align: center !important;
   }
 }
 

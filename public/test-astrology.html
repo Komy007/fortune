@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>점성술 API 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #f9f9f9;
+            white-space: pre-wrap;
+        }
+        .error {
+            color: red;
+            background: #ffe6e6;
+            border-color: #ffcccc;
+        }
+        .success {
+            color: green;
+            background: #e6ffe6;
+            border-color: #ccffcc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔮 점성술 API 테스트</h1>
+        
+        <div class="form-group">
+            <label for="email">이메일:</label>
+            <input type="email" id="email" placeholder="test@example.com">
+        </div>
+        
+        <div class="form-group">
+            <label for="password">비밀번호:</label>
+            <input type="password" id="password" placeholder="비밀번호">
+        </div>
+        
+        <button onclick="login()">로그인</button>
+        <button onclick="logout()">로그아웃</button>
+        <button onclick="testAstrology()">점성술 분석 테스트</button>
+        
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        async function apiRequest(url, options = {}) {
+            const defaultOptions = {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include'
+            };
+            
+            try {
+                const response = await fetch(url, { ...defaultOptions, ...options });
+                const data = await response.json().catch(() => ({}));
+                
+                if (!response.ok) {
+                    throw new Error(data.error || `요청 실패 (${response.status})`);
+                }
+                
+                return data;
+            } catch (err) {
+                throw err;
+            }
+        }
+
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showResult('이메일과 비밀번호를 입력해주세요.', 'error');
+                return;
+            }
+            
+            try {
+                const result = await apiRequest('/api/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({ email, password })
+                });
+                
+                if (result.success) {
+                    showResult(`로그인 성공!\n사용자: ${result.user.name}\n토큰: ${result.token.substring(0, 20)}...`, 'success');
+                }
+            } catch (error) {
+                showResult(`로그인 실패: ${error.message}`, 'error');
+            }
+        }
+
+        async function logout() {
+            try {
+                await apiRequest('/api/auth/logout', {
+                    method: 'POST'
+                });
+                showResult('로그아웃 성공!', 'success');
+            } catch (error) {
+                showResult(`로그아웃 실패: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAstrology() {
+            try {
+                const data = {
+                    birth_year: 1990,
+                    birth_month: 3,
+                    birth_day: 15,
+                    birth_hour: 12
+                };
+                
+                const result = await apiRequest('/api/astrology', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                
+                if (result.success) {
+                    showResult(`점성술 분석 성공!\n별자리: ${result.result.sunSign}\n원소: ${result.result.element}\n특성: ${result.result.characteristics}`, 'success');
+                }
+            } catch (error) {
+                showResult(`점성술 분석 실패: ${error.message}`, 'error');
+            }
+        }
+
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = message;
+            resultDiv.className = `result ${type}`;
+        }
+    </script>
+</body>
+</html>

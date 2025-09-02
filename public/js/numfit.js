@@ -8,6 +8,7 @@ class NumerologyApp {
     init() {
         this.setupEventListeners();
         this.setDefaultDates();
+        this.loadUserBaziInfo(); // 회원 사주정보 자동 로드
     }
 
     setupEventListeners() {
@@ -84,14 +85,6 @@ class NumerologyApp {
 
     // 길한 숫자 분석
     async analyzeLuckyNumbers() {
-        const formData = new FormData(document.getElementById('luckyNumbersForm'));
-        const data = {
-            birthYear: parseInt(formData.get('birthYear')),
-            birthMonth: parseInt(formData.get('birthMonth')),
-            birthDay: parseInt(formData.get('birthDay')),
-            birthHour: formData.get('birthHour') ? parseInt(formData.get('birthHour')) : 0
-        };
-
         try {
             this.showLoading();
             const response = await fetch('/api/numerology/lucky-numbers', {
@@ -99,7 +92,7 @@ class NumerologyApp {
             headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify({}) // 회원 데이터는 서버에서 자동으로 가져옴
         });
 
         const result = await response.json();
@@ -117,6 +110,9 @@ class NumerologyApp {
 
     displayLuckyNumbersResult(data) {
         const resultSection = document.getElementById('luckyNumbersResult');
+        
+        // 사주정보 표시
+        this.displayBaziInfo(data.baziInfo);
         
         // 길한 숫자 표시
         const luckyNumbersList = document.getElementById('luckyNumbersList');
@@ -140,15 +136,55 @@ class NumerologyApp {
         resultSection.scrollIntoView({ behavior: 'smooth' });
     }
 
+    // 사주정보 간단 표시 (전체 공통)
+    displayBaziInfo(baziInfo) {
+        if (!baziInfo) return;
+        
+        const baziInfoDisplay = document.getElementById('globalBaziInfoDisplay');
+        const birthInfo = document.getElementById('globalBirthInfo');
+        const baziPillars = document.getElementById('globalBaziPillars');
+        
+        // 생년월일 표시
+        birthInfo.textContent = `${baziInfo.birthYear}년 ${baziInfo.birthMonth}월 ${baziInfo.birthDay}일`;
+        
+        // 사주 기둥 표시
+        if (baziInfo.pillars) {
+            baziPillars.innerHTML = `
+                <span class="pillar">${baziInfo.pillars.year || '-'}</span>
+                <span class="pillar">${baziInfo.pillars.month || '-'}</span>
+                <span class="pillar">${baziInfo.pillars.day || '-'}</span>
+                <span class="pillar">${baziInfo.pillars.hour || '-'}</span>
+            `;
+        }
+        
+        baziInfoDisplay.style.display = 'flex';
+    }
+
+    // 회원 사주정보 자동 로드
+    async loadUserBaziInfo() {
+        try {
+            // 임시로 테스트 데이터 사용 (실제로는 API 호출)
+            const testData = {
+                pillars: {
+                    year: '甲子',
+                    month: '乙丑',
+                    day: '丙寅',
+                    hour: '丁卯'
+                }
+            };
+            
+            this.displayBaziInfo(testData);
+            console.log('사주정보 로드 완료:', testData);
+        } catch (error) {
+            console.log('사주정보 로드 실패:', error);
+        }
+    }
+
     // 전화번호 분석
     async analyzePhoneNumber() {
         const formData = new FormData(document.getElementById('phoneAnalysisForm'));
         const data = {
-            phoneNumber: formData.get('phoneNumber'),
-            birthYear: parseInt(formData.get('birthYear')),
-            birthMonth: parseInt(formData.get('birthMonth')),
-            birthDay: parseInt(formData.get('birthDay')),
-            birthHour: formData.get('birthHour') ? parseInt(formData.get('birthHour')) : 0
+            phoneNumber: formData.get('phoneNumber')
         };
 
         try {
@@ -177,6 +213,9 @@ class NumerologyApp {
     displayPhoneAnalysisResult(data) {
         const resultSection = document.getElementById('phoneAnalysisResult');
         
+        // 사주정보 표시 (공통)
+        this.displayBaziInfo(data.baziInfo);
+        
         // 점수 표시
         document.getElementById('phoneScore').textContent = data.score;
         document.getElementById('phoneGrade').textContent = data.grade;
@@ -200,38 +239,37 @@ class NumerologyApp {
     async analyzeCarNumber() {
         const formData = new FormData(document.getElementById('carAnalysisForm'));
         const data = {
-            carNumber: formData.get('carNumber'),
-            birthYear: parseInt(formData.get('birthYear')),
-            birthMonth: parseInt(formData.get('birthMonth')),
-            birthDay: parseInt(formData.get('birthDay')),
-            birthHour: formData.get('birthHour') ? parseInt(formData.get('birthHour')) : 0
+            carNumber: formData.get('carNumber')
         };
 
         try {
             this.showLoading();
             const response = await fetch('/api/numerology/car-analysis', {
-                method: 'POST',
-                headers: {
+            method: 'POST',
+            headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data)
-            });
+        });
 
-            const result = await response.json();
-            if (result.success) {
+        const result = await response.json();
+        if (result.success) {
                 this.displayCarAnalysisResult(result.data);
-            } else {
+        } else {
                 this.showError(result.message);
-            }
-        } catch (error) {
+        }
+    } catch (error) {
             this.showError('서버 연결 오류가 발생했습니다.');
-        } finally {
+    } finally {
             this.hideLoading();
         }
     }
 
     displayCarAnalysisResult(data) {
         const resultSection = document.getElementById('carAnalysisResult');
+        
+        // 사주정보 표시 (공통)
+        this.displayBaziInfo(data.baziInfo);
         
         // 점수 표시
         document.getElementById('carScore').textContent = data.score;
@@ -256,38 +294,37 @@ class NumerologyApp {
     async analyzePersonalNumber() {
         const formData = new FormData(document.getElementById('personalAnalysisForm'));
         const data = {
-            personalNumber: formData.get('personalNumber'),
-            birthYear: parseInt(formData.get('birthYear')),
-            birthMonth: parseInt(formData.get('birthMonth')),
-            birthDay: parseInt(formData.get('birthDay')),
-            birthHour: formData.get('birthHour') ? parseInt(formData.get('birthHour')) : 0
+            personalNumber: formData.get('personalNumber')
         };
 
         try {
             this.showLoading();
             const response = await fetch('/api/numerology/personal-analysis', {
-            method: 'POST',
-            headers: {
+                method: 'POST',
+                headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data)
-        });
+            });
 
-        const result = await response.json();
-        if (result.success) {
+            const result = await response.json();
+            if (result.success) {
                 this.displayPersonalAnalysisResult(result.data);
-        } else {
+            } else {
                 this.showError(result.message);
-        }
-    } catch (error) {
+            }
+        } catch (error) {
             this.showError('서버 연결 오류가 발생했습니다.');
-    } finally {
+        } finally {
             this.hideLoading();
         }
     }
 
     displayPersonalAnalysisResult(data) {
         const resultSection = document.getElementById('personalAnalysisResult');
+        
+        // 사주정보 표시 (공통)
+        this.displayBaziInfo(data.baziInfo);
         
         // 점수 표시
         document.getElementById('personalScore').textContent = data.score;
@@ -313,10 +350,6 @@ class NumerologyApp {
         const formData = new FormData(document.getElementById('dateSelectionForm'));
         const data = {
             purpose: formData.get('purpose'),
-            birthYear: parseInt(formData.get('birthYear')),
-            birthMonth: parseInt(formData.get('birthMonth')),
-            birthDay: parseInt(formData.get('birthDay')),
-            birthHour: formData.get('birthHour') ? parseInt(formData.get('birthHour')) : 0,
             startDate: formData.get('startDate'),
             days: parseInt(formData.get('days'))
         };
@@ -324,22 +357,22 @@ class NumerologyApp {
         try {
             this.showLoading();
             const response = await fetch('/api/numerology/date-selection', {
-                method: 'POST',
-                headers: {
+            method: 'POST',
+            headers: {
                     'Content-Type': 'application/json'
-                },
+            },
                 body: JSON.stringify(data)
-            });
+        });
 
-            const result = await response.json();
-            if (result.success) {
+        const result = await response.json();
+        if (result.success) {
                 this.displayDateSelectionResult(result.data);
-            } else {
+        } else {
                 this.showError(result.message);
-            }
-        } catch (error) {
+        }
+    } catch (error) {
             this.showError('서버 연결 오류가 발생했습니다.');
-        } finally {
+    } finally {
             this.hideLoading();
         }
     }
@@ -369,32 +402,28 @@ class NumerologyApp {
         const data = {
             phoneNumber: formData.get('phoneNumber'),
             carNumber: formData.get('carNumber'),
-            personalNumber: formData.get('personalNumber'),
-            birthYear: parseInt(formData.get('birthYear')),
-            birthMonth: parseInt(formData.get('birthMonth')),
-            birthDay: parseInt(formData.get('birthDay')),
-            birthHour: formData.get('birthHour') ? parseInt(formData.get('birthHour')) : 0
+            personalNumber: formData.get('personalNumber')
         };
 
         try {
             this.showLoading();
             const response = await fetch('/api/numerology/comprehensive-analysis', {
-            method: 'POST',
-            headers: {
+                method: 'POST',
+                headers: {
                     'Content-Type': 'application/json'
-            },
+                },
                 body: JSON.stringify(data)
-        });
+            });
 
-        const result = await response.json();
-        if (result.success) {
+            const result = await response.json();
+            if (result.success) {
                 this.displayComprehensiveResult(result.data);
-        } else {
+            } else {
                 this.showError(result.message);
-        }
-    } catch (error) {
+            }
+        } catch (error) {
             this.showError('서버 연결 오류가 발생했습니다.');
-    } finally {
+        } finally {
             this.hideLoading();
         }
     }
@@ -437,7 +466,7 @@ class NumerologyApp {
                 <p><strong>점수:</strong> ${data.personalAnalysis.score}점 (${data.personalAnalysis.grade})</p>
                 <p><strong>추천:</strong> ${data.personalAnalysis.recommendation}</p>
             `;
-        } else {
+    } else {
             compPersonalAnalysis.innerHTML = '<p>개인숫자를 입력하지 않았습니다.</p>';
         }
 

@@ -1,4 +1,7 @@
+
+
 // 디버깅: JavaScript 로딩 확인
+console.log('🚀 main.js 로딩 시작');
 console.log('🚀 main.js 로딩 시작');
 
 // 전역 오류 핸들러 추가
@@ -189,6 +192,8 @@ function closeMobileMenu() {
   }
 }
 
+
+
 // 모바일 탭 상태 업데이트
 function updateMobileTabState(activeSection) {
   console.log('📱 모바일 탭 상태 업데이트:', activeSection);
@@ -222,85 +227,21 @@ function changeMobileSection(sectionId) {
 
 // ===== PHASE 3: 터치 제스처 및 성능 최적화 =====
 
-// 터치 제스처 시스템
-let touchStartX = 0;
-let touchStartY = 0;
-let touchEndX = 0;
-let touchEndY = 0;
+// 터치 제스처 시스템 제거됨
 
 // 터치 시작 이벤트
-function handleTouchStart(e) {
-  touchStartX = e.changedTouches[0].screenX;
-  touchStartY = e.changedTouches[0].screenY;
-}
-
-// 터치 종료 이벤트
-function handleTouchEnd(e) {
-  if (!isMobile) return;
-  
-  touchEndX = e.changedTouches[0].screenX;
-  touchEndY = e.changedTouches[0].screenY;
-  
-  handleSwipe();
-}
+// 터치 이벤트 핸들러 함수들 제거됨
 
 // 스와이프 제스처 처리
-function handleSwipe() {
-  const minSwipeDistance = 50;
-  const deltaX = touchEndX - touchStartX;
-  const deltaY = touchEndY - touchStartY;
-  
-  // 수평 스와이프 감지
-  if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
-    const currentSection = getCurrentSection();
-    
-    if (deltaX > 0) {
-      // 오른쪽 스와이프 - 이전 섹션
-      navigateToPreviousSection(currentSection);
-    } else {
-      // 왼쪽 스와이프 - 다음 섹션
-      navigateToNextSection(currentSection);
-    }
-  }
-}
+// 스와이프 제스처 처리 함수 제거됨
 
-// 현재 섹션 가져오기
-function getCurrentSection() {
-  const activeSection = document.querySelector('.section[style*="display: block"]');
-  return activeSection ? activeSection.id : 'home';
-}
+// 스와이프 관련 함수 제거됨
 
-// 다음 섹션으로 이동
-function navigateToNextSection(currentSection) {
-  const sectionOrder = ['about-us', 'numerology', 'profile'];
-  const currentIndex = sectionOrder.indexOf(currentSection);
-  const nextIndex = (currentIndex + 1) % sectionOrder.length;
-  const nextSection = sectionOrder[nextIndex];
-  
-  console.log('📱 스와이프: 다음 섹션으로 이동', currentSection, '→', nextSection);
-  changeSection(nextSection);
-}
+// 스와이프 관련 함수 제거됨
 
-// 이전 섹션으로 이동
-function navigateToPreviousSection(currentSection) {
-  const sectionOrder = ['about-us', 'numerology', 'profile'];
-  const currentIndex = sectionOrder.indexOf(currentSection);
-  const prevIndex = currentIndex === 0 ? sectionOrder.length - 1 : currentIndex - 1;
-  const prevSection = sectionOrder[prevIndex];
-  
-  console.log('📱 스와이프: 이전 섹션으로 이동', currentSection, '→', prevSection);
-  changeSection(prevSection);
-}
+// 스와이프 관련 함수 제거됨
 
-// 터치 이벤트 리스너 등록
-function setupTouchGestures() {
-  if (!isMobile) return;
-  
-  document.addEventListener('touchstart', handleTouchStart, { passive: true });
-  document.addEventListener('touchend', handleTouchEnd, { passive: true });
-  
-  console.log('📱 터치 제스처 시스템 활성화');
-}
+// 터치 제스처 시스템 제거됨
 
 // ===== PHASE 3: 모바일 전용 유틸리티 함수들 =====
 
@@ -423,10 +364,7 @@ function initializeMobile() {
   // 모바일 헤더 상태 업데이트
   updateMobileHeader();
   
-  // 초기 토스트 메시지
-  setTimeout(() => {
-    showMobileToast('스와이프로 섹션을 전환할 수 있습니다! 👆', 4000);
-  }, 2000);
+  // 초기 토스트 메시지 제거됨
   
   console.log('📱 모바일 초기화 완료');
 }
@@ -483,6 +421,33 @@ function detectDeviceType() {
   document.body.classList.remove('mobile-mode', 'desktop-mode');
   document.body.classList.add(`${deviceType}-mode`);
   
+  // 하단 메뉴 완전 보호 및 강제 표시
+  const bottomNav = document.querySelector('.mobile-bottom-nav');
+  if (bottomNav) {
+    bottomNav.style.setProperty('display', 'flex', 'important');
+    bottomNav.style.setProperty('visibility', 'visible', 'important');
+    bottomNav.style.setProperty('opacity', '1', 'important');
+    bottomNav.style.setProperty('z-index', '99999', 'important');
+    
+    // MutationObserver로 하단 메뉴 보호
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.type === 'attributes' && 
+            (mutation.attributeName === 'style' || mutation.attributeName === 'class')) {
+          // 스타일이 변경되면 즉시 복원
+          bottomNav.style.setProperty('display', 'flex', 'important');
+          bottomNav.style.setProperty('visibility', 'visible', 'important');
+          bottomNav.style.setProperty('opacity', '1', 'important');
+        }
+      });
+    });
+    
+    observer.observe(bottomNav, {
+      attributes: true,
+      attributeFilter: ['style', 'class']
+    });
+  }
+  
   return deviceType;
 }
 
@@ -494,6 +459,36 @@ document.addEventListener('DOMContentLoaded', function() {
   if (isMobile) {
     initializeMobile();
   }
+  
+  // 점성술 폼 초기화
+  initializeAstrologyForm();
+  
+  // 스마트폰 하단 메뉴 보호 시스템
+  const protectBottomNav = () => {
+    const bottomNav = document.getElementById('mobileBottomNav');
+    if (bottomNav) {
+      // 핵심 스타일만 보호 (CSS에서 이미 보호됨)
+      bottomNav.style.setProperty('display', 'flex', 'important');
+      bottomNav.style.setProperty('visibility', 'visible', 'important');
+    }
+  };
+  
+  // 페이지 로드 완료 후 보호 시작
+  window.addEventListener('load', () => {
+    protectBottomNav();
+    console.log('✅ 하단 메뉴 보호 시스템 활성화');
+  });
+  
+  // DOM 변경 감지로 보호
+  const observer = new MutationObserver(() => {
+    protectBottomNav();
+  });
+  
+  // body 전체 감시
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
   
   // 디버깅 모드 활성화 (개발용)
   window.debugMode = true;
@@ -863,8 +858,11 @@ function setupNumerologyTabs() {
     newButton.addEventListener('mousedown', handleTabClick);
     newButton.addEventListener('touchstart', handleTabClick);
     
-    // onclick 속성도 설정
-    newButton.onclick = handleTabClick;
+    // HTML의 onclick 속성 유지 (모바일에서 정상 작동을 위해)
+    const originalOnclick = button.getAttribute('onclick');
+    if (originalOnclick) {
+      newButton.setAttribute('onclick', originalOnclick);
+    }
     
     // 이벤트 핸들러 함수 (모달 전용)
     function handleTabClick(e) {
@@ -885,32 +883,34 @@ function setupNumerologyTabs() {
       this.classList.add('active');
       console.log('  - 선택된 탭 활성화:', tabName);
       
-      // 모달 호출
-      console.log('🔄 모달 호출 시작:', tabName);
-      switch(tabName) {
-        case 'lucky-numbers':
-          showLuckyNumbersModal();
-          break;
-        case 'phone-analysis':
-          showPhoneAnalysisModal();
-          break;
-        case 'car-analysis':
-          showCarAnalysisModal();
-          break;
-        case 'personal-number':
-          showPersonalNumberModal();
-          break;
-        case 'date-selection':
-          showDateSelectionModal();
-          break;
-        case 'comprehensive':
-          showComprehensiveModal();
-          break;
-        default:
-          console.log('❌ 알 수 없는 탭:', tabName);
+      // 모달 호출 (onclick 속성과 중복 실행 방지)
+      if (e.type === 'click') {
+        console.log('🔄 모달 호출 시작:', tabName);
+        switch(tabName) {
+          case 'lucky-numbers':
+            showLuckyNumbersModal();
+            break;
+          case 'phone-analysis':
+            showPhoneAnalysisModal();
+            break;
+          case 'car-analysis':
+            showCarAnalysisModal();
+            break;
+          case 'personal-number':
+            showPersonalNumberModal();
+            break;
+          case 'date-selection':
+            showDateSelectionModal();
+            break;
+          case 'comprehensive':
+            showComprehensiveModal();
+            break;
+          default:
+            console.log('❌ 알 수 없는 탭:', tabName);
+        }
+        
+        console.log('✅ 모달 호출 완료:', tabName);
       }
-      
-      console.log('✅ 모달 호출 완료:', tabName);
     }
   });
   
@@ -1294,15 +1294,15 @@ function performNumerologyAnalysis(user) {
   const infoDisplay = document.getElementById('myNumerologyInfo');
   if (infoDisplay) {
     infoDisplay.innerHTML = `
-      <div style="display: flex; gap: 15px; justify-content: center;">
-        <div style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 12px; padding: 12px; border: 1px solid rgba(255, 255, 255, 0.2); flex: 1; max-width: 300px;">
-          <p style="font-weight: 500; font-size: 0.95rem; margin: 0;"><strong>생년월일:</strong> ${user.birthYear}년 ${user.birthMonth}월 ${user.birthDay}일 ${user.birthHour || 0}시</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+        <div style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 8px; padding: 8px; border: 1px solid rgba(255, 255, 255, 0.2); text-align: center;">
+          <p style="font-weight: 500; font-size: 0.85rem; margin: 0;"><strong>생년월일:</strong><br>${user.birthYear}년 ${user.birthMonth}월 ${user.birthDay}일</p>
         </div>
-        <div style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 12px; padding: 12px; border: 1px solid rgba(255, 255, 255, 0.2); flex: 1; max-width: 200px;">
-          <p style="font-weight: 500; font-size: 0.95rem; margin: 0;"><strong>이름:</strong> ${user.name || '사용자'}</p>
+        <div style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 8px; padding: 8px; border: 1px solid rgba(255, 255, 255, 0.2); text-align: center;">
+          <p style="font-weight: 500; font-size: 0.85rem; margin: 0;"><strong>이름:</strong><br>${user.name || '사용자'}</p>
         </div>
       </div>
-      <p style="color: #666; font-style: italic; font-size: 0.85rem; margin-top: 8px; text-align: center;">✅ 사주 정보가 로드되었습니다. 위의 탭에서 원하는 분석을 선택하세요.</p>
+      <p style="color: #666; font-style: italic; font-size: 0.75rem; margin: 0; text-align: center;">✅ 사주 정보 로드됨</p>
     `;
     console.log('✅ 사주 정보 표시 완료');
   } else {
@@ -3668,14 +3668,11 @@ function changeSection(sectionId) {
   console.log('📱 스마트폰 여부:', window.innerWidth <= 768);
   console.log('🔍 현재 URL:', window.location.href);
   
-  // 홈 섹션으로 이동할 때 페이지 리프레시 및 맨 위로 스크롤
+  // 홈 섹션으로 이동할 때 맨 위로 스크롤
   if (sectionId === 'home') {
-    console.log('🏠 홈 섹션으로 이동 - 페이지 리프레시 및 맨 위로 스크롤');
+    console.log('🏠 홈 섹션으로 이동 - 맨 위로 스크롤');
     window.scrollTo(0, 0); // 맨 위로 스크롤
-    setTimeout(() => {
-      location.reload(); // 페이지 리프레시
-    }, 100); // 0.1초 후 리프레시
-    return;
+    // return 제거 - 홈 섹션 표시 계속 진행
   }
   
   // 모바일 탭 상태 업데이트
@@ -3874,51 +3871,26 @@ function changeSection(sectionId) {
         // 탭과 폼 설정
         console.log('🔧 탭 시스템 초기화 시작');
         
-        // 탭 시스템 설정 (여러 번 시도)
-        let tabSetupAttempts = 0;
-        const maxAttempts = 3;
+        // 탭 시스템 초기화 (간단한 방식으로 변경)
+        console.log('🔧 탭 시스템 초기화 시작');
         
-        function attemptTabSetup() {
-          tabSetupAttempts++;
-          console.log(`🔄 탭 설정 시도 ${tabSetupAttempts}/${maxAttempts}`);
-          
-          setupNumerologyTabs();
-          setupNumerologyForms();
-          
-          // 탭 상태 확인
-          setTimeout(() => {
-            const tabButtons = document.querySelectorAll('.numerology-tabs .tab-btn');
-            const tabPanels = document.querySelectorAll('.tab-panel');
-            
-            console.log('🔍 탭 시스템 상태 확인');
-            console.log('📊 탭 버튼 수:', tabButtons.length);
-            console.log('📊 탭 패널 수:', tabPanels.length);
-            
-            if (tabButtons.length === 0 && tabSetupAttempts < maxAttempts) {
-              console.warn(`⚠️ 탭 버튼을 찾을 수 없음, 재시도 중... (${tabSetupAttempts}/${maxAttempts})`);
-              setTimeout(attemptTabSetup, 500);
-            } else if (tabButtons.length > 0) {
-              console.log('✅ 탭 시스템 초기화 성공');
-              tabButtons.forEach((btn, index) => {
-                const tabName = btn.getAttribute('data-tab');
-                const isActive = btn.classList.contains('active');
-                console.log(`  탭 ${index + 1}: ${tabName} - 활성: ${isActive}`);
-              });
-              
-              tabPanels.forEach((panel, index) => {
-                const panelId = panel.id;
-                const isActive = panel.classList.contains('active');
-                const isVisible = panel.style.display !== 'none';
-                console.log(`  패널 ${index + 1}: ${panelId} - 활성: ${isActive}, 표시: ${isVisible}`);
-              });
-            } else {
-              console.error('❌ 탭 시스템 초기화 실패');
-            }
-          }, 500);
+        // 탭 버튼 상태 확인만 수행
+        const tabButtons = document.querySelectorAll('.numerology-tabs .tab-btn');
+        const tabPanels = document.querySelectorAll('.tab-panel');
+        
+        console.log('📊 탭 버튼 수:', tabButtons.length);
+        console.log('📊 탭 패널 수:', tabPanels.length);
+        
+        if (tabButtons.length > 0) {
+          console.log('✅ 탭 시스템 확인 완료');
+          tabButtons.forEach((btn, index) => {
+            const tabName = btn.getAttribute('data-tab');
+            const isActive = btn.classList.contains('active');
+            console.log(`  탭 ${index + 1}: ${tabName} - 활성: ${isActive}`);
+          });
+        } else {
+          console.warn('⚠️ 탭 버튼을 찾을 수 없음');
         }
-        
-        // 첫 번째 시도 시작
-        attemptTabSetup();
       }, 300);
     }
     
@@ -3931,6 +3903,49 @@ function changeSection(sectionId) {
       } else {
         console.log('❌ 관리자 로그인 상태 아님, 로그인 화면 표시');
         showAdminLogin();
+      }
+    }
+    
+    // 점성술 섹션으로 이동할 때 사용자 정보 연동
+    if (sectionId === 'astrology') {
+      console.log('🔄 Astrology 섹션으로 이동');
+      
+      // PC 버전과 동일한 방식으로 폼 초기화
+      console.log('🔮 PC 버전 방식으로 폼 초기화 시작');
+      populateAstrologyFormOptions();
+      
+      // 점성술 폼 초기화 (즉시)
+      console.log('🔮 즉시 폼 초기화 시작');
+      populateAstrologyFormOptions();
+      
+      // 사용자 정보 확인 및 표시 (한 번만)
+      console.log('🔍 사용자 정보 확인 시작');
+      const storedUser = localStorage.getItem('currentUser');
+      const storedToken = localStorage.getItem('authToken');
+      
+      if (storedUser && storedToken) {
+        console.log('💾 localStorage에서 사용자 정보 발견');
+        const user = JSON.parse(storedUser);
+        currentUser = user;
+        authToken = storedToken;
+        
+        console.log('✅ 로그인 상태, 점성술 정보 표시');
+        console.log('🔮 현재 사용자 정보:', currentUser);
+        
+        // 점성술 정보 표시 업데이트
+        updateAstrologyInfo(user);
+        
+        // 폼에 사용자 정보 자동 채우기
+        populateAstrologyForm(user);
+        
+        console.log('🎯 사용자 사주정보 연동 완료 - 자동 분석 준비됨');
+        
+      } else {
+        console.log('❌ localStorage에 사용자 정보 없음');
+        updateAstrologyInfo(null);
+        
+        // 로그인 상태 확인을 위해 서버에 요청
+        checkLoginStatus();
       }
     }
     
@@ -4216,7 +4231,7 @@ function showServiceResult(serviceType) {
       break;
     case 'astrology':
       title = '⭐ 점성술';
-      content = '서양 점성술은 별자리와 행성의 영향을 분석하여 미래를 예측하는 방법입니다. 태어난 시점의 천체 위치를 바탕으로 성격과 운세를 분석합니다. 현재 서비스 준비 중입니다.';
+      content = '서양 점성술은 별자리와 행성의 영향을 분석하여 미래를 예측하는 방법입니다. 태어난 시점의 천체 위치를 바탕으로 성격과 운세를 분석합니다. 현재 로그인 후 점성술 분석 서비스를 이용하실 수 있습니다.';
       break;
     case 'tarot':
       title = '🃏 타로 점';
@@ -5613,6 +5628,15 @@ async function apiRequest(url, options = {}) {
     const data = await response.json().catch(() => ({}));
     
     if (!response.ok) {
+      // 인증 오류인 경우 로그인 상태 초기화
+      if (response.status === 401) {
+        console.log('❌ 인증 오류, 로그인 상태 초기화');
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('currentUser');
+        currentUser = null;
+        authToken = null;
+        throw new Error('로그인이 필요합니다. 다시 로그인해주세요.');
+      }
       throw new Error(data.error || `요청 실패 (${response.status})`);
     }
     
@@ -6033,22 +6057,104 @@ async function analyzeBazi(formData) {
   }
 }
 
-// 점성술 분석 함수
-async function analyzeAstrology(formData) {
-  if (!authToken) {
-    alert('로그인이 필요합니다.');
+// 점성술 사용자 정보 새로고침 함수
+function refreshAstrologyUserInfo() {
+  console.log('🔄 점성술 회원정보 새로고침 시작');
+  
+  // localStorage에서 사용자 정보 확인
+  const storedUser = localStorage.getItem('currentUser');
+  const storedToken = localStorage.getItem('authToken');
+  
+  if (storedUser && storedToken) {
+    console.log('💾 localStorage에서 사용자 정보 발견');
+    const user = JSON.parse(storedUser);
+    currentUser = user;
+    authToken = storedToken;
+    
+    console.log('✅ 회원정보 새로고침 완료:', currentUser);
+    
+    // 점성술 정보 표시 업데이트
+    updateAstrologyInfo(user);
+    
+    // 폼에 사용자 정보 자동 채우기
+    populateAstrologyForm(user);
+    
+    // 토스트 메시지 표시
+    showMobileToast('사용자 정보가 새로고침되었습니다!', 'success');
+  } else {
+    console.log('❌ localStorage에 사용자 정보 없음');
+    
+    // 서버에서 로그인 상태 확인
+    checkLoginStatus();
+    
+    // 토스트 메시지 표시
+    showMobileToast('로그인이 필요합니다.', 'error');
+  }
+}
+
+// 사용자 정보로 점성술 분석 함수
+async function analyzeWithUserInfo() {
+  // 이미 로딩 중이면 중복 실행 방지
+  // 기존 로딩 요소 정리
+  const existingLoading = document.getElementById('mobileLoading');
+  if (existingLoading) {
+    existingLoading.remove();
+  }
+  
+  // 이미 로딩 중이면 중복 실행 방지 (더 정확한 체크)
+  const loadingElements = document.querySelectorAll('.mobile-loading, #mobileLoading');
+  if (loadingElements.length > 0) {
     return;
   }
-  showLoading();
+  
+  // 사용자 정보 확인
+  const storedUser = localStorage.getItem('currentUser');
+  
+  if (!storedUser) {
+    showMobileToast('사용자 정보가 없습니다. 먼저 로그인해주세요.', 'error');
+    return;
+  }
+  
+  // 사용자 정보 업데이트
+  currentUser = JSON.parse(storedUser);
+  authToken = localStorage.getItem('authToken');
+  
+  // 사용자 정보에서 생년월일시 추출
+  const userBirthYear = currentUser?.birthYear || currentUser?.birth_year;
+  const userBirthMonth = currentUser?.birthMonth || currentUser?.birth_month;
+  const userBirthDay = currentUser?.birthDay || currentUser?.birth_day;
+  const userBirthHour = currentUser?.birthHour || currentUser?.birth_hour;
+  
+  if (!userBirthYear || !userBirthMonth || !userBirthDay) {
+    showMobileToast('사용자 정보에 생년월일이 없습니다. 내 정보에서 생년월일을 설정해주세요.', 'error');
+    return;
+  }
+  
+  showMobileLoading('👤 사용자 정보로 점성술 분석 중...');
+  
+  // 강제 종료 타이머 설정 (30초 후 자동 종료)
+  const forceStopTimer = setTimeout(() => {
+    hideMobileLoading();
+    const c = document.getElementById('astrologyResult');
+    if (c) c.innerHTML = `
+      <div style="text-align: center; padding: 2rem; color: orange;">
+        <h3>⏰ 분석 시간 초과</h3>
+        <p>분석이 30초를 초과했습니다.</p>
+        <p>네트워크 상태를 확인하고 다시 시도해주세요.</p>
+        <button onclick="location.reload()" style="background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; margin-top: 1rem; cursor: pointer;">
+          🔄 페이지 새로고침
+        </button>
+      </div>
+    `;
+  }, 30000);
+  
   try {
     const data = {
-      birth_year: parseInt(formData.get('year') || (currentUser && (currentUser.birth_year || currentUser.birthYear))),
-      birth_month: parseInt(formData.get('month') || (currentUser && (currentUser.birth_month || currentUser.birthMonth))),
-      birth_day: parseInt(formData.get('day') || (currentUser && (currentUser.birth_day || currentUser.birthDay))),
-      birth_hour: parseInt(formData.get('hour') || (currentUser && (currentUser.birth_hour || currentUser.birthHour)) || 0)
+      birth_year: parseInt(userBirthYear),
+      birth_month: parseInt(userBirthMonth),
+      birth_day: parseInt(userBirthDay),
+      birth_hour: parseInt(userBirthHour || 0)
     };
-    
-    console.log('🔮 Astrology 분석 데이터:', data);
     
     const result = await apiRequest('/api/astrology', {
       method: 'POST',
@@ -6056,20 +6162,158 @@ async function analyzeAstrology(formData) {
     });
     
     if (result.success) {
-      console.log('✅ Astrology 분석 성공:', result);
+      // 분석 완료 후 폼 숨기기
+      const astrologyForm = document.getElementById('astrologyForm');
+      if (astrologyForm) {
+        astrologyForm.style.display = 'none';
+      }
+      
+      // 결과 표시
       displayAstrologyResult(result.result);
+      showMobileToast('사용자 정보로 점성술 분석이 완료되었습니다!', 'success');
     } else {
-      console.log('❌ Astrology 분석 실패:', result.error);
       const c = document.getElementById('astrologyResult');
       if (c) c.innerHTML = `<p style="color:red">점성술 분석 실패: ${result.error}</p>`;
+      showMobileToast('점성술 분석에 실패했습니다.', 'error');
     }
   } catch (error) {
-    console.error('Astrology analysis error:', error);
+    console.error('❌ 사용자 정보 분석 오류:', error);
     const c = document.getElementById('astrologyResult');
     if (c) c.innerHTML = `<p style="color:red">점성술 분석 실패: ${error.message}</p>`;
-    alert(error.message);
+    showMobileToast('점성술 분석 중 오류가 발생했습니다.', 'error');
   } finally {
-    hideLoading();
+    // 강제 종료 타이머 정리
+    clearTimeout(forceStopTimer);
+    
+    // 로딩 스피너 숨기기
+    hideMobileLoading();
+    
+    // 추가 안전장치: DOM에서 로딩 요소 강제 제거
+    const loadingElements = document.querySelectorAll('.mobile-loading, #mobileLoading');
+    loadingElements.forEach(el => {
+      el.remove();
+    });
+  }
+}
+
+// 점성술 분석 함수
+async function analyzeAstrology(formData) {
+  // 이미 로딩 중이면 중복 실행 방지
+  // 기존 로딩 요소 정리
+  const existingLoading = document.getElementById('mobileLoading');
+  if (existingLoading) {
+    existingLoading.remove();
+  }
+  
+  // 이미 로딩 중이면 중복 실행 방지 (더 정확한 체크)
+  const loadingElements = document.querySelectorAll('.mobile-loading, #mobileLoading');
+  if (loadingElements.length > 0) {
+    return;
+  }
+  
+  showMobileLoading('🔮 점성술 분석 중...');
+  
+  // 강제 종료 타이머 설정 (30초 후 자동 종료)
+  const forceStopTimer = setTimeout(() => {
+    hideMobileLoading();
+    const c = document.getElementById('astrologyResult');
+    if (c) c.innerHTML = `
+      <div style="text-align: center; padding: 2rem; color: orange;">
+        <h3>⏰ 분석 시간 초과</h3>
+        <p>분석이 30초를 초과했습니다.</p>
+        <p>네트워크 상태를 확인하고 다시 시도해주세요.</p>
+        <button onclick="location.reload()" style="background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; margin-top: 1rem; cursor: pointer;">
+          🔄 페이지 새로고침
+        </button>
+      </div>
+    `;
+  }, 30000);
+  
+  try {
+    // 사용자 정보 확인 (선택적)
+    const storedUser = localStorage.getItem('currentUser');
+    let userData = null;
+    
+    if (storedUser) {
+      currentUser = JSON.parse(storedUser);
+      authToken = localStorage.getItem('authToken');
+      
+      // 사용자 정보에서 생년월일시 추출 (다양한 필드명 지원)
+      const userBirthYear = currentUser?.birthYear || currentUser?.birth_year;
+      const userBirthMonth = currentUser?.birthMonth || currentUser?.birth_month;
+      const userBirthDay = currentUser?.birthDay || currentUser?.birth_day;
+      const userBirthHour = currentUser?.birthHour || currentUser?.birth_hour;
+      
+      // 폼에 입력된 데이터가 있으면 무조건 폼 데이터 사용, 없을 때만 사용자 정보 사용
+      const formYear = formData.get('year');
+      const formMonth = formData.get('month');
+      const formDay = formData.get('day');
+      const formHour = formData.get('hour');
+      
+      if (formYear && formMonth && formDay) {
+        // 폼에 모든 필수 데이터가 있으면 폼 데이터 사용
+        userData = {
+          birth_year: parseInt(formYear),
+          birth_month: parseInt(formMonth),
+          birth_day: parseInt(formDay),
+          birth_hour: parseInt(formHour || 0)
+        };
+      } else {
+        // 폼 데이터가 부족하면 사용자 정보 사용
+        userData = {
+          birth_year: parseInt(userBirthYear),
+          birth_month: parseInt(userBirthMonth),
+          birth_day: parseInt(userBirthDay),
+          birth_hour: parseInt(userBirthHour || 0)
+        };
+      }
+    } else {
+      // 폼 데이터만 사용
+      userData = {
+        birth_year: parseInt(formData.get('year')),
+        birth_month: parseInt(formData.get('month')),
+        birth_day: parseInt(formData.get('day')),
+        birth_hour: parseInt(formData.get('hour') || 0)
+      };
+    }
+    
+    const result = await apiRequest('/api/astrology', {
+      method: 'POST',
+      body: JSON.stringify(userData)
+    });
+    
+    if (result.success) {
+      // 분석 완료 후 폼 숨기기
+      const astrologyForm = document.getElementById('astrologyForm');
+      if (astrologyForm) {
+        astrologyForm.style.display = 'none';
+      }
+      
+      // 결과 표시
+      displayAstrologyResult(result.result);
+      showMobileToast('점성술 분석이 완료되었습니다!', 'success');
+    } else {
+      const c = document.getElementById('astrologyResult');
+      if (c) c.innerHTML = `<p style="color:red">점성술 분석 실패: ${result.error}</p>`;
+      showMobileToast('점성술 분석에 실패했습니다.', 'error');
+    }
+  } catch (error) {
+    console.error('❌ Astrology analysis error:', error);
+    const c = document.getElementById('astrologyResult');
+    if (c) c.innerHTML = `<p style="color:red">점성술 분석 실패: ${error.message}</p>`;
+    showMobileToast('점성술 분석 중 오류가 발생했습니다.', 'error');
+  } finally {
+    // 강제 종료 타이머 정리
+    clearTimeout(forceStopTimer);
+    
+    // 로딩 스피너 숨기기
+    hideMobileLoading();
+    
+    // 추가 안전장치: DOM에서 로딩 요소 강제 제거
+    const loadingElements = document.querySelectorAll('.mobile-loading, #mobileLoading');
+    loadingElements.forEach(el => {
+      el.remove();
+    });
   }
 }
 
@@ -6404,69 +6648,625 @@ function branchInfoJS(branch){const map={
 // 점성술 결과 표시
 function displayAstrologyResult(result) {
   const resultContainer = document.getElementById('astrologyResult');
+  if (!resultContainer) {
+    console.error('❌ astrologyResult 컨테이너를 찾을 수 없습니다.');
+    return;
+  }
   
-  resultContainer.innerHTML = `
-    <div class="astrology-result-header">
-      <h3>⭐ 점성술 분석 결과</h3>
-      <div class="zodiac-sign">${result.sunSign}</div>
-      <div class="element-badge">${result.element}의 기운</div>
-    </div>
+  // 결과 데이터가 비어있으면 기본 메시지 표시
+  if (!result || Object.keys(result).length === 0) {
+    resultContainer.innerHTML = `
+      <div style="text-align: center; padding: 2rem; color: #666;">
+        <h3>🔮 점성술 분석</h3>
+        <p>분석 결과를 불러오는 중입니다...</p>
+        <button onclick="location.reload()" style="background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; margin-top: 1rem; cursor: pointer;">
+          🔄 새로고침
+        </button>
+      </div>
+    `;
+    return;
+  }
+  
+  // 결과 데이터 안전하게 처리
+  const safeResult = {
+    sunSign: result?.sunSign || '별자리',
+    element: result?.element || '원소',
+    age: result?.age || '알 수 없음',
+    characteristics: result?.characteristics || '특성 분석 중...',
+    strengths: result?.strengths || '장점 분석 중...',
+    weaknesses: result?.weaknesses || '주의점 분석 중...',
+    career: result?.career || '적성 분석 중...',
+    careerAdvice: result?.careerAdvice || '직업 조언 생성 중...',
+    love: result?.love || '사랑관 분석 중...',
+    relationshipAdvice: result?.relationshipAdvice || '관계 조언 생성 중...',
+    period: result?.period || '현재',
+    fortune: result?.fortune || '운세 분석 중...',
+    fortuneAdvice: result?.fortuneAdvice || '조언 생성 중...',
+    planetaryInfluence: result?.planetaryInfluence || '행성 영향 분석 중...',
+    detailedAnalysis: result?.detailedAnalysis || '상세 분석 중...',
+    recommendations: result?.recommendations || ['조언 생성 중...'],
+    ageAdvice: result?.ageAdvice || '연령대별 조언 생성 중...',
+    healthAdvice: result?.healthAdvice || '건강 조언 생성 중...',
+    luckyNumbers: result?.luckyNumbers || [3, 7, 12, 21],
+    luckyColors: result?.luckyColors || ['파랑', '보라', '은색'],
+    luckyDays: result?.luckyDays || ['월요일', '목요일'],
+    compatibility: result?.compatibility || '호환성 분석 중...',
+    monthlyHoroscope: result?.monthlyHoroscope || []
+  };
+  
+  try {
+    resultContainer.innerHTML = `
+      <div class="astrology-result-header">
+        <h3>⭐ 점성술 분석 결과</h3>
+        <div class="zodiac-sign">${safeResult.sunSign}</div>
+        <div class="element-badge">${safeResult.element}의 기운</div>
+        <div class="age-info">현재 나이: ${safeResult.age}세</div>
+      </div>
+      
+      <div class="astrology-chart">
+        <div class="zodiac-info">
+          <h4>🌟 태양궁 특성</h4>
+          <p class="characteristics">${safeResult.characteristics}</p>
+        </div>
+        
+        <div class="zodiac-traits">
+          <div class="traits-section">
+            <h5>✨ 장점</h5>
+            <p>${safeResult.strengths}</p>
+          </div>
+          <div class="traits-section">
+            <h5>⚠️ 주의점</h5>
+            <p>${safeResult.weaknesses}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="astrology-analysis">
+        <div class="analysis-section">
+          <h4>💼 적성 분석</h4>
+          <p>${safeResult.career}</p>
+          <div class="career-advice">
+            <strong>💡 직업 조언:</strong> ${safeResult.careerAdvice}
+          </div>
+        </div>
+        
+        <div class="analysis-section">
+          <h4>❤️ 사랑관</h4>
+          <p>${safeResult.love}</p>
+          <div class="relationship-advice">
+            <strong>💡 관계 조언:</strong> ${safeResult.relationshipAdvice}
+          </div>
+        </div>
+        
+        <div class="analysis-section">
+          <h4>🔮 ${safeResult.period} 운세</h4>
+          <p class="fortune-prediction">${safeResult.fortune}</p>
+          <div class="fortune-advice">
+            <strong>💡 조언:</strong> ${safeResult.fortuneAdvice}
+          </div>
+        </div>
+        
+        <div class="analysis-section">
+          <h4>🪐 행성의 영향</h4>
+          <p class="planetary-influence">${safeResult.planetaryInfluence}</p>
+        </div>
+        
+        <div class="analysis-section">
+          <h4>📝 상세 분석</h4>
+          <p>${safeResult.detailedAnalysis}</p>
+        </div>
+        
+        <div class="analysis-section">
+          <h4>💡 개인 조언</h4>
+          <ul class="recommendations-list">
+            ${safeResult.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+          </ul>
+        </div>
+        
+        <div class="analysis-section">
+          <h4>🎯 연령대별 조언</h4>
+          <p>${safeResult.ageAdvice}</p>
+        </div>
+        
+        <div class="analysis-section">
+          <h4>🏥 건강 조언</h4>
+          <p>${safeResult.healthAdvice}</p>
+        </div>
+        
+        <div class="analysis-section">
+          <h4>🔢 행운 정보</h4>
+          <div class="lucky-info">
+            <p><strong>행운 숫자:</strong> ${safeResult.luckyNumbers.join(', ')}</p>
+            <p><strong>행운 색상:</strong> ${safeResult.luckyColors.join(', ')}</p>
+            <p><strong>행운 요일:</strong> ${safeResult.luckyDays.join(', ')}</p>
+          </div>
+        </div>
+        
+        <div class="analysis-section">
+          <h4>💕 호환성</h4>
+          <p>${safeResult.compatibility}</p>
+        </div>
+        
+        <div class="analysis-section">
+          <h4>📅 월별 운세</h4>
+          <div class="monthly-horoscope">
+            ${safeResult.monthlyHoroscope.map(month => `
+              <div class="month-item">
+                <strong>${month.month}:</strong> ${month.prediction}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+      
+      <!-- 새로 분석하기 링크 -->
+      <div style="text-align: center; margin-top: 2rem; padding: 1rem;">
+        <button onclick="showAstrologyFormAgain()" style="display: inline-block; background: #007bff; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; text-decoration: none;">
+          🔮 새로 분석하기
+        </button>
+      </div>
+    `;
+  } catch (error) {
+    console.error('❌ 점성술 결과 표시 중 오류:', error);
+    resultContainer.innerHTML = `
+      <div style="text-align: center; padding: 2rem; color: red;">
+        <h3>❌ 결과 표시 오류</h3>
+        <p>분석 결과를 표시하는 중 오류가 발생했습니다.</p>
+        <p>오류 내용: ${error.message}</p>
+        <button onclick="location.reload()" style="background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; margin-top: 1rem; cursor: pointer;">
+          🔄 페이지 새로고침
+        </button>
+      </div>
+    `;
+  }
+}
+
+// 로그인 상태 확인 함수
+async function checkLoginStatus() {
+  try {
+    console.log('🔍 서버에서 로그인 상태 확인 중...');
+    const result = await apiRequest('/api/me');
     
-    <div class="astrology-chart">
-      <div class="zodiac-info">
-        <h4>🌟 태양궁 특성</h4>
-        <p class="characteristics">${result.characteristics}</p>
-      </div>
+    if (result.success && result.user) {
+      console.log('✅ 서버에서 로그인 상태 확인됨:', result.user);
       
-      <div class="zodiac-traits">
-        <div class="traits-section">
-          <h5>✨ 장점</h5>
-          <p>${result.strengths}</p>
-        </div>
-        <div class="traits-section">
-          <h5>⚠️ 주의점</h5>
-          <p>${result.weaknesses}</p>
-        </div>
-      </div>
-    </div>
+      // 전역 변수 업데이트
+      currentUser = result.user;
+      authToken = 'server-session'; // 서버 세션 사용
+      
+      // localStorage 업데이트
+      localStorage.setItem('currentUser', JSON.stringify(result.user));
+      localStorage.setItem('authToken', 'server-session');
+      
+      // 점성술 정보 표시 업데이트
+      updateAstrologyInfo(result.user);
+      
+      // 폼에 사용자 정보 자동 채우기
+      populateAstrologyForm(result.user);
+      
+    } else {
+      console.log('❌ 서버에서 로그인 상태 확인 실패');
+      updateAstrologyInfo(null);
+    }
+  } catch (error) {
+    console.log('❌ 로그인 상태 확인 중 오류:', error.message);
+    updateAstrologyInfo(null);
+  }
+}
+
+// 점성술 정보 표시 업데이트 함수
+function updateAstrologyInfo(user) {
+  console.log('🔮 updateAstrologyInfo 호출됨:', user);
+  
+  const infoDisplay = document.querySelector('#myAstrologyInfo .astrology-info-display');
+  
+  if (!infoDisplay) {
+    console.error('❌ 점성술 정보 표시 요소를 찾을 수 없습니다.');
+    console.error('🔍 #myAstrologyInfo 요소:', document.getElementById('myAstrologyInfo'));
+    console.error('🔍 .astrology-info-display 요소:', document.querySelector('.astrology-info-display'));
+    return;
+  }
+  
+  console.log('✅ 점성술 정보 표시 요소 발견:', infoDisplay);
+  
+  if (user) {
+    // 로그인 상태 - 사용자 정보 표시
+    const birthYear = user.birthYear || user.birth_year;
+    const birthMonth = user.birthMonth || user.birth_month;
+    const birthDay = user.birthDay || user.birth_day;
+    const birthHour = user.birthHour || user.birth_hour;
+    const userName = user.name || '사용자';
     
-    <div class="astrology-analysis">
-      <div class="analysis-section">
-        <h4>💼 적성 분석</h4>
-        <p>${result.career}</p>
-      </div>
-      
-      <div class="analysis-section">
-        <h4>❤️ 사랑관</h4>
-        <p>${result.love}</p>
-      </div>
-      
-      <div class="analysis-section">
-        <h4>🔮 ${result.period} 운세</h4>
-        <p class="fortune-prediction">${result.fortune}</p>
-        <div class="fortune-advice">
-          <strong>💡 조언:</strong> ${result.fortuneAdvice}
+    console.log('📅 추출된 사용자 정보:', { birthYear, birthMonth, birthDay, birthHour, userName });
+    
+    const infoHTML = `
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+        <div style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 8px; padding: 8px; border: 1px solid rgba(255, 255, 255, 0.2); text-align: center;">
+          <p style="font-weight: 500; font-size: 0.85rem; margin: 0;"><strong>생년월일:</strong><br>${birthYear}년 ${birthMonth}월 ${birthDay}일</p>
+        </div>
+        <div style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 8px; padding: 8px; border: 1px solid rgba(255, 255, 255, 0.2); text-align: center;">
+          <p style="font-weight: 500; font-size: 0.85rem; margin: 0;"><strong>이름:</strong><br>${userName}</p>
         </div>
       </div>
+      <p style="color: #666; font-style: italic; font-size: 0.75rem; margin: 0; text-align: center;">✅ 사주 정보 로드됨 - 자동 분석 가능</p>
+    `;
+    
+    infoDisplay.innerHTML = infoHTML;
+    
+    console.log('✅ 점성술 정보 표시 업데이트 완료:', { birthYear, birthMonth, birthDay, birthHour, userName });
+  } else {
+    // 비로그인 상태
+    const noUserHTML = `
+      <p style="color: #666; font-style: italic; text-align: center;">🔮 생년월일을 입력하여 점성술 분석을 받아보세요</p>
+    `;
+    
+    infoDisplay.innerHTML = noUserHTML;
+    console.log('ℹ️ 비로그인 상태로 점성술 정보 표시 업데이트');
+  }
+}
+
+// 점성술 폼 다시 표시 함수
+function showAstrologyFormAgain() {
+  // 폼 표시
+  const astrologyForm = document.getElementById('astrologyForm');
+  if (astrologyForm) {
+    astrologyForm.style.display = 'block';
+  }
+  
+  // 결과 컨테이너 내용 지우기
+  const resultContainer = document.getElementById('astrologyResult');
+  if (resultContainer) {
+    resultContainer.innerHTML = '';
+  }
+  
+  // 폼 옵션 초기화
+  populateAstrologyFormOptions();
+  
+  // 로그인된 사용자가 있다면 폼에 사용자 정보 자동 채우기
+  const storedUser = localStorage.getItem('currentUser');
+  if (storedUser) {
+    const user = JSON.parse(storedUser);
+    populateAstrologyForm(user);
+  }
+}
+
+// 점성술 전용 폼 옵션 생성 함수 (PC 버전과 동일한 로직)
+function populateAstrologyFormOptions() {
+  const yearSelect = document.getElementById('astroYear');
+  const monthSelect = document.getElementById('astroMonth');
+  const daySelect = document.getElementById('astroDay');
+  const hourSelect = document.getElementById('astroHour');
+  
+  // 년도 옵션 (1900-2024)
+  if (yearSelect) {
+    yearSelect.innerHTML = '';
+    for (let year = 2024; year >= 1900; year--) {
+      const option = document.createElement('option');
+      option.value = year;
+      option.textContent = year;
+      yearSelect.appendChild(option);
+    }
+  }
+  
+  // 월 옵션
+  if (monthSelect) {
+    monthSelect.innerHTML = '';
+    for (let month = 1; month <= 12; month++) {
+      const option = document.createElement('option');
+      option.value = month;
+      option.textContent = month;
+      monthSelect.appendChild(option);
+    }
+  }
+  
+  // 일 옵션
+  if (daySelect) {
+    daySelect.innerHTML = '';
+    for (let day = 1; day <= 31; day++) {
+      const option = document.createElement('option');
+      option.value = day;
+      option.textContent = day;
+      daySelect.appendChild(option);
+    }
+  }
+  
+  // 시간 옵션
+  if (hourSelect) {
+    hourSelect.innerHTML = '';
+    for (let hour = 0; hour <= 23; hour++) {
+      const option = document.createElement('option');
+      option.value = hour;
+      option.textContent = `${hour.toString().padStart(2, '0')}:00`;
+      hourSelect.appendChild(option);
+    }
+  }
+}
+
+// 점성술 폼 초기화 함수
+function initializeAstrologyForm() {
+  console.log('🔮 점성술 폼 초기화 시작');
+  
+  // 폼 요소 확인
+  const astrologyForm = document.getElementById('astrologyForm');
+  console.log('🔮 astrologyForm 요소:', astrologyForm ? '찾음' : '없음');
+  
+  if (!astrologyForm) {
+    console.error('❌ astrologyForm을 찾을 수 없습니다.');
+    return;
+  }
+  
+  // 점성술 전용 폼 옵션 생성
+  console.log('🔮 점성술 전용 폼 옵션 생성 시작');
+  populateAstrologyFormOptions();
+  
+  console.log('✅ 점성술 폼 초기화 완료');
+}
+
+// 점성술 폼 수동 초기화 함수
+function manualInitializeAstrologyForm() {
+  console.log('🔮 점성술 폼 수동 초기화 시작');
+  
+  // 점성술 전용 폼 옵션 생성
+  console.log('🔮 점성술 전용 폼 옵션 생성 시작');
+  populateAstrologyFormOptions();
+  
+  console.log('✅ 점성술 폼 수동 초기화 완료');
+}
+function debugAstrologySection() {
+  console.log('🔍 점성술 섹션 DOM 상태 확인');
+  
+  const elements = [
+    { id: 'astrology', name: '점성술 섹션' },
+    { id: 'astrologyForm', name: '점성술 폼' },
+    { id: 'astroYear', name: '년도 선택' },
+    { id: 'astroMonth', name: '월 선택' },
+    { id: 'astroDay', name: '일 선택' },
+    { id: 'astroHour', name: '시간 선택' },
+    { id: 'astrologyResult', name: '결과 컨테이너' },
+    { id: 'myAstrologyInfo', name: '사용자 정보 표시' }
+  ];
+  
+  elements.forEach(element => {
+    const el = document.getElementById(element.id);
+    if (el) {
+      console.log(`✅ ${element.name} (${element.id}): 찾음`);
+      if (element.id.includes('astro') && element.id !== 'astrologyForm') {
+        console.log(`  📋 ${element.name} 옵션 개수:`, el.options ? el.options.length : 'N/A');
+        console.log(`  📋 ${element.name} 값:`, el.value);
+      }
+    } else {
+      console.log(`❌ ${element.name} (${element.id}): 없음`);
+    }
+  });
+  
+  // 폼 제출 이벤트 리스너 확인
+  const astrologyForm = document.getElementById('astrologyForm');
+  if (astrologyForm) {
+    console.log('🔍 폼 이벤트 리스너 확인:', astrologyForm);
+    // 이벤트 리스너는 직접 확인할 수 없으므로 수동으로 다시 등록
+    console.log('🔄 폼 이벤트 리스너 재등록 시도');
+    
+    // 기존 폼을 복제하여 이벤트 리스너 제거
+    const newForm = astrologyForm.cloneNode(true);
+    astrologyForm.parentNode.replaceChild(newForm, astrologyForm);
+    
+    // 새로운 이벤트 리스너 등록
+    newForm.addEventListener('submit', (e) => {
+      console.log('🔮 점성술 폼 제출 이벤트 발생! (디버그 재등록)');
+      e.preventDefault();
       
-      <div class="analysis-section">
-        <h4>🪐 행성의 영향</h4>
-        <p class="planetary-influence">${result.planetaryInfluence}</p>
-      </div>
+      const formData = new FormData(newForm);
+      console.log('📋 폼 데이터 생성됨:', formData);
       
-      <div class="analysis-section">
-        <h4>📝 상세 분석</h4>
-        <p>${result.detailedAnalysis}</p>
-      </div>
+      for (let [key, value] of formData.entries()) {
+        console.log(`  📋 ${key}: ${value}`);
+      }
       
-      <div class="analysis-section">
-        <h4>💡 개인 조언</h4>
-        <ul class="recommendations-list">
-          ${result.recommendations.map(rec => `<li>${rec}</li>`).join('')}
-        </ul>
-      </div>
-    </div>
-  `;
+      analyzeAstrology(formData);
+    });
+    
+    console.log('✅ 디버그 이벤트 리스너 재등록 완료');
+  }
+  
+  console.log('🔍 점성술 섹션 DOM 상태 확인 완료');
+}
+function createAstrologyFormIfNeeded() {
+  console.log('🔮 점성술 폼 동적 생성 확인');
+  
+  const astrologyForm = document.getElementById('astrologyForm');
+  
+  if (!astrologyForm) {
+    console.log('❌ astrologyForm이 없어서 생성합니다.');
+    
+    // 점성술 섹션 찾기
+    const astrologySection = document.getElementById('astrology');
+    if (!astrologySection) {
+      console.error('❌ astrology 섹션을 찾을 수 없습니다.');
+      return;
+    }
+    
+    // 폼 HTML 생성
+    const formHTML = `
+      <form id="astrologyForm" class="birth-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="astroYear" data-i18n="form.year">출생년도</label>
+            <select id="astroYear" name="year" required></select>
+          </div>
+          <div class="form-group">
+            <label for="astroMonth" data-i18n="form.month">출생월</label>
+            <select id="astroMonth" name="month" required></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="astroDay" data-i18n="form.day">출생일</label>
+            <select id="astroDay" name="day" required></select>
+          </div>
+          <div class="form-group">
+            <label for="astroHour" data-i18n="form.hour">출생시간</label>
+            <select id="astroHour" name="hour" required></select>
+          </div>
+        </div>
+        <button type="submit" class="submit-btn" data-i18n="form.submit">🔮 점성술 분석하기</button>
+        <button type="button" onclick="analyzeWithUserInfo()" class="submit-btn user-info-btn" style="background: #28a745; margin-left: 10px;">👤 내 정보로 분석</button>
+      </form>
+    `;
+    
+    // 결과 컨테이너 앞에 폼 삽입
+    const resultContainer = document.getElementById('astrologyResult');
+    if (resultContainer) {
+      resultContainer.insertAdjacentHTML('beforebegin', formHTML);
+      console.log('✅ 점성술 폼 동적 생성 완료');
+      
+      // 폼 초기화
+      initializeAstrologyForm();
+      
+      // 이벤트 리스너 등록
+      const newForm = document.getElementById('astrologyForm');
+      if (newForm) {
+        newForm.addEventListener('submit', (e) => {
+          console.log('🔮 점성술 폼 제출 이벤트 발생! (동적 생성)');
+          e.preventDefault();
+          
+          const formData = new FormData(newForm);
+          console.log('📋 폼 데이터 생성됨:', formData);
+          
+          for (let [key, value] of formData.entries()) {
+            console.log(`  📋 ${key}: ${value}`);
+          }
+          
+          analyzeAstrology(formData);
+        });
+        console.log('✅ 동적 생성된 폼 이벤트 리스너 등록 완료');
+      }
+    } else {
+      console.error('❌ astrologyResult 컨테이너를 찾을 수 없습니다.');
+    }
+  } else {
+    console.log('✅ astrologyForm이 이미 존재합니다.');
+  }
+}
+function forceInitializeAstrologySection() {
+  console.log('🔮 점성술 섹션 강제 초기화 시작');
+  
+  // 점성술 섹션 확인
+  const astrologySection = document.getElementById('astrology');
+  console.log('🔮 astrology 섹션:', astrologySection ? '찾음' : '없음');
+  
+  if (!astrologySection) {
+    console.error('❌ astrology 섹션을 찾을 수 없습니다.');
+    return;
+  }
+  
+  // 폼 요소들 직접 확인 및 초기화
+  const elements = [
+    { id: 'astrologyForm', name: '점성술 폼' },
+    { id: 'astroYear', name: '년도 선택' },
+    { id: 'astroMonth', name: '월 선택' },
+    { id: 'astroDay', name: '일 선택' },
+    { id: 'astroHour', name: '시간 선택' }
+  ];
+  
+  elements.forEach(element => {
+    const el = document.getElementById(element.id);
+    console.log(`🔮 ${element.name} (${element.id}):`, el ? '찾음' : '없음');
+  });
+  
+  // 폼 초기화 실행
+  initializeAstrologyForm();
+  
+  // 이벤트 리스너 재등록
+  const astrologyForm = document.getElementById('astrologyForm');
+  if (astrologyForm) {
+    console.log('🔮 이벤트 리스너 재등록 시도');
+    
+    // 기존 이벤트 리스너 제거
+    const newForm = astrologyForm.cloneNode(true);
+    astrologyForm.parentNode.replaceChild(newForm, astrologyForm);
+    
+    // 새로운 이벤트 리스너 등록
+    newForm.addEventListener('submit', (e) => {
+      console.log('🔮 점성술 폼 제출 이벤트 발생! (재등록됨)');
+      e.preventDefault();
+      
+      const formData = new FormData(newForm);
+      console.log('📋 폼 데이터 생성됨:', formData);
+      
+      for (let [key, value] of formData.entries()) {
+        console.log(`  📋 ${key}: ${value}`);
+      }
+      
+      analyzeAstrology(formData);
+    });
+    
+    console.log('✅ 이벤트 리스너 재등록 완료');
+  }
+  
+  console.log('✅ 점성술 섹션 강제 초기화 완료');
+}
+function populateAstrologyForm(user) {
+  console.log('📝 populateAstrologyForm 호출됨:', user);
+  
+  if (!user) {
+    console.log('❌ 사용자 정보가 없어서 폼 채우기를 건너뜁니다.');
+    return;
+  }
+  
+  // 사용자 정보에서 생년월일시 추출 (다양한 필드명 지원)
+  const birthYear = user.birthYear || user.birth_year;
+  const birthMonth = user.birthMonth || user.birth_month;
+  const birthDay = user.birthDay || user.birth_day;
+  const birthHour = user.birthHour || user.birth_hour;
+  
+  console.log('📅 추출된 생년월일시:', { birthYear, birthMonth, birthDay, birthHour });
+  
+  // 폼 요소들 찾기
+  const yearSelect = document.getElementById('astroYear');
+  const monthSelect = document.getElementById('astroMonth');
+  const daySelect = document.getElementById('astroDay');
+  const hourSelect = document.getElementById('astroHour');
+  
+  console.log('🔍 폼 요소들:', {
+    astroYear: !!yearSelect,
+    astroMonth: !!monthSelect,
+    astroDay: !!daySelect,
+    astroHour: !!hourSelect
+  });
+  
+  // 년도 설정
+  if (yearSelect && birthYear) {
+    yearSelect.value = birthYear;
+    console.log('✅ 년도 설정:', birthYear);
+  } else {
+    console.log('❌ 년도 설정 실패:', { yearSelect: !!yearSelect, birthYear });
+  }
+  
+  // 월 설정
+  if (monthSelect && birthMonth) {
+    monthSelect.value = birthMonth;
+    console.log('✅ 월 설정:', birthMonth);
+  } else {
+    console.log('❌ 월 설정 실패:', { monthSelect: !!monthSelect, birthMonth });
+  }
+  
+  // 일 설정
+  if (daySelect && birthDay) {
+    daySelect.value = birthDay;
+    console.log('✅ 일 설정:', birthDay);
+  } else {
+    console.log('❌ 일 설정 실패:', { daySelect: !!daySelect, birthDay });
+  }
+  
+  // 시간 설정
+  if (hourSelect && birthHour !== undefined) {
+    hourSelect.value = birthHour;
+    console.log('✅ 시간 설정:', birthHour);
+  } else {
+    console.log('❌ 시간 설정 실패:', { hourSelect: !!hourSelect, birthHour });
+  }
+  
+  console.log('✅ 점성술 폼 사용자 정보 설정 완료:', { birthYear, birthMonth, birthDay, birthHour });
 }
 
 // 폼 초기화 함수 수정
@@ -6706,11 +7506,27 @@ function attachEventListeners() {
   }
   
   if (astrologyForm) {
+    console.log('🔮 astrologyForm 이벤트 리스너 등록');
     astrologyForm.addEventListener('submit', (e) => {
+      console.log('🔮 점성술 폼 제출 이벤트 발생!');
       e.preventDefault();
+      
+      console.log('🔮 점성술 폼 제출됨');
+      
+      // 폼 데이터 확인
       const formData = new FormData(astrologyForm);
+      console.log('📋 폼 데이터 생성됨:', formData);
+      
+      // 폼 데이터 내용 확인
+      for (let [key, value] of formData.entries()) {
+        console.log(`  📋 ${key}: ${value}`);
+      }
+      
+      // PC 버전과 동일한 방식으로 분석 실행
       analyzeAstrology(formData);
     });
+  } else {
+    console.error('❌ astrologyForm을 찾을 수 없어서 이벤트 리스너를 등록할 수 없습니다.');
   }
   
   if (profileForm) {
@@ -8586,6 +9402,124 @@ document.addEventListener('keydown', function(event) {
 // 전역 함수로 노출
 window.drawTarotCards = drawTarotCards;
 window.toggleTarotHelp = toggleTarotHelp;
+
+// 알림 함수 정의
+function showNotification(message, type = 'info') {
+  console.log(`🔔 알림 [${type}]: ${message}`);
+  
+  // 알림 요소 생성
+  const notification = document.createElement('div');
+  notification.className = `mobile-notification ${type}`;
+  notification.innerHTML = `
+    <div class="notification-content">
+      <span class="notification-icon">${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️'}</span>
+      <span class="notification-message">${message}</span>
+    </div>
+  `;
+  
+  // 스타일 적용
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: ${type === 'success' ? 'rgba(34, 197, 94, 0.95)' : 
+                 type === 'error' ? 'rgba(239, 68, 68, 0.95)' : 
+                 type === 'warning' ? 'rgba(245, 158, 11, 0.95)' : 
+                 'rgba(59, 130, 246, 0.95)'};
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 10000;
+    font-size: 14px;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: slideInDown 0.3s ease-out;
+  `;
+  
+  // 페이지에 추가
+  document.body.appendChild(notification);
+  
+  // 3초 후 자동 제거
+  setTimeout(() => {
+    if (notification.parentNode) {
+      notification.style.animation = 'slideOutUp 0.3s ease-in';
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification);
+        }
+      }, 300);
+    }
+  }, 3000);
+}
+
+// 언어 관련 함수들
+function toggleLanguageMenu() {
+  const dropdown = document.getElementById('languageDropdown');
+  const languageSelector = document.querySelector('.language-selector');
+  
+  if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+    dropdown.style.display = 'block';
+    languageSelector.classList.add('active');
+  } else {
+    dropdown.style.display = 'none';
+    languageSelector.classList.remove('active');
+  }
+}
+
+function changeLanguage(langCode) {
+  console.log('🌐 언어 변경:', langCode);
+  
+  // 언어 드롭다운 닫기
+  document.getElementById('languageDropdown').style.display = 'none';
+  document.querySelector('.language-selector').classList.remove('active');
+  
+  // 언어 변경 로직 (향후 구현)
+  switch(langCode) {
+    case 'ko':
+      console.log('🇰🇷 한국어로 변경');
+      // 한국어 적용 로직
+      break;
+    case 'en':
+      console.log('🇺🇸 English로 변경');
+      // 영어 적용 로직
+      break;
+    case 'zh':
+      console.log('🇨🇳 中文으로 변경');
+      // 중국어 적용 로직
+      break;
+    case 'th':
+      console.log('🇹🇭 ไทย로 변경');
+      // 태국어 적용 로직
+      break;
+    case 'vi':
+      console.log('🇻🇳 Tiếng Việt로 변경');
+      // 베트남어 적용 로직
+      break;
+    case 'km':
+      console.log('🇰🇭 ភាសាខ្មែរ로 변경');
+      // 캄보디아어 적용 로직
+      break;
+  }
+  
+  // 언어 변경 알림 제거 (사용자 요청)
+  console.log(`🌐 언어 변경 완료: ${langCode}`);
+}
+
+// 언어 드롭다운 외부 클릭 시 닫기
+document.addEventListener('click', function(event) {
+  const dropdown = document.getElementById('languageDropdown');
+  const languageSelector = document.querySelector('.language-selector');
+  
+  if (dropdown && dropdown.style.display === 'block' && 
+      !dropdown.contains(event.target) && 
+      !languageSelector.contains(event.target)) {
+    dropdown.style.display = 'none';
+    languageSelector.classList.remove('active');
+  }
+});
 
 // 간단한 탭 상태 확인 함수
 window.checkTabStatus = function() {

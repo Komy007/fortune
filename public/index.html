@@ -125,7 +125,7 @@
             <a href="#bazi" class="dropdown-item">🔮 명리학</a>
             <a href="#astrology" class="dropdown-item">⭐ 점성술</a>
             <a href="#tarot" class="dropdown-item">🃏 타로 점</a>
-            <a href="#numerology" class="dropdown-item">🔢 숫자 택일</a>
+                            <a href="#numerology" class="dropdown-item">🔢 숫자 택일</a>
 
           </div>
         </div>
@@ -299,11 +299,11 @@
             <div class="menu-icon">🔢</div>
             <div class="menu-text">숫자/택일</div>
           </div>
-          <div class="menu-item" onclick="showServiceResult('astrology')">
+          <div class="menu-item" onclick="changeSection('astrology')">
             <div class="menu-icon">⭐</div>
             <div class="menu-text">점성술</div>
           </div>
-          <div class="menu-item" onclick="showServiceResult('tarot')">
+          <div class="menu-item" onclick="changeSection('tarot')">
             <div class="menu-icon">🃏</div>
             <div class="menu-text">타로 점</div>
           </div>
@@ -1179,27 +1179,40 @@
     <!-- 서양점성술 섹션 -->
     <section id="astrology" class="section">
       <div class="container">
-        <h2 class="section-title" data-i18n="astrology.title">서양점성술</h2>
+        <h2 class="section-title" data-i18n="astrology.title">⭐ 서양점성술</h2>
         <p class="section-desc" data-i18n="astrology.desc">태양궁과 행성의 위치를 분석하여 운세를 읽어드립니다.</p>
         
+        <!-- 사용자 정보 표시 영역 -->
+        <div id="myAstrologyInfo" class="my-astrology-info">
+          <div class="astrology-info-display">
+            <p style="color: #666; font-style: italic; text-align: center;">🔮 생년월일을 입력하여 점성술 분석을 받아보세요</p>
+          </div>
+          <button type="button" onclick="refreshAstrologyUserInfo()" class="refresh-btn" style="background: #6c757d; color: white; padding: 5px 10px; border: none; border-radius: 4px; font-size: 0.8rem; margin-top: 5px;">🔄 회원정보로 새로고침</button>
+        </div>
+        
         <form id="astrologyForm" class="birth-form">
-          <div class="form-group">
-            <label for="astroYear" data-i18n="form.year">출생년도</label>
-            <select id="astroYear" name="year" required></select>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="astroYear" data-i18n="form.year">출생년도</label>
+              <select id="astroYear" name="year" required></select>
+            </div>
+            <div class="form-group">
+              <label for="astroMonth" data-i18n="form.month">출생월</label>
+              <select id="astroMonth" name="month" required></select>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="astroMonth" data-i18n="form.month">출생월</label>
-            <select id="astroMonth" name="month" required></select>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="astroDay" data-i18n="form.day">출생일</label>
+              <select id="astroDay" name="day" required></select>
+            </div>
+            <div class="form-group">
+              <label for="astroHour" data-i18n="form.hour">출생시간</label>
+              <select id="astroHour" name="hour" required></select>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="astroDay" data-i18n="form.day">출생일</label>
-            <select id="astroDay" name="day" required></select>
-          </div>
-          <div class="form-group">
-            <label for="astroHour" data-i18n="form.hour">출생시간</label>
-            <select id="astroHour" name="hour" required></select>
-          </div>
-          <button type="submit" class="submit-btn" data-i18n="form.submit">점성술 분석하기</button>
+          <button type="submit" class="submit-btn" data-i18n="form.submit">🔮 현재 정보로 분석하기</button>
+          <button type="button" onclick="analyzeWithUserInfo()" class="submit-btn user-info-btn" style="background: #28a745; margin-left: 10px;">👤 회원정보로 분석</button>
         </form>
         
         <div id="astrologyResult" class="result-container"></div>
@@ -2951,26 +2964,37 @@
   </style>
       <script src="/js/main.js?v=73&t=20241221"></script>
   
-  <!-- 모바일 하단 탭 네비게이션 -->
-  <nav class="mobile-bottom-nav">
-    <button class="mobile-tab-item" data-section="about-us" onclick="changeSection('about-us')">
-      <span class="mobile-tab-icon">ℹ️</span>
-      <span class="mobile-tab-text">About_Us</span>
-    </button>
-    <button class="mobile-tab-item" data-section="announcements" onclick="changeSection('announcements')">
-      <span class="mobile-tab-icon">📢</span>
-      <span class="mobile-tab-text">공지사항</span>
-    </button>
-    <button class="mobile-tab-item" data-section="profile" onclick="changeSection('profile')">
-      <span class="mobile-tab-icon">👤</span>
-      <span class="mobile-tab-text">내정보</span>
-    </button>
-  </nav>
-  
-  <!-- 모바일 전용 로딩 스피너 (기본적으로 숨김) -->
-  <div class="mobile-loading" id="mobileLoading" style="display: none;">
-    <div class="mobile-loading-spinner"></div>
-  </div>
 </body>
-</html>
+
+<!-- 스마트폰 하단 메뉴 (최후방 배치로 보호) -->
+<nav class="mobile-bottom-nav" id="mobileBottomNav">
+  <button class="mobile-tab-item" data-section="about-us" onclick="changeSection('about-us')">
+    <span class="mobile-tab-icon">ℹ️</span>
+    <span class="mobile-tab-text">About_Us</span>
+  </button>
+  <button class="mobile-tab-item" data-section="announcements" onclick="changeSection('announcements')">
+    <span class="mobile-tab-icon">📢</span>
+    <span class="mobile-tab-text">공지사항</span>
+  </button>
+  <button class="mobile-tab-item language-selector" onclick="toggleLanguageMenu()">
+    <span class="mobile-tab-icon">🌐</span>
+    <span class="mobile-tab-text">언어</span>
+  </button>
+</nav>
+
+<!-- 언어 선택 드롭다운 메뉴 -->
+<div class="language-dropdown" id="languageDropdown" style="display: none;">
+  <button class="language-option" onclick="changeLanguage('ko')">🇰🇷 한국어</button>
+  <button class="language-option" onclick="changeLanguage('en')">🇺🇸 English</button>
+  <button class="language-option" onclick="changeLanguage('zh')">🇨🇳 中文</button>
+  <button class="language-option" onclick="changeLanguage('th')">🇹🇭 ไทย</button>
+  <button class="language-option" onclick="changeLanguage('vi')">🇻🇳 Tiếng Việt</button>
+  <button class="language-option" onclick="changeLanguage('km')">🇰🇭 ភាសាខ្មែរ</button>
+</div>
+
+<!-- 모바일 전용 로딩 스피너 -->
+<div class="mobile-loading" id="mobileLoading" style="display: none;">
+  <div class="mobile-loading-spinner"></div>
+</div>
+
 </html>
