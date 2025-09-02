@@ -387,4 +387,3 @@ exports.GOAL_COACHING_TEMPLATES = {
         }
     }
 };
-//# sourceMappingURL=rules.js.map

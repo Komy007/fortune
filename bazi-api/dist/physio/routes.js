@@ -176,4 +176,3 @@ router.get('/docs', (req, res) => {
     res.json(docs);
 });
 exports.default = router;
-//# sourceMappingURL=routes.js.map

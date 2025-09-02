@@ -519,4 +519,3 @@ class BaziEngine {
     }
 }
 exports.BaziEngine = BaziEngine;
-//# sourceMappingURL=bazi.js.map

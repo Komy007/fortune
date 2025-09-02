@@ -65,4 +65,3 @@ exports.ERROR_MESSAGES = {
     INVALID_LANGUAGE: '언어는 ko 또는 en이어야 합니다',
     INVALID_RANGE_DAYS: '기간은 1에서 30일 사이여야 합니다'
 };
-//# sourceMappingURL=schemas.js.map

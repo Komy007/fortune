@@ -34,4 +34,3 @@ function getPhnomPenhTimeInfo() {
         timestamp: now.toMillis()
     };
 }
-//# sourceMappingURL=time.js.map

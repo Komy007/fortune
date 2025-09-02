@@ -137,4 +137,3 @@ exports.HOUSE_SYSTEM_INFO = {
         disadvantages: '극지방에서 계산 불가능'
     }
 };
-//# sourceMappingURL=houses.js.map

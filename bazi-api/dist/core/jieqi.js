@@ -142,4 +142,3 @@ class JieQiCalculator {
 exports.JieQiCalculator = JieQiCalculator;
 // 싱글톤 인스턴스
 exports.jieqiCalculator = new JieQiCalculator();
-//# sourceMappingURL=jieqi.js.map

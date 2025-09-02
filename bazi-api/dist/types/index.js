@@ -26,4 +26,3 @@ exports.RectificationRequestSchema = zod_1.z.object({
     candidateIndex: zod_1.z.number(),
     userResponse: zod_1.z.string()
 });
-//# sourceMappingURL=index.js.map

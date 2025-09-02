@@ -38,4 +38,3 @@ exports.PHYSIO_RULES = {
         WEAK: 0.4
     }
 };
-//# sourceMappingURL=types.js.map

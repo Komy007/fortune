@@ -146,4 +146,3 @@ exports.ACCURACY_INFO = {
     Neptune: '±1.0°',
     Pluto: '±2.0°'
 };
-//# sourceMappingURL=ephemeris.js.map

@@ -179,4 +179,3 @@ exports.ASPECT_MEANINGS = {
         orb: '±8°'
     }
 };
-//# sourceMappingURL=aspects.js.map

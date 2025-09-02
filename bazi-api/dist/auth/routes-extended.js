@@ -351,4 +351,3 @@ router.post('/logout', (req, res) => {
     });
 });
 exports.default = router;
-//# sourceMappingURL=routes-extended.js.map

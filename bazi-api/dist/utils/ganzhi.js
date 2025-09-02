@@ -158,4 +158,3 @@ class GanzhiCalculator {
     }
 }
 exports.GanzhiCalculator = GanzhiCalculator;
-//# sourceMappingURL=ganzhi.js.map

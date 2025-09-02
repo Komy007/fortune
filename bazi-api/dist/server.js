@@ -12,8 +12,7 @@ const bazi_1 = require("./core/bazi");
 const types_1 = require("./types");
 const routes_extended_1 = __importDefault(require("./auth/routes-extended"));
 const routes_1 = __importDefault(require("./astro/routes"));
-const routes_2 = __importDefault(require("./tarot/routes"));
-const routes_3 = __importDefault(require("./physio/routes"));
+const routes_2 = __importDefault(require("./physio/routes"));
 const swe_1 = require("./astro/swe");
 const swagger_1 = require("./astro/swagger");
 const app = (0, express_1.default)();
@@ -45,9 +44,7 @@ app.use('/api/auth', routes_extended_1.default);
 // Astrology 라우터 연결
 app.use('/api/astro', routes_1.default);
 // Physiognomy 라우터 연결
-app.use('/api/physio', routes_3.default);
-// Tarot 라우터 연결
-app.use('/api/tarot', routes_2.default);
+app.use('/api/physio', routes_2.default);
 // Swagger UI 문서
 app.use('/docs', swagger_1.swaggerUiSetup);
 // 입력 검증 스키마
@@ -297,4 +294,3 @@ app.listen(PORT, () => {
     console.log(`📅 버전: 1.0.0`);
 });
 exports.default = app;
-//# sourceMappingURL=server.js.map

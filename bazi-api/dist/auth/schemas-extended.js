@@ -117,4 +117,3 @@ exports.ErrorResponseSchema = zod_1.z.object({
         message: zod_1.z.string()
     })
 });
-//# sourceMappingURL=schemas-extended.js.map

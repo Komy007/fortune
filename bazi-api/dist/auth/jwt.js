@@ -63,4 +63,3 @@ function extractTokenFromHeader(authHeader) {
     }
     return authHeader.substring(7);
 }
-//# sourceMappingURL=jwt.js.map

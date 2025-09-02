@@ -431,4 +431,3 @@ class InterpretationTemplates {
     }
 }
 exports.InterpretationTemplates = InterpretationTemplates;
-//# sourceMappingURL=cards.js.map

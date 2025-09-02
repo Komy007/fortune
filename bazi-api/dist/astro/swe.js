@@ -188,4 +188,3 @@ function getSwissEphemerisInfo() {
         return { version: 'unknown', path: 'unknown' };
     }
 }
-//# sourceMappingURL=swe.js.map

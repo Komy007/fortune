@@ -388,4 +388,3 @@ exports.swaggerUiSetup = swagger_ui_express_1.default.setup(swaggerDocument, {
     customCss: '.swagger-ui .topbar { display: none }',
     customSiteTitle: '점성술 API 문서'
 });
-//# sourceMappingURL=swagger.js.map

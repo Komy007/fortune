@@ -33,4 +33,3 @@ exports.ASPECT_ANGLES = {
 exports.HARMONIOUS_ASPECTS = ['sextile', 'trine'];
 exports.CHALLENGING_ASPECTS = ['square', 'opposition'];
 exports.NEUTRAL_ASPECTS = ['conjunction'];
-//# sourceMappingURL=types.js.map
