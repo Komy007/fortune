@@ -1510,12 +1510,7 @@
       </div>
     </section>
     
-    <!-- 관리자 아이콘 (홈페이지 하단) -->
-    <div class="admin-icon-container">
-      <button onclick="changeSection('admin')" class="admin-icon-btn" title="관리자 모드">
-        ⚙️
-      </button>
-    </div>
+
   </main>
 
   <!-- 공지사항 상세 보기 모달 -->
@@ -2964,37 +2959,108 @@
   </style>
       <script src="/js/main.js?v=73&t=20241221"></script>
   
-</body>
+      <!-- Donation/기부 섹션 -->
+      <section id="donation" class="section" style="display: none;">
+        <div class="donation-header">
+          <h1 class="donation-title">💝 Donation / 기부</h1>
+          <p class="donation-subtitle">작은 화면 위에 타오르는 글자들이 누군가의 길이 되기를 바랍니다</p>
+        </div>
+        
+        <div class="donation-content">
+          <div class="donation-message">
+            <div class="message-text">
+              <p>제가 만든 웹 서비스(명리학, 점성술 등)는 누구나 무료로 이용할 수 있습니다. 다만 이 길이 오래 빛나려면, 함께 보태는 따뜻한 마음이 필요합니다.</p>
+              
+              <p>여러분이 보내 주시는 도네이션은 20%를 서버와 유지 관리에, 나머지 80%는 캄보디아의 어려운 학생들에게 전해집니다. 장학금 같은 가장 실용적인 자리에서 쓰입니다. 금액의 크기는 중요하지 않습니다. 작은 마음이 모여 누군가의 내일을 바꿉니다.</p>
+              
+              <p>현금 소액 송금도, USDT(테더) 전송도 가능합니다. 형편이 허락하는 만큼, 한 번의 응원이라도 세상을 바꿀 것 입니다.</p>
+              
+              <p>당신의 호흡 같은 한 번의 클릭이, 멀리 떨어진 아이에게는 오늘의 식사, 내일의 배움, 모레의 꿈이 됩니다.</p>
+              
+              <p>여기는 운명을 읽는 곳이지만, 더 깊이 믿는 것은 사람의 선한 선택입니다.</p>
+            </div>
+            
+            <div class="message-text-en">
+              <p>"I hope the words glowing on a small screen become someone's path. The web services I've built—Myeongri (Four Pillars), astrology, and more—are free for everyone to use. Yet for this path to keep shining, it needs the warmth we add together.</p>
+              
+              <p>Of the donations you send, 20% supports servers and upkeep, and the remaining 80% reaches students in need in Cambodia. It is used where it matters most, such as scholarships. The amount does not matter. Small acts of care gathered together change someone's tomorrow.</p>
+              
+              <p>Both small cash transfers and USDT (Tether) are welcome. Give as you are able—even a single gesture of support can change the world.</p>
+              
+              <p>A single click, light as a breath, becomes today's meal, tomorrow's learning, and the day after's dream for a child far away.</p>
+              
+              <p>This is a place that reads destiny, but what I trust even more is the goodness of human choice."</p>
+            </div>
+          </div>
+          
+          <div class="donation-methods">
+            <h3>🏦 기부 방법</h3>
+            
+            <div class="method-section">
+              <h4>💳 은행 송금</h4>
+              <p>🏦 Bank: ABA BANK Cambodia</p>
+              <p>Account: Bae KwangYoon</p>
+              <p>ACC. No.: 000752989</p>
+              <p>📱 Mobile: +85595779873</p>
+              <p>🌐 SWIFT: ABAAKHPP</p>
+            </div>
+            
+            <!-- 별도 QR 코드 박스 -->
+            <div class="separate-qr-box">
+              <img src="img/aba.jpg" alt="ABA BANK QR Code" class="separate-qr-image">
+              <p class="separate-qr-text">ABA BANK QR 코드</p>
+            </div>
+            
+            <div class="method-section">
+              <h4>🚀 USDT (TRC20)</h4>
+              <p>🚀 USDT: BINANCE (TRC20)</p>
+              <p>Address: THxudDuXfp5Q1gqxAiGj9EH1waQDRKjbcc</p>
+            </div>
+            
+            <!-- 바이낸스 USDT QR 코드 박스 -->
+            <div class="separate-qr-box">
+              <img src="img/usdt.jpg" alt="Binance USDT QR Code" class="separate-qr-image">
+              <p class="separate-qr-text">Binance USDT QR 코드</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-<!-- 스마트폰 하단 메뉴 (최후방 배치로 보호) -->
-<nav class="mobile-bottom-nav" id="mobileBottomNav">
-  <button class="mobile-tab-item" data-section="about-us" onclick="changeSection('about-us')">
-    <span class="mobile-tab-icon">ℹ️</span>
-    <span class="mobile-tab-text">About_Us</span>
-  </button>
-  <button class="mobile-tab-item" data-section="announcements" onclick="changeSection('announcements')">
-    <span class="mobile-tab-icon">📢</span>
-    <span class="mobile-tab-text">공지사항</span>
-  </button>
-  <button class="mobile-tab-item language-selector" onclick="toggleLanguageMenu()">
-    <span class="mobile-tab-icon">🌐</span>
-    <span class="mobile-tab-text">언어</span>
-  </button>
-</nav>
+      <!-- 스마트폰 하단 메뉴 (최후방 배치로 보호) -->
+      <nav class="mobile-bottom-nav" id="mobileBottomNav">
+        <button class="mobile-tab-item" data-section="about-us" onclick="changeSection('about-us')">
+          <span class="mobile-tab-icon">ℹ️</span>
+          <span class="mobile-tab-text">About_Us</span>
+        </button>
+        
+        <!-- 모바일 언어 선택기 (PC와 동일한 형태) -->
+        <div class="mobile-language-selector">
+          <select id="mobileLanguageSelect" class="mobile-lang-select">
+            <option value="ko">🇰🇷 한국어</option>
+            <option value="en">🇺🇸 English</option>
+            <option value="zh">🇨🇳 中文</option>
+            <option value="th">🇹🇭 ไทย</option>
+            <option value="vi">🇻🇳 Tiếng Việt</option>
+            <option value="km">🇰🇭 ភាសាខ្មែរ</option>
+          </select>
+        </div>
+        
+        <button class="mobile-tab-item" data-section="donation" onclick="changeSection('donation')">
+          <span class="mobile-tab-icon">💝</span>
+          <span class="mobile-tab-text">기부</span>
+        </button>
+        
+        <button class="mobile-tab-item" data-section="announcements" onclick="changeSection('announcements')">
+          <span class="mobile-tab-icon">📢</span>
+          <span class="mobile-tab-text">공지사항</span>
+        </button>
+      </nav>
 
-<!-- 언어 선택 드롭다운 메뉴 -->
-<div class="language-dropdown" id="languageDropdown" style="display: none;">
-  <button class="language-option" onclick="changeLanguage('ko')">🇰🇷 한국어</button>
-  <button class="language-option" onclick="changeLanguage('en')">🇺🇸 English</button>
-  <button class="language-option" onclick="changeLanguage('zh')">🇨🇳 中文</button>
-  <button class="language-option" onclick="changeLanguage('th')">🇹🇭 ไทย</button>
-  <button class="language-option" onclick="changeLanguage('vi')">🇻🇳 Tiếng Việt</button>
-  <button class="language-option" onclick="changeLanguage('km')">🇰🇭 ភាសាខ្មែរ</button>
-</div>
 
-<!-- 모바일 전용 로딩 스피너 -->
-<div class="mobile-loading" id="mobileLoading" style="display: none;">
-  <div class="mobile-loading-spinner"></div>
-</div>
 
+      <!-- 모바일 전용 로딩 스피너 -->
+      <div class="mobile-loading" id="mobileLoading" style="display: none;">
+        <div class="mobile-loading-spinner"></div>
+      </div>
+    </body>
 </html>

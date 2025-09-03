@@ -155,6 +155,13 @@ function showMobileMenuModal(currentSection) {
               🔢 숫자 택일
             </button>
           </div>
+          
+          <div class="mobile-menu-section">
+            <h4>💝 기부</h4>
+            <button class="mobile-menu-item" onclick="changeSection('donation'); closeMobileMenu();">
+              💝 Donation / 기부
+            </button>
+          </div>
           <div class="mobile-menu-section">
             <h4>👤 계정</h4>
             <button class="mobile-menu-item" onclick="changeSection('profile'); closeMobileMenu();">
@@ -162,6 +169,13 @@ function showMobileMenuModal(currentSection) {
             </button>
             <button class="mobile-menu-item" onclick="logout(); closeMobileMenu();">
               로그아웃
+            </button>
+          </div>
+          
+          <div class="mobile-menu-section">
+            <h4>⚙️ 관리자</h4>
+            <button class="mobile-menu-item" onclick="changeSection('admin'); closeMobileMenu();">
+              ⚙️ 관리자 모드
             </button>
           </div>
         </div>
@@ -3673,6 +3687,17 @@ function changeSection(sectionId) {
     console.log('🏠 홈 섹션으로 이동 - 맨 위로 스크롤');
     window.scrollTo(0, 0); // 맨 위로 스크롤
     // return 제거 - 홈 섹션 표시 계속 진행
+  }
+  
+  // 기부 섹션으로 이동할 때 맨 위로 스크롤
+  if (sectionId === 'donation') {
+    console.log('💝 기부 섹션으로 이동 - 강제 스크롤 적용');
+    // 즉시 스크롤 + 약간의 지연 후 재스크롤
+    window.scrollTo(0, 0);
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+      document.getElementById('donation').scrollIntoView({ behavior: 'smooth' });
+    }, 100);
   }
   
   // 모바일 탭 상태 업데이트
@@ -9518,6 +9543,18 @@ document.addEventListener('click', function(event) {
       !languageSelector.contains(event.target)) {
     dropdown.style.display = 'none';
     languageSelector.classList.remove('active');
+  }
+});
+
+// 모바일 언어 선택기 이벤트 리스너
+document.addEventListener('DOMContentLoaded', function() {
+  const mobileLanguageSelect = document.getElementById('mobileLanguageSelect');
+  if (mobileLanguageSelect) {
+    mobileLanguageSelect.addEventListener('change', function() {
+      const selectedLanguage = this.value;
+      console.log('🌐 모바일 언어 변경:', selectedLanguage);
+      changeLanguage(selectedLanguage);
+    });
   }
 });
 
