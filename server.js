@@ -144,21 +144,27 @@ db.exec(`
 });
 
 // 기본 관리자 사용자 생성 (ID: 1)
-try {
-  const adminExists = db.prepare('SELECT id FROM users WHERE id = 1').get();
+db.get('SELECT id FROM users WHERE id = 1', (err, adminExists) => {
+  if (err) {
+    console.warn('관리자 사용자 확인 실패:', err.message);
+    return;
+  }
+  
   if (!adminExists) {
     console.log('🔧 기본 관리자 사용자 생성 중...');
-    const adminStmt = db.prepare(`
+    const adminPasswordHash = bcrypt.hashSync('12341234', 10);
+    db.run(`
       INSERT INTO users (id, email, name, username, password_hash, birth_year, birth_month, birth_day, birth_hour) 
       VALUES (1, 'admin@fortune.com', '관리자', 'admin', ?, 1990, 1, 1, 0)
-    `);
-    const adminPasswordHash = bcrypt.hashSync('12341234', 10);
-    adminStmt.run(adminPasswordHash);
-    console.log('✅ 기본 관리자 사용자 생성 완료 (ID: 1)');
+    `, [adminPasswordHash], function(err) {
+      if (err) {
+        console.log('⚠️ 기본 관리자 사용자 생성 실패 (이미 존재할 수 있음):', err.message);
+      } else {
+        console.log('✅ 기본 관리자 사용자 생성 완료 (ID: 1)');
+      }
+    });
   }
-} catch (error) {
-  console.log('⚠️ 기본 관리자 사용자 생성 실패 (이미 존재할 수 있음):', error.message);
-}
+});
 
 // 인증 미들웨어
 function authenticateToken(req, res, next) {
@@ -213,21 +219,23 @@ app.post('/api/auth/register', async (req, res) => {
     // 비밀번호 해시화
     const passwordHash = await bcrypt.hash(password, 10);
     
-    // 사용자 생성
-    const stmt = db.prepare(`
+    // 사용자 생성 (비동기)
+    db.run(`
       INSERT INTO users (email, name, username, password_hash, birth_year, birth_month, birth_day, birth_hour) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-    
-    const result = stmt.run(email, name, username, passwordHash, birth_year, birth_month, birth_day, birth_hour);
+    `, [email, name, username, passwordHash, birth_year, birth_month, birth_day, birth_hour], function(err) {
+      if (err) {
+        console.error('사용자 생성 실패:', err);
+        return res.status(500).json({ 
+          error: 'user_creation_failed',
+          message: '사용자 생성 중 오류가 발생했습니다.' 
+        });
+      }
+      
+      const userId = this.lastID;
+      console.log('✅ 사용자 생성 성공, ID:', userId);
 
-    // 추가 정보 저장 (user_kv 테이블)
-    try {
-      const upsertKv = db.prepare(`
-        INSERT INTO user_kv (user_id, k, v) VALUES (?, ?, ?)
-        ON CONFLICT(user_id, k) DO UPDATE SET v = excluded.v, updated_at = CURRENT_TIMESTAMP
-      `);
-      const userId = result.lastInsertRowid;
+      // 추가 정보 저장 (user_kv 테이블)
       const extras = {
         birthplace,
         calendar_type,
@@ -238,43 +246,70 @@ app.post('/api/auth/register', async (req, res) => {
         birth_month,
         birth_day
       };
+      
+      let savedCount = 0;
+      const totalExtras = Object.keys(extras).length;
+      
       Object.entries(extras).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== '') {
-          upsertKv.run(userId, key, JSON.stringify(value));
+          db.run(`
+            INSERT OR REPLACE INTO user_kv (user_id, k, v, updated_at) 
+            VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+          `, [userId, key, JSON.stringify(value)], function(err) {
+            if (err) {
+              console.warn(`추가 정보 저장 실패 (${key}):`, err.message);
+            }
+            savedCount++;
+            
+            // 모든 추가 정보 저장 완료 후 JWT 토큰 생성
+            if (savedCount === totalExtras) {
+              createJWTToken();
+            }
+          });
+        } else {
+          savedCount++;
+          if (savedCount === totalExtras) {
+            createJWTToken();
+          }
         }
       });
-    } catch (e) {
-      console.warn('추가 가입 정보 저장 실패(무시):', e.message);
-    }
-    
-    // JWT 토큰 생성
-    const token = jwt.sign(
-      { uid: result.lastInsertRowid, email, name },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
-    
-    // 보안 쿠키 설정
-    res.cookie('token', token, {
-      httpOnly: true,
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
-      secure: process.env.NODE_ENV === 'production'
-    });
-    
-    res.json({ 
-      success: true, 
-      token: token, // 토큰을 응답에 포함
-      user: { 
-        id: result.lastInsertRowid, 
-        email, 
-        name, 
-        username,
-        birth_year,
-        birth_month,
-        birth_day,
-        birth_hour
-      } 
+      
+      // 추가 정보가 없는 경우 바로 JWT 토큰 생성
+      if (totalExtras === 0) {
+        createJWTToken();
+      }
+      
+      function createJWTToken() {
+        // JWT 토큰 생성
+        const token = jwt.sign(
+          { uid: userId, email, name },
+          process.env.JWT_SECRET,
+          { expiresIn: '7d' }
+        );
+        
+        // 보안 쿠키 설정
+        res.cookie('token', token, {
+          httpOnly: true,
+          sameSite: 'lax',
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
+          secure: process.env.NODE_ENV === 'production'
+        });
+        
+        res.json({ 
+          success: true, 
+          token: token, // 토큰을 응답에 포함
+          user: { 
+            id: userId, 
+            email, 
+            name, 
+            username,
+            birth_year,
+            birth_month,
+            birth_day,
+            birth_hour
+          } 
+        });
+      }
     });
     
   } catch (error) {
@@ -316,54 +351,66 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(400).json({ error: 'missing_credentials' });
     }
     
-    // 사용자 조회
-    const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
-    console.log('👤 사용자 조회 결과:', user ? '사용자 발견' : '사용자 없음');
-    
-    if (!user) {
-      console.log('❌ 로그인 실패: 사용자 없음');
-      return res.status(401).json({ error: 'user_not_found', message: '해당 이메일로 가입된 회원이 없습니다.' });
-    }
-    
-    // 비밀번호 검증
-    const isValidPassword = await bcrypt.compare(password, user.password_hash);
-    console.log('🔑 비밀번호 검증 결과:', isValidPassword ? '성공' : '실패');
-    
-    if (!isValidPassword) {
-      console.log('❌ 로그인 실패: 비밀번호 불일치');
-      return res.status(401).json({ error: 'invalid_password', message: '비밀번호가 올바르지 않습니다.' });
-    }
-    
-    // JWT 토큰 생성
-    const token = jwt.sign(
-      { uid: user.id, email: user.email, name: user.name },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
-    
-    // 보안 쿠키 설정
-    res.cookie('token', token, {
-      httpOnly: true,
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
-      secure: process.env.NODE_ENV === 'production'
-    });
-    
-    console.log('✅ 로그인 성공:', user.name);
-    
-    res.json({ 
-      success: true, 
-      token: token, // 토큰을 응답에 포함
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        username: user.username,
-        birthYear: user.birth_year,
-        birthMonth: user.birth_month,
-        birthDay: user.birth_day,
-        birthHour: user.birth_hour
+    // 사용자 조회 (비동기)
+    db.get('SELECT * FROM users WHERE email = ?', [email], (err, user) => {
+      if (err) {
+        console.error('사용자 조회 실패:', err);
+        return res.status(500).json({ error: 'database_error' });
       }
+      
+      console.log('👤 사용자 조회 결과:', user ? '사용자 발견' : '사용자 없음');
+      
+      if (!user) {
+        console.log('❌ 로그인 실패: 사용자 없음');
+        return res.status(401).json({ error: 'user_not_found', message: '해당 이메일로 가입된 회원이 없습니다.' });
+      }
+      
+      // 비밀번호 검증
+      bcrypt.compare(password, user.password_hash, (err, isValidPassword) => {
+        if (err) {
+          console.error('비밀번호 검증 오류:', err);
+          return res.status(500).json({ error: 'password_verification_failed' });
+        }
+        
+        console.log('🔑 비밀번호 검증 결과:', isValidPassword ? '성공' : '실패');
+        
+        if (!isValidPassword) {
+          console.log('❌ 로그인 실패: 비밀번호 불일치');
+          return res.status(401).json({ error: 'invalid_password', message: '비밀번호가 올바르지 않습니다.' });
+        }
+        
+        // JWT 토큰 생성
+        const token = jwt.sign(
+          { uid: user.id, email: user.email, name: user.name },
+          process.env.JWT_SECRET,
+          { expiresIn: '7d' }
+        );
+        
+        // 보안 쿠키 설정
+        res.cookie('token', token, {
+          httpOnly: true,
+          sameSite: 'lax',
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
+          secure: process.env.NODE_ENV === 'production'
+        });
+        
+        console.log('✅ 로그인 성공:', user.name);
+        
+        res.json({ 
+          success: true, 
+          token: token, // 토큰을 응답에 포함
+          user: {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            username: user.username,
+            birthYear: user.birth_year,
+            birthMonth: user.birth_month,
+            birthDay: user.birth_day,
+            birthHour: user.birth_hour
+          }
+        });
+      });
     });
     
   } catch (error) {
