@@ -49,8 +49,9 @@ app.use('/img', express.static(path.join(__dirname, 'img')));
 app.use('/image', express.static(path.join(__dirname, 'public', 'image')));
 app.use('/image', express.static(path.join(__dirname, 'public', 'img')));
 
-// 데이터베이스 초기화
-const db = new sqlite3.Database('./data/app.db');
+// 데이터베이스 초기화 (Render 호환)
+const dbPath = process.env.NODE_ENV === 'production' ? '/tmp/app.db' : './data/app.db';
+const db = new sqlite3.Database(dbPath);
 db.exec('PRAGMA journal_mode = WAL;');
 
 // 테이블 생성
