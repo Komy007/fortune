@@ -51,7 +51,7 @@ app.use('/image', express.static(path.join(__dirname, 'public', 'img')));
 
 // 데이터베이스 초기화
 const db = new sqlite3.Database('./data/app.db');
-db.pragma('journal_mode = WAL');
+db.exec('PRAGMA journal_mode = WAL;');
 
 // 테이블 생성
 db.exec(`
