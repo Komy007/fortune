@@ -8,7 +8,7 @@
     "dev": "node server.js",
     "build": "echo 'Build completed'",
     "deploy": "echo 'Deploy to your preferred platform'",
-    "postinstall": "npm rebuild better-sqlite3"
+    "postinstall": "echo 'Build completed'"
   },
   "keywords": ["fortune", "bazi", "astrology", "divination", "ai"],
   "author": "Fortune Master",
@@ -28,7 +28,7 @@
   "dependencies": {
     "express": "^4.18.2",
     "body-parser": "^1.20.2",
-    "better-sqlite3": "^9.2.2",
+    "sqlite3": "^5.1.6",
     "bcrypt": "^5.1.1",
     "jsonwebtoken": "^9.0.2",
     "cookie-parser": "^1.4.6",

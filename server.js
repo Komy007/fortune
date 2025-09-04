@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
-const Database = require('better-sqlite3');
+const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
@@ -50,7 +50,7 @@ app.use('/image', express.static(path.join(__dirname, 'public', 'image')));
 app.use('/image', express.static(path.join(__dirname, 'public', 'img')));
 
 // 데이터베이스 초기화
-const db = new Database('./data/app.db');
+const db = new sqlite3.Database('./data/app.db');
 db.pragma('journal_mode = WAL');
 
 // 테이블 생성
@@ -118,18 +118,29 @@ db.exec(`
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (author_id) REFERENCES users(id)
   );
-`);
+`, (err) => {
+  if (err) {
+    console.error('Database initialization error:', err);
+  } else {
+    console.log('Database tables created successfully');
+  }
+});
 
 // 고유 제약 인덱스 (중복 방지)
-try {
-  db.exec(`DROP INDEX IF EXISTS idx_relationships_unique;`);
-  db.exec(`
-    CREATE UNIQUE INDEX IF NOT EXISTS idx_relationships_unique
-    ON relationships(user_id, name, birth_year, birth_month, birth_day, birth_time, birthplace);
-  `);
-} catch (e) {
-  // skip
-}
+db.exec(`DROP INDEX IF EXISTS idx_relationships_unique;`, (err) => {
+  if (err) console.log('인덱스 삭제 중 오류 (무시 가능):', err.message);
+});
+
+db.exec(`
+  CREATE UNIQUE INDEX IF NOT EXISTS idx_relationships_unique
+  ON relationships(user_id, name, birth_year, birth_month, birth_day, birth_time, birthplace);
+`, (err) => {
+  if (err) {
+    console.log('인덱스 생성 중 오류 (무시 가능):', err.message);
+  } else {
+    console.log('인덱스 생성 완료');
+  }
+});
 
 // 기본 관리자 사용자 생성 (ID: 1)
 try {
