@@ -5777,6 +5777,24 @@ async function checkServerHealth() {
   }
 }
 
+// 생시 파싱 함수 (HH:mm 형식을 정수로 변환)
+function parseBirthTime(timeValue) {
+  if (!timeValue) return 0;
+  
+  // 이미 정수인 경우
+  if (typeof timeValue === 'number' || /^\d+$/.test(timeValue)) {
+    return parseInt(timeValue);
+  }
+  
+  // HH:mm 형식인 경우
+  if (typeof timeValue === 'string' && timeValue.includes(':')) {
+    const [hours] = timeValue.split(':');
+    return parseInt(hours) || 0;
+  }
+  
+  return 0;
+}
+
 // 회원가입 함수
 async function register(formData) {
   showLoading();
@@ -5784,13 +5802,13 @@ async function register(formData) {
   try {
     const data = {
       name: formData.get('name'),
-      username: formData.get('username'),
+      username: formData.get('username') || formData.get('email'), // username이 없으면 email 사용
       email: formData.get('email'),
       password: formData.get('password'),
       birth_year: parseInt(formData.get('birthYear')),
       birth_month: parseInt(formData.get('birthMonth')),
       birth_day: parseInt(formData.get('birthDay')),
-      birth_hour: parseInt(formData.get('birthHour'))
+      birth_hour: parseBirthTime(formData.get('birthTime') || formData.get('birthHour') || 0)
     };
     
     console.log('📝 회원가입 시도:', data.email);
