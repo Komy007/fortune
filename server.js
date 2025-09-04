@@ -195,7 +195,7 @@ function authenticateToken(req, res, next) {
 }
 
 // 회원가입 API
-app.post('/api/auth/register', async (req, res) => {
+app.post('/api/auth/register', (req, res) => {
   console.log('📝 회원가입 요청 받음:', { email: req.body.email, name: req.body.name });
   
   try {
@@ -396,7 +396,7 @@ app.post('/api/auth/register', async (req, res) => {
 });
 
 // 로그인 API
-app.post('/api/auth/login', async (req, res) => {
+app.post('/api/auth/login', (req, res) => {
   console.log('🔐 로그인 요청 받음:', { email: req.body.email, hasPassword: !!req.body.password });
   
   try {
