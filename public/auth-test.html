@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인증 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+        .success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔐 인증 테스트 페이지</h1>
+    
+    <div class="test-section">
+        <h2>1️⃣ 로그인 테스트</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label>이메일:</label>
+                <input type="email" id="loginEmail" name="email" value="cambodia.bae@gmail.com" required>
+            </div>
+            <div class="form-group">
+                <label>비밀번호:</label>
+                <input type="password" id="loginPassword" name="password" value="12341234" required>
+            </div>
+            <button type="submit">로그인</button>
+        </form>
+        <div id="loginResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2️⃣ 회원가입 테스트</h2>
+        <form id="registerForm">
+            <div class="form-group">
+                <label>이름:</label>
+                <input type="text" id="registerName" name="name" value="테스트 사용자" required>
+            </div>
+            <div class="form-group">
+                <label>사용자명:</label>
+                <input type="text" id="registerUsername" name="username" value="testuser" required>
+            </div>
+            <div class="form-group">
+                <label>이메일:</label>
+                <input type="email" id="registerEmail" name="email" value="test@example.com" required>
+            </div>
+            <div class="form-group">
+                <label>비밀번호:</label>
+                <input type="password" id="registerPassword" name="password" value="password123" required>
+            </div>
+            <div class="form-group">
+                <label>생년:</label>
+                <input type="number" id="registerBirthYear" name="birthYear" value="1990" required>
+            </div>
+            <div class="form-group">
+                <label>생월:</label>
+                <input type="number" id="registerBirthMonth" name="birthMonth" value="1" required>
+            </div>
+            <div class="form-group">
+                <label>생일:</label>
+                <input type="number" id="registerBirthDay" name="birthDay" value="1" required>
+            </div>
+            <div class="form-group">
+                <label>생시:</label>
+                <input type="number" id="registerBirthHour" name="birthHour" value="12" required>
+            </div>
+            <button type="submit">회원가입</button>
+        </form>
+        <div id="registerResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3️⃣ 서버 상태 확인</h2>
+        <button onclick="testServer()">서버 연결 테스트</button>
+        <div id="serverResult" class="result"></div>
+    </div>
+    
+    <script>
+        // API 요청 헬퍼 함수
+        async function apiRequest(url, options = {}) {
+            const defaultOptions = {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include'
+            };
+            
+            const finalOptions = { ...defaultOptions, ...options };
+            
+            if (finalOptions.body && typeof finalOptions.body === 'object') {
+                finalOptions.body = JSON.stringify(finalOptions.body);
+            }
+            
+            const response = await fetch(url, finalOptions);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            return await response.json();
+        }
+        
+        // 서버 테스트
+        async function testServer() {
+            try {
+                const result = await apiRequest('/api/health');
+                document.getElementById('serverResult').innerHTML = 
+                    `<div class="success">✅ 서버 연결 성공: ${JSON.stringify(result)}</div>`;
+            } catch (error) {
+                document.getElementById('serverResult').innerHTML = 
+                    `<div class="error">❌ 서버 연결 실패: ${error.message}</div>`;
+            }
+        }
+        
+        // 로그인 테스트
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = {
+                email: formData.get('email'),
+                password: formData.get('password')
+            };
+            
+            try {
+                console.log('🔐 로그인 시도:', data);
+                const result = await apiRequest('/api/auth/login', {
+                    method: 'POST',
+                    body: data
+                });
+                
+                console.log('📡 로그인 응답:', result);
+                document.getElementById('loginResult').innerHTML = 
+                    `<div class="success">✅ 로그인 성공: ${JSON.stringify(result, null, 2)}</div>`;
+                
+                if (result.success) {
+                    localStorage.setItem('currentUser', JSON.stringify(result.user));
+                    localStorage.setItem('authToken', result.token);
+                }
+            } catch (error) {
+                console.error('❌ 로그인 실패:', error);
+                document.getElementById('loginResult').innerHTML = 
+                    `<div class="error">❌ 로그인 실패: ${error.message}</div>`;
+            }
+        });
+        
+        // 회원가입 테스트
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = {
+                name: formData.get('name'),
+                username: formData.get('username'),
+                email: formData.get('email'),
+                password: formData.get('password'),
+                birth_year: parseInt(formData.get('birthYear')),
+                birth_month: parseInt(formData.get('birthMonth')),
+                birth_day: parseInt(formData.get('birthDay')),
+                birth_hour: parseInt(formData.get('birthHour'))
+            };
+            
+            try {
+                console.log('📝 회원가입 시도:', data);
+                const result = await apiRequest('/api/auth/register', {
+                    method: 'POST',
+                    body: data
+                });
+                
+                console.log('📡 회원가입 응답:', result);
+                document.getElementById('registerResult').innerHTML = 
+                    `<div class="success">✅ 회원가입 성공: ${JSON.stringify(result, null, 2)}</div>`;
+                
+                if (result.success) {
+                    localStorage.setItem('currentUser', JSON.stringify(result.user));
+                    localStorage.setItem('authToken', result.token);
+                }
+            } catch (error) {
+                console.error('❌ 회원가입 실패:', error);
+                document.getElementById('registerResult').innerHTML = 
+                    `<div class="error">❌ 회원가입 실패: ${error.message}</div>`;
+            }
+        });
+        
+        // 페이지 로드 시 서버 테스트
+        window.addEventListener('load', () => {
+            console.log('🚀 인증 테스트 페이지 로드됨');
+            testServer();
+        });
+    </script>
+</body>
+</html>

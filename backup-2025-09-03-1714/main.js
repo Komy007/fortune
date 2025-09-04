@@ -4226,25 +4226,14 @@ function hideLoading() {
 
 // 모달 제어
 function showModal(modal) {
-  console.log('🔍 showModal 호출됨:', modal);
-  
-  if (!modal) {
-    console.error('❌ 모달 요소가 null입니다');
-    return;
-  }
-  
-  console.log('✅ 모달 표시 시작');
   modal.style.display = 'block';
-  
   if (modal === registerModal) {
     updateStep(1); // 회원가입 모달 열 때 1단계로 초기화
-    console.log('📝 회원가입 모달 1단계로 초기화');
   }
   
   // 모달 스타일 강제 적용
   setTimeout(() => {
     applyModalStyles();
-    console.log('✅ 모달 스타일 적용 완료');
   }, 100);
 }
 
@@ -7452,79 +7441,11 @@ function attachEventListeners() {
     });
   });
   
-  // 인증 버튼 이벤트 (DOM 로딩 완료 후 실행)
-  setTimeout(() => {
-    const loginBtn = document.getElementById('loginBtn');
-    const registerBtn = document.getElementById('registerBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const openRegisterNav = document.getElementById('openRegisterNav');
-    
-    console.log('🔍 로그인 버튼 요소 확인:', loginBtn);
-    console.log('🔍 회원가입 버튼 요소 확인:', registerBtn);
-    console.log('🔍 로그아웃 버튼 요소 확인:', logoutBtn);
-    
-    if (loginBtn) {
-      loginBtn.addEventListener('click', () => {
-        console.log('🔑 로그인 버튼 클릭됨');
-        showModal(loginModal);
-      });
-      console.log('✅ 로그인 버튼 이벤트 리스너 추가 완료');
-    } else {
-      console.error('❌ 로그인 버튼을 찾을 수 없음');
-    }
-    
-    if (registerBtn) {
-      registerBtn.addEventListener('click', () => {
-        console.log('📝 회원가입 버튼 클릭됨');
-        showModal(registerModal);
-      });
-      console.log('✅ 회원가입 버튼 이벤트 리스너 추가 완료');
-    } else {
-      console.error('❌ 회원가입 버튼을 찾을 수 없음');
-    }
-    
-    if (logoutBtn) {
-      logoutBtn.addEventListener('click', logout);
-      console.log('✅ 로그아웃 버튼 이벤트 리스너 추가 완료');
-    }
-    
-    if (openRegisterNav) {
-      openRegisterNav.addEventListener('click', (e) => { 
-        e.preventDefault(); 
-        showModal(registerModal); 
-      });
-      console.log('✅ 회원가입 네비게이션 이벤트 리스너 추가 완료');
-    }
-  }, 100);
-  
-  // 모바일 인증 버튼 이벤트 (DOM 로딩 완료 후 실행)
-  setTimeout(() => {
-    const mobileLoginBtn = document.querySelector('.mobile-login-btn');
-    const mobileRegisterBtn = document.querySelector('.mobile-register-btn');
-    
-    console.log('🔍 모바일 로그인 버튼 요소 확인:', mobileLoginBtn);
-    console.log('🔍 모바일 회원가입 버튼 요소 확인:', mobileRegisterBtn);
-    
-    if (mobileLoginBtn) {
-      mobileLoginBtn.addEventListener('click', () => {
-        console.log('📱 모바일 로그인 버튼 클릭됨');
-        showModal(loginModal);
-      });
-      console.log('✅ 모바일 로그인 버튼 이벤트 리스너 추가 완료');
-    } else {
-      console.error('❌ 모바일 로그인 버튼을 찾을 수 없음');
-    }
-    
-    if (mobileRegisterBtn) {
-      mobileRegisterBtn.addEventListener('click', () => {
-        console.log('📱 모바일 회원가입 버튼 클릭됨');
-        showModal(registerModal);
-      });
-      console.log('✅ 모바일 회원가입 버튼 이벤트 리스너 추가 완료');
-    } else {
-      console.error('❌ 모바일 회원가입 버튼을 찾을 수 없음');
-    }
-  }, 150);
+  // 인증 버튼 이벤트
+  if (loginBtn) loginBtn.addEventListener('click', () => showModal(loginModal));
+  if (registerBtn) registerBtn.addEventListener('click', () => showModal(registerModal));
+  if (logoutBtn) logoutBtn.addEventListener('click', logout);
+  if (openRegisterNav) openRegisterNav.addEventListener('click', (e) => { e.preventDefault(); showModal(registerModal); });
   
   
   // 홈 버튼 이벤트
@@ -8150,13 +8071,8 @@ document.addEventListener('DOMContentLoaded', async function() {
   try {
     // 다국어 지원 초기화
     console.log('🔤 다국어 지원 초기화 시작');
-    try {
-      initializeLanguage();
-      console.log('✅ 다국어 지원 초기화 완료');
-    } catch (langError) {
-      console.error('❌ 다국어 지원 초기화 실패:', langError);
-      // 다국어 초기화 실패해도 앱은 계속 작동
-    }
+    initializeLanguage();
+    console.log('✅ 다국어 지원 초기화 완료');
     
     // 폼 초기화
     console.log('📝 폼 초기화 시작');
@@ -8221,15 +8137,8 @@ window.addEventListener('scroll', () => {
 // 다국어 지원 초기화 함수
 function initializeLanguage() {
   console.log('🔤 다국어 지원 초기화');
-  
-  try {
-    // 기본 언어 설정
-    changeLanguage(currentLanguage);
-    console.log('✅ 다국어 지원 초기화 완료');
-  } catch (error) {
-    console.error('❌ 다국어 지원 초기화 중 오류:', error);
-    // 오류가 발생해도 앱이 계속 작동하도록 함
-  }
+  // 기본 언어 설정
+  changeLanguage(currentLanguage);
 }
 
 // 폼 초기화 함수
@@ -9588,23 +9497,9 @@ function toggleLanguageMenu() {
 function changeLanguage(langCode) {
   console.log('🌐 언어 변경:', langCode);
   
-  // 언어 드롭다운 닫기 (요소 존재 여부 확인)
-  const languageDropdown = document.getElementById('languageDropdown');
-  const languageSelector = document.querySelector('.language-selector');
-  
-  if (languageDropdown) {
-    languageDropdown.style.display = 'none';
-    console.log('✅ 언어 드롭다운 닫기 완료');
-  } else {
-    console.log('⚠️ 언어 드롭다운 요소를 찾을 수 없음');
-  }
-  
-  if (languageSelector) {
-    languageSelector.classList.remove('active');
-    console.log('✅ 언어 선택기 비활성화 완료');
-  } else {
-    console.log('⚠️ 언어 선택기 요소를 찾을 수 없음');
-  }
+  // 언어 드롭다운 닫기
+  document.getElementById('languageDropdown').style.display = 'none';
+  document.querySelector('.language-selector').classList.remove('active');
   
   // 언어 변경 로직 (향후 구현)
   switch(langCode) {

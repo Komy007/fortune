@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 테스트</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 로그인 테스트</h1>
+        
+        <div class="form-group">
+            <label for="email">이메일:</label>
+            <input type="email" id="email" value="test@example.com" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="password">비밀번호:</label>
+            <input type="password" id="password" value="password123" required>
+        </div>
+        
+        <button onclick="testLogin()">로그인 테스트</button>
+        <button onclick="checkStatus()">상태 확인</button>
+        <button onclick="testLogout()">로그아웃 테스트</button>
+        
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        // API 요청 헬퍼 함수
+        async function apiRequest(url, options = {}) {
+            const defaultOptions = {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include'
+            };
+            
+            try {
+                const response = await fetch(url, { ...defaultOptions, ...options });
+                const data = await response.json().catch(() => ({}));
+                
+                if (!response.ok) {
+                    throw new Error(data.error || `요청 실패 (${response.status})`);
+                }
+                
+                return data;
+            } catch (err) {
+                if (err instanceof TypeError) {
+                    throw new Error('서버에 연결할 수 없습니다.');
+                }
+                throw err;
+            }
+        }
+
+        function showResult(message, type = 'info') {
+            const result = document.getElementById('result');
+            result.textContent = message;
+            result.className = `result ${type}`;
+            result.style.display = 'block';
+        }
+
+        async function testLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showResult('이메일과 비밀번호를 입력해주세요.', 'error');
+                return;
+            }
+            
+            showResult('로그인 중...', 'info');
+            
+            try {
+                const data = { email, password };
+                const result = await apiRequest('/api/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                
+                showResult(`✅ 로그인 성공!\n\n사용자 정보:\n${JSON.stringify(result.user, null, 2)}\n\n토큰: ${result.token ? '있음' : '없음'}`, 'success');
+                
+                // 3초 후 상태 확인
+                setTimeout(checkStatus, 3000);
+                
+            } catch (error) {
+                showResult(`❌ 로그인 실패:\n${error.message}`, 'error');
+            }
+        }
+
+        async function checkStatus() {
+            showResult('상태 확인 중...', 'info');
+            
+            try {
+                const result = await apiRequest('/api/me');
+                
+                if (result.success && result.user) {
+                    showResult(`✅ 로그인 상태 확인됨!\n\n사용자 정보:\n${JSON.stringify(result.user, null, 2)}`, 'success');
+                } else {
+                    showResult('❌ 로그인되지 않은 상태입니다.', 'error');
+                }
+                
+            } catch (error) {
+                showResult(`❌ 상태 확인 실패:\n${error.message}`, 'error');
+            }
+        }
+
+        async function testLogout() {
+            showResult('로그아웃 중...', 'info');
+            
+            try {
+                const result = await apiRequest('/api/auth/logout', {
+                    method: 'POST'
+                });
+                
+                showResult('✅ 로그아웃 성공!', 'success');
+                
+                // 2초 후 상태 확인
+                setTimeout(checkStatus, 2000);
+                
+            } catch (error) {
+                showResult(`❌ 로그아웃 실패:\n${error.message}`, 'error');
+            }
+        }
+
+        // 페이지 로드 시 상태 확인
+        window.onload = function() {
+            console.log('🔍 로그인 테스트 페이지 로드됨');
+            checkStatus();
+        };
+    </script>
+</body>
+</html>
