@@ -4129,21 +4129,55 @@ function validateCurrentStep() {
   
   // 특별한 유효성 검사
   if (currentStep === 1) {
-    const email = document.getElementById('registerEmail').value;
-    const password = document.getElementById('registerPassword').value;
+    const emailElement = document.getElementById('registerEmail');
+    const passwordElement = document.getElementById('registerPassword');
+    
+    console.log('🔍 이메일 요소:', emailElement);
+    console.log('🔍 비밀번호 요소:', passwordElement);
+    
+    if (!emailElement) {
+      console.error('❌ 이메일 입력 필드를 찾을 수 없습니다');
+      alert('이메일 입력 필드를 찾을 수 없습니다.');
+      return false;
+    }
+    
+    if (!passwordElement) {
+      console.error('❌ 비밀번호 입력 필드를 찾을 수 없습니다');
+      alert('비밀번호 입력 필드를 찾을 수 없습니다.');
+      return false;
+    }
+    
+    const email = emailElement.value;
+    const password = passwordElement.value;
     
     console.log('📧 이메일 검사:', email);
     console.log('🔒 비밀번호 검사:', password.length, '자');
     
+    if (!email || email.trim() === '') {
+      console.log('❌ 이메일이 비어있음');
+      alert('이메일을 입력해주세요.');
+      emailElement.focus();
+      return false;
+    }
+    
+    if (!password || password.trim() === '') {
+      console.log('❌ 비밀번호가 비어있음');
+      alert('비밀번호를 입력해주세요.');
+      passwordElement.focus();
+      return false;
+    }
+    
     if (!isValidEmail(email)) {
       console.log('❌ 이메일 형식 오류');
       alert('올바른 이메일 형식을 입력해주세요.');
+      emailElement.focus();
       return false;
     }
     
     if (password.length < 8) {
       console.log('❌ 비밀번호 길이 부족');
       alert('비밀번호는 8자 이상이어야 합니다.');
+      passwordElement.focus();
       return false;
     }
   }
