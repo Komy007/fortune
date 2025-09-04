@@ -4041,6 +4041,8 @@ function changeSection(sectionId) {
 
 // 회원가입 단계 관리
 function updateStep(newStep) {
+  console.log('🔄 updateStep 호출됨, newStep:', newStep, 'currentStep:', currentStep);
+  
   // 현재 단계 비활성화
   formSteps.forEach(step => step.classList.remove('active'));
   progressSteps.forEach(step => {
@@ -4049,8 +4051,13 @@ function updateStep(newStep) {
   
   // 새 단계 활성화
   const targetFormStep = document.querySelector(`.form-step[data-step="${newStep}"]`);
+  console.log('🎯 targetFormStep:', targetFormStep);
+  
   if (targetFormStep) {
     targetFormStep.classList.add('active');
+    console.log('✅ 새 단계 활성화 완료');
+  } else {
+    console.error('❌ 새 단계 폼을 찾을 수 없습니다:', newStep);
   }
   
   // 진행 단계 업데이트
@@ -4064,17 +4071,27 @@ function updateStep(newStep) {
   }
   
   currentStep = newStep;
+  console.log('✅ currentStep 업데이트 완료:', currentStep);
 }
 
 // 다음 단계로 이동
 function nextStep() {
+  console.log('🚀 nextStep 호출됨, currentStep:', currentStep, 'totalSteps:', totalSteps);
+  
   if (currentStep < totalSteps) {
+    console.log('✅ 단계 진행 가능, 유효성 검사 시작');
     if (validateCurrentStep()) {
+      console.log('✅ 유효성 검사 통과, 다음 단계로 이동');
       updateStep(currentStep + 1);
       if (currentStep === 3) {
+        console.log('📋 3단계 도달, 요약 정보 생성');
         populateSummary();
       }
+    } else {
+      console.log('❌ 유효성 검사 실패');
     }
+  } else {
+    console.log('❌ 마지막 단계에 도달함');
   }
 }
 
@@ -4087,11 +4104,23 @@ function prevStep() {
 
 // 현재 단계 유효성 검사
 function validateCurrentStep() {
+  console.log('🔍 validateCurrentStep 호출됨, currentStep:', currentStep);
+  
   const currentFormStep = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+  console.log('📋 currentFormStep:', currentFormStep);
+  
+  if (!currentFormStep) {
+    console.error('❌ 현재 단계 폼을 찾을 수 없습니다:', currentStep);
+    return false;
+  }
+  
   const inputs = currentFormStep.querySelectorAll('input[required], select[required]');
+  console.log('📝 필수 입력 필드들:', inputs);
   
   for (let input of inputs) {
+    console.log('🔍 입력 필드 검사:', input.name, '값:', input.value);
     if (!input.value.trim()) {
+      console.log('❌ 필수 항목 누락:', input.name);
       alert('모든 필수 항목을 입력해주세요.');
       input.focus();
       return false;
@@ -4103,17 +4132,23 @@ function validateCurrentStep() {
     const email = document.getElementById('registerEmail').value;
     const password = document.getElementById('registerPassword').value;
     
+    console.log('📧 이메일 검사:', email);
+    console.log('🔒 비밀번호 검사:', password.length, '자');
+    
     if (!isValidEmail(email)) {
+      console.log('❌ 이메일 형식 오류');
       alert('올바른 이메일 형식을 입력해주세요.');
       return false;
     }
     
     if (password.length < 8) {
+      console.log('❌ 비밀번호 길이 부족');
       alert('비밀번호는 8자 이상이어야 합니다.');
       return false;
     }
   }
   
+  console.log('✅ 유효성 검사 통과');
   return true;
 }
 
@@ -9660,7 +9695,8 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('🌐 모바일 언어 변경:', selectedLanguage);
       changeLanguage(selectedLanguage);
     });
-  }
+
+이메넣넣고번  }
 });
 
 // 간단한 탭 상태 확인 함수
