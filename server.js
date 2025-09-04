@@ -216,98 +216,154 @@ app.post('/api/auth/register', async (req, res) => {
       });
     }
 
-    // 비밀번호 해시화
-    const passwordHash = await bcrypt.hash(password, 10);
-    
-    // 사용자 생성 (비동기)
-    db.run(`
-      INSERT INTO users (email, name, username, password_hash, birth_year, birth_month, birth_day, birth_hour) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `, [email, name, username, passwordHash, birth_year, birth_month, birth_day, birth_hour], function(err) {
+    // 이메일 중복 체크
+    db.get('SELECT id FROM users WHERE email = ?', [email], (err, existingUser) => {
       if (err) {
-        console.error('사용자 생성 실패:', err);
+        console.error('이메일 중복 체크 실패:', err);
         return res.status(500).json({ 
-          error: 'user_creation_failed',
-          message: '사용자 생성 중 오류가 발생했습니다.' 
+          error: 'database_error',
+          message: '데이터베이스 오류가 발생했습니다.' 
         });
       }
       
-      const userId = this.lastID;
-      console.log('✅ 사용자 생성 성공, ID:', userId);
-
-      // 추가 정보 저장 (user_kv 테이블)
-      const extras = {
-        birthplace,
-        calendar_type,
-        sex,
-        time_accuracy,
-        birth_time,
-        birth_year,
-        birth_month,
-        birth_day
-      };
+      if (existingUser) {
+        console.log('❌ 회원가입 실패: 이미 존재하는 이메일');
+        return res.status(409).json({ 
+          error: 'email_exists',
+          message: '이미 사용 중인 이메일입니다.' 
+        });
+      }
       
-      let savedCount = 0;
-      const totalExtras = Object.keys(extras).length;
+      // 사용자명 중복 체크 (username이 있는 경우)
+      if (username) {
+        db.get('SELECT id FROM users WHERE username = ?', [username], (err, existingUsername) => {
+          if (err) {
+            console.error('사용자명 중복 체크 실패:', err);
+            return res.status(500).json({ 
+              error: 'database_error',
+              message: '데이터베이스 오류가 발생했습니다.' 
+            });
+          }
+          
+          if (existingUsername) {
+            console.log('❌ 회원가입 실패: 이미 존재하는 사용자명');
+            return res.status(409).json({ 
+              error: 'username_exists',
+              message: '이미 사용 중인 사용자명입니다.' 
+            });
+          }
+          
+          // 중복 체크 통과 후 사용자 생성
+          createUser();
+        });
+      } else {
+        // username이 없는 경우 바로 사용자 생성
+        createUser();
+      }
       
-      Object.entries(extras).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== '') {
+      function createUser() {
+        // 비밀번호 해시화
+        bcrypt.hash(password, 10, (err, passwordHash) => {
+          if (err) {
+            console.error('비밀번호 해시화 실패:', err);
+            return res.status(500).json({ 
+              error: 'password_hash_failed',
+              message: '비밀번호 처리 중 오류가 발생했습니다.' 
+            });
+          }
+          
+          // 사용자 생성 (비동기)
           db.run(`
-            INSERT OR REPLACE INTO user_kv (user_id, k, v, updated_at) 
-            VALUES (?, ?, ?, CURRENT_TIMESTAMP)
-          `, [userId, key, JSON.stringify(value)], function(err) {
+            INSERT INTO users (email, name, username, password_hash, birth_year, birth_month, birth_day, birth_hour) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          `, [email, name, username, passwordHash, birth_year, birth_month, birth_day, birth_hour], function(err) {
             if (err) {
-              console.warn(`추가 정보 저장 실패 (${key}):`, err.message);
+              console.error('사용자 생성 실패:', err);
+              return res.status(500).json({ 
+                error: 'user_creation_failed',
+                message: '사용자 생성 중 오류가 발생했습니다.' 
+              });
             }
-            savedCount++;
             
-            // 모든 추가 정보 저장 완료 후 JWT 토큰 생성
-            if (savedCount === totalExtras) {
+            const userId = this.lastID;
+            console.log('✅ 사용자 생성 성공, ID:', userId);
+
+            // 추가 정보 저장 (user_kv 테이블)
+            const extras = {
+              birthplace,
+              calendar_type,
+              sex,
+              time_accuracy,
+              birth_time,
+              birth_year,
+              birth_month,
+              birth_day
+            };
+            
+            let savedCount = 0;
+            const totalExtras = Object.keys(extras).length;
+            
+            Object.entries(extras).forEach(([key, value]) => {
+              if (value !== undefined && value !== null && value !== '') {
+                db.run(`
+                  INSERT OR REPLACE INTO user_kv (user_id, k, v, updated_at) 
+                  VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+                `, [userId, key, JSON.stringify(value)], function(err) {
+                  if (err) {
+                    console.warn(`추가 정보 저장 실패 (${key}):`, err.message);
+                  }
+                  savedCount++;
+                  
+                  // 모든 추가 정보 저장 완료 후 JWT 토큰 생성
+                  if (savedCount === totalExtras) {
+                    createJWTToken();
+                  }
+                });
+              } else {
+                savedCount++;
+                if (savedCount === totalExtras) {
+                  createJWTToken();
+                }
+              }
+            });
+            
+            // 추가 정보가 없는 경우 바로 JWT 토큰 생성
+            if (totalExtras === 0) {
               createJWTToken();
             }
+            
+            function createJWTToken() {
+              // JWT 토큰 생성
+              const token = jwt.sign(
+                { uid: userId, email, name },
+                process.env.JWT_SECRET,
+                { expiresIn: '7d' }
+              );
+              
+              // 보안 쿠키 설정
+              res.cookie('token', token, {
+                httpOnly: true,
+                sameSite: 'lax',
+                maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
+                secure: process.env.NODE_ENV === 'production'
+              });
+              
+              res.json({ 
+                success: true, 
+                token: token, // 토큰을 응답에 포함
+                user: { 
+                  id: userId, 
+                  email, 
+                  name, 
+                  username,
+                  birth_year,
+                  birth_month,
+                  birth_day,
+                  birth_hour
+                } 
+              });
+            }
           });
-        } else {
-          savedCount++;
-          if (savedCount === totalExtras) {
-            createJWTToken();
-          }
-        }
-      });
-      
-      // 추가 정보가 없는 경우 바로 JWT 토큰 생성
-      if (totalExtras === 0) {
-        createJWTToken();
-      }
-      
-      function createJWTToken() {
-        // JWT 토큰 생성
-        const token = jwt.sign(
-          { uid: userId, email, name },
-          process.env.JWT_SECRET,
-          { expiresIn: '7d' }
-        );
-        
-        // 보안 쿠키 설정
-        res.cookie('token', token, {
-          httpOnly: true,
-          sameSite: 'lax',
-          maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
-          secure: process.env.NODE_ENV === 'production'
-        });
-        
-        res.json({ 
-          success: true, 
-          token: token, // 토큰을 응답에 포함
-          user: { 
-            id: userId, 
-            email, 
-            name, 
-            username,
-            birth_year,
-            birth_month,
-            birth_day,
-            birth_hour
-          } 
         });
       }
     });
