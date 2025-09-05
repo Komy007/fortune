@@ -1355,10 +1355,10 @@
           </div>
           
           <div class="admin-tabs">
-            <button class="tab-btn active" data-tab="users">사용자 관리</button>
-            <button class="tab-btn" data-tab="readings">분석 기록</button>
-            <button class="tab-btn" data-tab="announcements">공지사항 관리</button>
-            <button class="tab-btn" data-tab="system">시스템 정보</button>
+            <button class="tab-btn active" data-tab="users" onclick="switchAdminTab('users')">사용자 관리</button>
+            <button class="tab-btn" data-tab="readings" onclick="switchAdminTab('readings')">분석 기록</button>
+            <button class="tab-btn" data-tab="announcements" onclick="switchAdminTab('announcements')">공지사항 관리</button>
+            <button class="tab-btn" data-tab="system" onclick="switchAdminTab('system')">시스템 정보</button>
           </div>
           
           <!-- 사용자 관리 탭 -->
@@ -1854,6 +1854,178 @@
       }
     }
     
+    // 관리자 탭 전환 함수
+    function switchAdminTab(tabName) {
+      console.log('🔄 관리자 탭 전환:', tabName);
+      
+      // 모든 탭 버튼 비활성화
+      document.querySelectorAll('.admin-tabs .tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      // 모든 탭 콘텐츠 숨기기
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      
+      // 선택된 탭 버튼 활성화
+      const activeBtn = document.querySelector(`[data-tab="${tabName}"]`);
+      if (activeBtn) {
+        activeBtn.classList.add('active');
+      }
+      
+      // 선택된 탭 콘텐츠 표시
+      const activeContent = document.getElementById(`${tabName}Tab`);
+      if (activeContent) {
+        activeContent.classList.add('active');
+      }
+      
+      // 탭별 데이터 로드
+      if (tabName === 'users') {
+        loadUsersData();
+      } else if (tabName === 'readings') {
+        loadReadingsData();
+      } else if (tabName === 'announcements') {
+        loadAnnouncementsData();
+      } else if (tabName === 'system') {
+        loadSystemData();
+      }
+    }
+    
+    // 사용자 데이터 로드 함수
+    async function loadUsersData() {
+      console.log('👥 사용자 목록 로드 중...');
+      try {
+        const usersResponse = await fetch('/api/admin/users');
+        if (usersResponse.ok) {
+          const usersResult = await usersResponse.json();
+          if (usersResult.success) {
+            const usersTableBody = document.getElementById('usersTableBody');
+            if (usersTableBody) {
+              usersTableBody.innerHTML = '';
+              usersResult.users.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                  <td>${user.id}</td>
+                  <td>${user.name || 'N/A'}</td>
+                  <td>${user.email}</td>
+                  <td>${new Date(user.created_at).toLocaleDateString()}</td>
+                  <td>${user.birth_year || 'N/A'}</td>
+                  <td>
+                    <button class="action-btn edit-btn" onclick="editUser(${user.id})">편집</button>
+                    <button class="action-btn delete-btn" onclick="deleteUser(${user.id})">삭제</button>
+                  </td>
+                `;
+                usersTableBody.appendChild(row);
+              });
+              console.log('✅ 사용자 목록 로드 완료');
+            }
+          }
+        }
+      } catch (error) {
+        console.error('❌ 사용자 목록 로드 오류:', error);
+      }
+    }
+    
+    // 분석 기록 데이터 로드 함수
+    async function loadReadingsData() {
+      console.log('📋 분석 기록 로드 중...');
+      try {
+        const readingsResponse = await fetch('/api/admin/readings');
+        if (readingsResponse.ok) {
+          const readingsResult = await readingsResponse.json();
+          if (readingsResult.success) {
+            const readingsTableBody = document.getElementById('readingsTableBody');
+            if (readingsTableBody) {
+              readingsTableBody.innerHTML = '';
+              if (readingsResult.readings.length === 0) {
+                readingsTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">분석 기록이 없습니다.</td></tr>';
+              } else {
+                readingsResult.readings.forEach(reading => {
+                  const row = document.createElement('tr');
+                  row.innerHTML = `
+                    <td><input type="checkbox" value="${reading.id}" class="reading-checkbox"></td>
+                    <td>${reading.id}/${reading.user_name || 'N/A'}</td>
+                    <td>${reading.type || 'N/A'}</td>
+                    <td>${new Date(reading.created_at).toLocaleDateString()}</td>
+                    <td>
+                      <button class="action-btn delete-btn" onclick="deleteReading(${reading.id})">삭제</button>
+                    </td>
+                  `;
+                  readingsTableBody.appendChild(row);
+                });
+              }
+              console.log('✅ 분석 기록 로드 완료');
+            }
+          }
+        }
+      } catch (error) {
+        console.error('❌ 분석 기록 로드 오류:', error);
+      }
+    }
+    
+    // 공지사항 데이터 로드 함수
+    async function loadAnnouncementsData() {
+      console.log('📢 공지사항 로드 중...');
+      try {
+        const announcementsResponse = await fetch('/api/admin/announcements');
+        if (announcementsResponse.ok) {
+          const announcementsResult = await announcementsResponse.json();
+          if (announcementsResult.success) {
+            const announcementsTableBody = document.getElementById('announcementsTableBody');
+            if (announcementsTableBody) {
+              announcementsTableBody.innerHTML = '';
+              announcementsResult.announcements.forEach(announcement => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                  <td>${announcement.id}</td>
+                  <td>${announcement.title}</td>
+                  <td>${announcement.author || '관리자'}</td>
+                  <td>${announcement.priority === 2 ? '긴급' : announcement.priority === 1 ? '중요' : '일반'}</td>
+                  <td>${announcement.status === 'active' ? '활성' : '비활성'}</td>
+                  <td>${new Date(announcement.created_at).toLocaleDateString()}</td>
+                  <td>
+                    <button class="action-btn edit-btn" onclick="editAnnouncement(${announcement.id})">편집</button>
+                    <button class="action-btn delete-btn" onclick="deleteAnnouncement(${announcement.id})">삭제</button>
+                  </td>
+                `;
+                announcementsTableBody.appendChild(row);
+              });
+              console.log('✅ 공지사항 로드 완료');
+            }
+          }
+        }
+      } catch (error) {
+        console.error('❌ 공지사항 로드 오류:', error);
+      }
+    }
+    
+    // 시스템 데이터 로드 함수
+    async function loadSystemData() {
+      console.log('⚙️ 시스템 정보 로드 중...');
+      try {
+        const systemResponse = await fetch('/api/admin/system');
+        if (systemResponse.ok) {
+          const systemResult = await systemResponse.json();
+          if (systemResult.success) {
+            const serverStatusEl = document.getElementById('serverStatus');
+            const dbStatusEl = document.getElementById('dbStatus');
+            const serverStartTimeEl = document.getElementById('serverStartTime');
+            const memoryUsageEl = document.getElementById('memoryUsage');
+            
+            if (serverStatusEl) serverStatusEl.textContent = systemResult.system.serverStatus || '정상';
+            if (dbStatusEl) dbStatusEl.textContent = systemResult.system.dbStatus || '연결됨';
+            if (serverStartTimeEl) serverStartTimeEl.textContent = systemResult.system.startTime || '-';
+            if (memoryUsageEl) memoryUsageEl.textContent = systemResult.system.memoryUsage || '-';
+            
+            console.log('✅ 시스템 정보 로드 완료');
+          }
+        }
+      } catch (error) {
+        console.error('❌ 시스템 정보 로드 오류:', error);
+      }
+    }
+    
     // 관리자 데이터 로드 함수
     async function loadAdminData() {
       console.log('🔄 관리자 데이터 로드 시작');
@@ -2220,6 +2392,27 @@
       }
     }
     
+    // 공지사항 폼 표시/숨기기
+    function showAnnouncementForm() {
+      const form = document.getElementById('announcementForm');
+      if (form) {
+        form.style.display = 'block';
+        form.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+    
+    function hideAnnouncementForm() {
+      const form = document.getElementById('announcementForm');
+      if (form) {
+        form.style.display = 'none';
+        // 폼 초기화
+        const titleInput = document.getElementById('announcementTitle');
+        const contentInput = document.getElementById('announcementContent');
+        if (titleInput) titleInput.value = '';
+        if (contentInput) contentInput.value = '';
+      }
+    }
+    
     async function createAnnouncement(formData) {
       console.log('📢 공지사항 생성 시작');
       
@@ -2276,6 +2469,78 @@
       } catch (error) {
         console.error('📢 공지사항 생성 오류:', error);
         alert('공지사항 등록 중 오류가 발생했습니다: ' + error.message);
+      }
+    }
+    
+    // 공지사항 편집 함수
+    async function editAnnouncement(announcementId) {
+      console.log('📝 공지사항 편집 시작:', announcementId);
+      
+      try {
+        const response = await fetch(`/api/admin/announcements/${announcementId}`);
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            const announcement = result.announcement;
+            
+            // 편집 폼 표시 (간단한 prompt 사용)
+            const newTitle = prompt('제목을 수정하세요:', announcement.title || '');
+            if (newTitle !== null) {
+              const newContent = prompt('내용을 수정하세요:', announcement.content || '');
+              if (newContent !== null) {
+                const updateResponse = await fetch(`/api/admin/announcements/${announcementId}`, {
+                  method: 'PUT',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ 
+                    title: newTitle, 
+                    content: newContent,
+                    priority: announcement.priority || 0
+                  })
+                });
+                
+                if (updateResponse.ok) {
+                  alert('공지사항이 수정되었습니다.');
+                  loadAnnouncementsData(); // 목록 새로고침
+                } else {
+                  alert('공지사항 수정에 실패했습니다.');
+                }
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('📝 공지사항 편집 오류:', error);
+        alert('공지사항 편집 중 오류가 발생했습니다.');
+      }
+    }
+    
+    // 공지사항 삭제 함수
+    async function deleteAnnouncement(announcementId) {
+      console.log('🗑️ 공지사항 삭제 시작:', announcementId);
+      
+      if (!confirm('정말로 이 공지사항을 삭제하시겠습니까?')) {
+        return;
+      }
+      
+      try {
+        const response = await fetch(`/api/admin/announcements/${announcementId}`, {
+          method: 'DELETE'
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            alert('공지사항이 삭제되었습니다.');
+            loadAnnouncementsData(); // 목록 새로고침
+          } else {
+            alert('공지사항 삭제에 실패했습니다.');
+          }
+        }
+      } catch (error) {
+        console.error('🗑️ 공지사항 삭제 오류:', error);
+        alert('공지사항 삭제 중 오류가 발생했습니다.');
       }
     }
     
