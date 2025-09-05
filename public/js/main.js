@@ -4968,6 +4968,8 @@ async function performBaziAnalysis(user) {
       console.error('❌ 서버 오류 응답:', errorText);
       
       if (response.status === 401) {
+        console.log('🔐 토큰 만료 또는 무효, 자동 로그아웃 실행');
+        logout();
         throw new Error('인증 오류: 로그인이 필요합니다. 다시 로그인해주세요.');
       } else if (response.status === 403) {
         throw new Error('권한 오류: 접근이 거부되었습니다.');
@@ -5091,6 +5093,8 @@ async function performBaziAnalysisFallback(user) {
       console.error('❌ 폴백 서버 오류 응답:', errorText);
       
       if (response.status === 401) {
+        console.log('🔐 토큰 만료 또는 무효, 자동 로그아웃 실행');
+        logout();
         throw new Error('폴백 인증 오류: 로그인이 필요합니다. 다시 로그인해주세요.');
       } else if (response.status === 403) {
         throw new Error('폴백 권한 오류: 접근이 거부되었습니다.');

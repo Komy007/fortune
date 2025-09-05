@@ -695,7 +695,19 @@ app.post('/api/bazi', authenticateToken, (req, res) => {
     const userRow = db.prepare('SELECT id, name, email, birth_year, birth_month, birth_day, birth_hour FROM users WHERE id = ?').get(req.user.uid);
     const kvRows = db.prepare('SELECT k, v FROM user_kv WHERE user_id = ?').all(req.user.uid);
     const user_kv = {};
-    kvRows.forEach(row => { try { user_kv[row.k] = JSON.parse(row.v); } catch { user_kv[row.k] = row.v; } });
+    
+    // kvRows가 배열인지 확인 후 처리
+    if (Array.isArray(kvRows)) {
+      kvRows.forEach(row => { 
+        if (row && row.k && row.v) {
+          try { 
+            user_kv[row.k] = JSON.parse(row.v); 
+          } catch { 
+            user_kv[row.k] = row.v; 
+          } 
+        }
+      });
+    }
 
     // 장문 전문가 리포트 생성
     const proReport = buildProReport(baziResult, userRow, user_kv);
