@@ -1819,6 +1819,9 @@
           // 관리자 데이터 로드
           await loadAdminData();
           
+          // 초기 탭 설정 (사용자 관리 탭 활성화)
+          switchAdminTab('users');
+          
           alert('관리자 로그인 성공!');
           
         } else {

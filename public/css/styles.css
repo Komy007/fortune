@@ -8032,11 +8032,16 @@ body[data-section="numerology"] {
 /* 간단한 관리자 인증 화면 */
 .admin-login-simple {
   display: flex;
-  justify-content: flex-end;
-  align-items: flex-start;
-  min-height: 200px;
-  padding-right: 30px;
-  padding-top: 30px;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  padding: 40px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  margin: 20px 0;
 }
 
 .admin-login-box {
@@ -8097,12 +8102,14 @@ body[data-section="numerology"] {
 }
 
 .admin-dashboard {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(15px);
   border-radius: 20px;
   padding: 30px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  margin: 20px 0;
+  min-height: 500px;
 }
 
 .admin-header {
@@ -8177,23 +8184,46 @@ body[data-section="numerology"] {
 
 .tab-content {
   display: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .tab-content.active {
   display: block;
+  opacity: 1;
+  visibility: visible;
+  animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .table-container {
   overflow-x: auto;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
   padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  margin: 15px 0;
 }
 
 .admin-table {
   width: 100%;
   border-collapse: collapse;
   color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 .admin-table th,
@@ -8201,12 +8231,24 @@ body[data-section="numerology"] {
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background-color 0.3s ease;
 }
 
 .admin-table th {
   background: rgba(255, 215, 0, 0.2);
   color: #FFD700;
   font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+.admin-table tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.admin-table tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
 }
 
 /* 관리자 표 가독성: 등록자 이름/이메일 */
