@@ -790,7 +790,7 @@ const translations = {
 
 // 회원가입 단계 관리
 let currentStep = 1;
-const totalSteps = 3;
+const totalSteps = 2;
 
 // 전역 변수들
 let currentLanguage = 'ko';
@@ -4083,15 +4083,24 @@ function nextStep() {
     if (validateCurrentStep()) {
       console.log('✅ 유효성 검사 통과, 다음 단계로 이동');
       updateStep(currentStep + 1);
-      if (currentStep === 3) {
-        console.log('📋 3단계 도달, 요약 정보 생성');
-        populateSummary();
+      if (currentStep === 2) {
+        console.log('📋 2단계 도달, 회원가입 준비 완료');
       }
     } else {
       console.log('❌ 유효성 검사 실패');
     }
   } else {
-    console.log('❌ 마지막 단계에 도달함');
+    console.log('✅ 마지막 단계 도달, 회원가입 실행');
+    // 2단계에서 회원가입 실행
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+      const formData = new FormData(registerForm);
+      console.log('📋 폼 데이터 수집 완료, 회원가입 시작');
+      register(formData);
+    } else {
+      console.error('❌ 회원가입 폼을 찾을 수 없습니다');
+      alert('회원가입 폼을 찾을 수 없습니다. 페이지를 새로고침해주세요.');
+    }
   }
 }
 
@@ -4178,6 +4187,67 @@ function validateCurrentStep() {
       console.log('❌ 비밀번호 길이 부족');
       alert('비밀번호는 8자 이상이어야 합니다.');
       passwordElement.focus();
+      return false;
+    }
+  }
+  
+  // 2단계 유효성 검사
+  if (currentStep === 2) {
+    const nameElement = document.getElementById('registerNameSignup');
+    const yearElement = document.getElementById('registerYearSignup');
+    const monthElement = document.getElementById('registerMonthSignup');
+    const dayElement = document.getElementById('registerDaySignup');
+    const timeElement = document.getElementById('registerBirthTimeSignup');
+    const birthplaceElement = document.getElementById('registerBirthplaceSignup');
+    
+    console.log('🔍 2단계 필드 검사:', {
+      name: nameElement?.value,
+      year: yearElement?.value,
+      month: monthElement?.value,
+      day: dayElement?.value,
+      time: timeElement?.value,
+      birthplace: birthplaceElement?.value
+    });
+    
+    if (!nameElement || !nameElement.value.trim()) {
+      console.log('❌ 이름이 비어있음');
+      alert('이름을 입력해주세요.');
+      nameElement?.focus();
+      return false;
+    }
+    
+    if (!yearElement || !yearElement.value) {
+      console.log('❌ 출생년도가 비어있음');
+      alert('출생년도를 선택해주세요.');
+      yearElement?.focus();
+      return false;
+    }
+    
+    if (!monthElement || !monthElement.value) {
+      console.log('❌ 출생월이 비어있음');
+      alert('출생월을 선택해주세요.');
+      monthElement?.focus();
+      return false;
+    }
+    
+    if (!dayElement || !dayElement.value) {
+      console.log('❌ 출생일이 비어있음');
+      alert('출생일을 선택해주세요.');
+      dayElement?.focus();
+      return false;
+    }
+    
+    if (!timeElement || !timeElement.value) {
+      console.log('❌ 출생시간이 비어있음');
+      alert('출생시간을 입력해주세요.');
+      timeElement?.focus();
+      return false;
+    }
+    
+    if (!birthplaceElement || !birthplaceElement.value.trim()) {
+      console.log('❌ 출생지가 비어있음');
+      alert('출생지를 입력해주세요.');
+      birthplaceElement?.focus();
       return false;
     }
   }
@@ -5718,6 +5788,8 @@ function displayFriendResult(friend) {
 
 // API 요청 헬퍼 함수
 async function apiRequest(url, options = {}) {
+  console.log('🌐 API 요청:', url, options);
+  
   const defaultOptions = {
     headers: {
       'Content-Type': 'application/json',
@@ -5730,7 +5802,10 @@ async function apiRequest(url, options = {}) {
   
   try {
     const response = await fetch(url, { ...defaultOptions, ...options });
+    console.log('📡 API 응답 상태:', response.status, response.statusText);
+    
     const data = await response.json().catch(() => ({}));
+    console.log('📡 API 응답 데이터:', data);
     
     if (!response.ok) {
       // 인증 오류인 경우 로그인 상태 초기화
@@ -5797,9 +5872,16 @@ function parseBirthTime(timeValue) {
 
 // 회원가입 함수
 async function register(formData) {
+  console.log('🚀 register 함수 호출됨');
   showLoading();
   
   try {
+    // 폼 데이터 디버깅
+    console.log('📋 폼 데이터 원본:');
+    for (let [key, value] of formData.entries()) {
+      console.log(`  ${key}: ${value}`);
+    }
+    
     const data = {
       name: formData.get('name'),
       username: formData.get('username') || formData.get('email'), // username이 없으면 email 사용
@@ -5808,10 +5890,17 @@ async function register(formData) {
       birth_year: parseInt(formData.get('birthYear')),
       birth_month: parseInt(formData.get('birthMonth')),
       birth_day: parseInt(formData.get('birthDay')),
-      birth_hour: parseBirthTime(formData.get('birthTime') || formData.get('birthHour') || 0)
+      birth_hour: parseBirthTime(formData.get('birthTime') || formData.get('birthHour') || 0),
+      birthplace: formData.get('birthplace'),
+      calendar_type: formData.get('calendarType') || 'solar',
+      sex: formData.get('sex') || 'male',
+      time_accuracy: formData.get('timeAccuracy') || 'exact'
     };
     
-    console.log('📝 회원가입 시도:', data.email);
+    console.log('📝 회원가입 데이터:', data);
+    console.log('📧 이메일:', data.email);
+    console.log('👤 이름:', data.name);
+    console.log('🔒 비밀번호 길이:', data.password?.length);
     
     const result = await apiRequest('/api/auth/register', {
       method: 'POST',
@@ -5864,15 +5953,23 @@ async function register(formData) {
 
 // 로그인 함수
 async function login(formData) {
+  console.log('🚀 login 함수 호출됨');
   showLoading();
   
   try {
+    // 폼 데이터 디버깅
+    console.log('📋 로그인 폼 데이터:');
+    for (let [key, value] of formData.entries()) {
+      console.log(`  ${key}: ${value}`);
+    }
+    
     const data = {
       email: formData.get('email'),
       password: formData.get('password')
     };
     
     console.log('🔐 로그인 시도:', data.email);
+    console.log('🔒 비밀번호 길이:', data.password?.length);
     
     const result = await apiRequest('/api/auth/login', {
       method: 'POST',
@@ -7681,11 +7778,12 @@ function attachEventListeners() {
   }
   
   if (registerForm) {
-    registerForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const formData = new FormData(registerForm);
-      register(formData);
-    });
+    // 회원가입 폼의 submit 이벤트는 제거 (단계별 진행 방식 사용)
+    // registerForm.addEventListener('submit', (e) => {
+    //   e.preventDefault();
+    //   const formData = new FormData(registerForm);
+    //   register(formData);
+    // });
   }
   
   if (baziForm) {

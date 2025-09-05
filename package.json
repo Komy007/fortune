@@ -10,7 +10,13 @@
     "deploy": "echo 'Deploy to your preferred platform'",
     "postinstall": "echo 'Build completed'"
   },
-  "keywords": ["fortune", "bazi", "astrology", "divination", "ai"],
+  "keywords": [
+    "fortune",
+    "bazi",
+    "astrology",
+    "divination",
+    "ai"
+  ],
   "author": "Fortune Master",
   "license": "MIT",
   "engines": {
@@ -26,14 +32,14 @@
   },
   "homepage": "https://github.com/yourusername/fortune-teller-app#readme",
   "dependencies": {
-    "express": "^4.18.2",
+    "bcrypt": "^6.0.0",
     "body-parser": "^1.20.2",
-    "sqlite3": "^5.1.6",
-    "bcrypt": "^5.1.1",
-    "jsonwebtoken": "^9.0.2",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.3.1",
-    "lru-cache": "^10.0.0"
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "lru-cache": "^10.0.0",
+    "sqlite3": "^5.1.6"
   },
   "resolutions": {
     "better-sqlite3": "npm:sqlite3@^5.1.6"
