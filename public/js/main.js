@@ -906,7 +906,7 @@ function setupNumerologyTabs() {
         console.log('🔄 모달 호출 시작:', tabName);
         switch(tabName) {
           case 'lucky-numbers':
-            showLuckyNumbersModal();
+            showLuckyNumbersModal(currentUser);
             break;
           case 'phone-analysis':
             showPhoneAnalysisModal();
@@ -1034,7 +1034,7 @@ window.switchTab = function(tabName) {
       switch(tabName) {
         case 'lucky-numbers':
           console.log('⭐ 길한 숫자 모달 팝업');
-          showLuckyNumbersModal();
+          showLuckyNumbersModal(currentUser);
           break;
         case 'phone-analysis':
           console.log('📱 전화번호 분석 모달 팝업');
@@ -1329,21 +1329,27 @@ function performNumerologyAnalysis(user) {
 }
 
 // 길한 숫자 분석
-async function analyzeLuckyNumbers() {
+async function analyzeLuckyNumbers(user = null) {
   console.log('⭐ 길한 숫자 분석 시작');
   
+  // 사용자 정보 가져오기 (매개변수 우선, 없으면 currentUser 사용)
+  const userToUse = user || currentUser;
+  console.log('🔍 분석할 사용자 정보:', userToUse);
+  
   // 현재 사용자 정보로 기본 데이터 생성
-  const data = currentUser ? {
-    birthYear: parseInt(currentUser.birthYear || currentUser.birth_year),
-    birthMonth: parseInt(currentUser.birthMonth || currentUser.birth_month),
-    birthDay: parseInt(currentUser.birthDay || currentUser.birth_day),
-    birthHour: parseInt(currentUser.birthHour || currentUser.birth_hour || 0)
+  const data = userToUse ? {
+    birthYear: parseInt(userToUse.birthYear || userToUse.birth_year),
+    birthMonth: parseInt(userToUse.birthMonth || userToUse.birth_month),
+    birthDay: parseInt(userToUse.birthDay || userToUse.birth_day),
+    birthHour: parseInt(userToUse.birthHour || userToUse.birth_hour || 0)
   } : {
     birthYear: 1990,
     birthMonth: 5,
     birthDay: 15,
     birthHour: 0
   };
+  
+  console.log('📊 분석 데이터:', data);
 
   // 자동 분석 결과 즉시 표시
   const basicResult = generateBasicLuckyNumbers(data);
@@ -2526,10 +2532,82 @@ function closeModal() {
   console.log('✅ 모달 팝업 닫기');
 }
 
+// 길한 숫자 계산 함수
+function calculateLuckyNumbers(user) {
+  if (!user) {
+    return [1, 2, 9]; // 기본값
+  }
+  
+  const birthYear = parseInt(user.birthYear || user.birth_year);
+  const birthMonth = parseInt(user.birthMonth || user.birth_month);
+  const birthDay = parseInt(user.birthDay || user.birth_day);
+  const birthHour = parseInt(user.birthHour || user.birth_hour || 0);
+  
+  // 생년월일시를 이용한 길한 숫자 계산 (간단한 알고리즘)
+  const yearSum = (birthYear % 9) || 9;
+  const monthSum = (birthMonth % 9) || 9;
+  const daySum = (birthDay % 9) || 9;
+  const hourSum = (birthHour % 9) || 9;
+  
+  // 길한 숫자 계산 (1-9 중에서 선택)
+  const luckyNumbers = [];
+  
+  // 기본 길한 숫자들
+  luckyNumbers.push(yearSum);
+  luckyNumbers.push(monthSum);
+  luckyNumbers.push(daySum);
+  
+  // 중복 제거 및 정렬
+  const uniqueNumbers = [...new Set(luckyNumbers)].sort((a, b) => a - b);
+  
+  // 최소 3개, 최대 5개 숫자 반환
+  if (uniqueNumbers.length < 3) {
+    uniqueNumbers.push(hourSum);
+    if (uniqueNumbers.length < 3) {
+      uniqueNumbers.push(5); // 기본 길한 숫자
+    }
+  }
+  
+  return uniqueNumbers.slice(0, 5);
+}
+
+// 최적 요일 계산 함수
+function calculateOptimalDays(user) {
+  if (!user) {
+    return ['월요일', '목요일']; // 기본값
+  }
+  
+  const birthYear = parseInt(user.birthYear || user.birth_year);
+  const birthMonth = parseInt(user.birthMonth || user.birth_month);
+  const birthDay = parseInt(user.birthDay || user.birth_day);
+  
+  // 생년월일을 이용한 최적 요일 계산
+  const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+  
+  // 간단한 알고리즘으로 최적 요일 계산
+  const dayIndex1 = (birthYear + birthMonth) % 7;
+  const dayIndex2 = (birthMonth + birthDay) % 7;
+  
+  const optimalDays = [];
+  optimalDays.push(days[dayIndex1]);
+  if (dayIndex1 !== dayIndex2) {
+    optimalDays.push(days[dayIndex2]);
+  } else {
+    optimalDays.push(days[(dayIndex1 + 1) % 7]);
+  }
+  
+  return optimalDays;
+}
+
 // 모달 팝업 함수들
-function showLuckyNumbersModal() {
-  // 사용자 정보 가져오기
-  const userInfo = currentUser ? `(${currentUser.birthYear}년 ${currentUser.birthMonth}월 ${currentUser.birthDay}일)` : '';
+function showLuckyNumbersModal(user = null) {
+  // 사용자 정보 가져오기 (매개변수 우선, 없으면 currentUser 사용)
+  const userToUse = user || currentUser;
+  const userInfo = userToUse ? `(${userToUse.birthYear || userToUse.birth_year}년 ${userToUse.birthMonth || userToUse.birth_month}월 ${userToUse.birthDay || userToUse.birth_day}일)` : '';
+  
+  // 사용자 생년월일에 기반한 길한 숫자 계산
+  const luckyNumbers = calculateLuckyNumbers(userToUse);
+  const optimalDays = calculateOptimalDays(userToUse);
   
   const content = `
     <div style="margin-bottom: 20px; padding: 15px; background: rgba(255, 215, 0, 0.1); border-radius: 10px; border: 1px solid rgba(255, 215, 0, 0.3);">
@@ -2540,17 +2618,14 @@ function showLuckyNumbersModal() {
       <div class="modal-result-card">
         <h5><i class="fas fa-star"></i> 길한 숫자</h5>
         <div class="modal-number-list">
-          <span class="modal-number-item">1</span>
-          <span class="modal-number-item">2</span>
-          <span class="modal-number-item">9</span>
+          ${luckyNumbers.map(num => `<span class="modal-number-item">${num}</span>`).join('')}
         </div>
         <p style="color: #ffd700; font-size: 0.9rem; margin-top: 10px;">사주에 길한 숫자들입니다</p>
       </div>
       <div class="modal-result-card">
         <h5><i class="fas fa-calendar"></i> 최적 요일</h5>
         <div class="modal-number-list">
-          <span class="modal-number-item">월요일</span>
-          <span class="modal-number-item">목요일</span>
+          ${optimalDays.map(day => `<span class="modal-number-item">${day}</span>`).join('')}
         </div>
         <p style="color: #ffd700; font-size: 0.9rem; margin-top: 10px;">이 요일들이 가장 길합니다</p>
       </div>
