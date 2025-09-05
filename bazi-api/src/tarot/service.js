@@ -79,24 +79,44 @@ class TarotService {
     ];
   }
 
-  async drawCards(spreadId, question) {
+  // 사용자 기반 랜덤 생성 함수
+  generateUserBasedRandom(seed, max) {
+    const x = Math.sin(seed) * 10000;
+    return Math.floor((x - Math.floor(x)) * max);
+  }
+
+  async drawCards(spreadId, question, userInfo = null) {
     const spread = this.spreads.find(s => s.id === spreadId) || this.spreads[1];
     const drawnCards = [];
     const usedIds = new Set();
 
+    // 사용자 정보 기반 시드 생성 (개인화된 랜덤)
+    let seed = Date.now();
+    if (userInfo && userInfo.birthYear && userInfo.birthMonth && userInfo.birthDay) {
+      seed = userInfo.birthYear * 10000 + userInfo.birthMonth * 100 + userInfo.birthDay;
+      console.log('🔍 사용자 기반 시드 생성:', { userInfo, seed });
+    }
+
+    // 사용자별 개인화된 카드 선택
     for (let i = 0; i < spread.cardCount; i++) {
       let card;
       do {
-        card = this.cards[Math.floor(Math.random() * this.cards.length)];
+        // 사용자 생년월일을 기반으로 한 개인화된 랜덤
+        const userSeed = seed + i * 1000 + (userInfo ? userInfo.birthHour || 0 : 0);
+        const randomIndex = this.generateUserBasedRandom(userSeed, this.cards.length);
+        card = this.cards[randomIndex];
       } while (usedIds.has(card.id));
       
       usedIds.add(card.id);
-      card.orientation = Math.random() > 0.5 ? 'upright' : 'reversed';
+      
+      // 사용자 기반 방향 결정
+      const orientationSeed = seed + i * 100 + (userInfo ? userInfo.birthHour || 0 : 0);
+      card.orientation = this.generateUserBasedRandom(orientationSeed, 2) === 0 ? 'upright' : 'reversed';
       card.position = spread.positions[i];
       drawnCards.push(card);
     }
 
-    const interpretation = this.generateInterpretation(drawnCards, question, spread);
+    const interpretation = this.generateInterpretation(drawnCards, question, spread, userInfo);
 
     return {
       id: Date.now().toString(),
@@ -108,11 +128,19 @@ class TarotService {
     };
   }
 
-  generateInterpretation(cards, question, spread) {
+  generateInterpretation(cards, question, spread, userInfo = null) {
     let interpretation = `# 🃏 타로 점 결과\n\n`;
     
     if (question) {
       interpretation += `**질문**: ${question}\n\n`;
+    }
+    
+    // 사용자 정보 포함
+    if (userInfo && userInfo.name) {
+      interpretation += `**점성 대상**: ${userInfo.name}\n`;
+      if (userInfo.birthYear && userInfo.birthMonth && userInfo.birthDay) {
+        interpretation += `**생년월일**: ${userInfo.birthYear}년 ${userInfo.birthMonth}월 ${userInfo.birthDay}일\n`;
+      }
     }
     
     interpretation += `**스프레드**: ${spread.name}\n`;

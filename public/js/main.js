@@ -9632,7 +9632,21 @@ async function drawTarotCards() {
   const selectedSpread = selectedSpreadElement.value;
   const question = document.getElementById('tarotQuestion').value;
   
-  console.log('📋 요청 데이터:', { selectedSpread, question });
+  // 사용자 정보 가져오기
+  const userToUse = currentUser;
+  console.log('🔍 타로 분석할 사용자 정보:', userToUse);
+  
+  // 사용자 생년월일 정보 포함
+  const userBirthInfo = userToUse ? {
+    birthYear: parseInt(userToUse.birthYear || userToUse.birth_year),
+    birthMonth: parseInt(userToUse.birthMonth || userToUse.birth_month),
+    birthDay: parseInt(userToUse.birthDay || userToUse.birth_day),
+    birthHour: parseInt(userToUse.birthHour || userToUse.birth_hour || 0),
+    name: userToUse.name,
+    email: userToUse.email
+  } : null;
+  
+  console.log('📋 요청 데이터:', { selectedSpread, question, userBirthInfo });
   
   try {
     // 버튼 상태 변경
@@ -9645,10 +9659,12 @@ async function drawTarotCards() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
       },
       body: JSON.stringify({
         spread: selectedSpread,
-        question: question
+        question: question,
+        userInfo: userBirthInfo
       })
     });
     

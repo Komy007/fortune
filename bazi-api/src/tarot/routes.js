@@ -7,9 +7,11 @@ const tarotService = new TarotService();
 // 타로 카드 뽑기
 router.post('/draw', async (req, res) => {
   try {
-    const { spread = 'three-card', question = '' } = req.body;
+    const { spread = 'three-card', question = '', userInfo = null } = req.body;
     
-    const result = await tarotService.drawCards(spread, question);
+    console.log('🃏 타로 카드 뽑기 요청:', { spread, question, userInfo });
+    
+    const result = await tarotService.drawCards(spread, question, userInfo);
     
     res.json({
       success: true,
