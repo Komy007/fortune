@@ -194,6 +194,52 @@ function authenticateToken(req, res, next) {
   }
 }
 
+// 이메일 중복 체크 API
+app.post('/api/auth/check-email', (req, res) => {
+  const { email } = req.body;
+  
+  if (!email) {
+    return res.status(400).json({ 
+      error: 'missing_email',
+      message: '이메일을 입력해주세요.' 
+    });
+  }
+
+  // 이메일 형식 검증
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ 
+      error: 'invalid_email',
+      message: '올바른 이메일 형식을 입력해주세요.' 
+    });
+  }
+
+  // 이메일 중복 체크
+  db.get('SELECT id FROM users WHERE email = ?', [email], (err, existingUser) => {
+    if (err) {
+      console.error('이메일 중복 체크 실패:', err);
+      return res.status(500).json({ 
+        error: 'database_error',
+        message: '데이터베이스 오류가 발생했습니다.' 
+      });
+    }
+    
+    if (existingUser) {
+      console.log('❌ 이메일 중복 확인: 이미 존재하는 이메일');
+      return res.status(409).json({ 
+        error: 'email_exists',
+        message: '⚠️ 이미 가입된 이메일입니다!\n다른 이메일 주소를 사용해주세요.' 
+      });
+    }
+    
+    console.log('✅ 이메일 사용 가능:', email);
+    return res.status(200).json({ 
+      success: true,
+      message: '사용 가능한 이메일입니다.' 
+    });
+  });
+});
+
 // 회원가입 API
 app.post('/api/auth/register', (req, res) => {
   console.log('📝 회원가입 요청 받음:', req.body);

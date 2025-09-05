@@ -4088,12 +4088,13 @@ function updateStep(newStep) {
 }
 
 // 다음 단계로 이동
-function nextStep() {
+async function nextStep() {
   console.log('🚀 nextStep 호출됨, currentStep:', currentStep, 'totalSteps:', totalSteps);
   
   if (currentStep < totalSteps) {
     console.log('✅ 단계 진행 가능, 유효성 검사 시작');
-    if (validateCurrentStep()) {
+    const isValid = await validateCurrentStep();
+    if (isValid) {
       console.log('✅ 유효성 검사 통과, 다음 단계로 이동');
       const nextStepNumber = currentStep + 1;
       updateStep(nextStepNumber);
@@ -4125,8 +4126,39 @@ function prevStep() {
   }
 }
 
+// 이메일 중복 체크 함수
+async function checkEmailDuplicate(email) {
+  try {
+    console.log('📧 이메일 중복 체크 API 호출:', email);
+    
+    const response = await fetch('/api/auth/check-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: email })
+    });
+    
+    const result = await response.json();
+    console.log('📧 이메일 중복 체크 응답:', result);
+    
+    if (response.ok) {
+      console.log('✅ 이메일 사용 가능');
+      return true;
+    } else {
+      console.log('❌ 이메일 중복 또는 오류:', result.message);
+      alert(result.message);
+      return false;
+    }
+  } catch (error) {
+    console.error('🚨 이메일 중복 체크 오류:', error);
+    alert('이메일 중복 체크 중 오류가 발생했습니다. 다시 시도해주세요.');
+    return false;
+  }
+}
+
 // 현재 단계 유효성 검사
-function validateCurrentStep() {
+async function validateCurrentStep() {
   console.log('🔍 validateCurrentStep 호출됨, currentStep:', currentStep);
   
   const currentFormStep = document.querySelector(`.form-step[data-step="${currentStep}"]`);
@@ -4200,7 +4232,9 @@ function validateCurrentStep() {
       return false;
     }
     
-    console.log('✅ 1단계 유효성 검사 통과');
+    // 이메일 중복 체크 (비동기)
+    console.log('🔍 이메일 중복 체크 시작');
+    return await checkEmailDuplicate(email);
   }
   
   // 2단계 유효성 검사
