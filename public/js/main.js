@@ -8022,7 +8022,12 @@ function attachEventListeners() {
       
       // 선택된 탭 활성화
       btn.classList.add('active');
-      document.getElementById(`${tabName}Tab`).classList.add('active');
+      const targetTab = document.getElementById(`${tabName}Tab`);
+      if (targetTab) {
+        targetTab.classList.add('active');
+      } else {
+        console.warn(`⚠️ 탭 요소를 찾을 수 없습니다: ${tabName}Tab`);
+      }
       
       // 공지사항 탭이 선택되면 공지사항 로드
       if (tabName === 'announcements') {
