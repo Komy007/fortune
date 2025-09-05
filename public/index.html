@@ -1774,27 +1774,45 @@
     function showAdminLogin() {
       console.log('🔐 PC에서 관리자 로그인 화면 표시');
       console.log('🔍 현재 화면 너비:', window.innerWidth);
-      console.log('🔍 관리자 섹션 존재 여부:', document.getElementById('admin'));
-      console.log('🔍 changeSection 함수 존재 여부:', typeof changeSection);
+      
+      // 관리자 섹션 직접 찾기
+      const adminSection = document.getElementById('admin');
+      console.log('🔍 관리자 섹션 존재 여부:', adminSection);
+      
+      if (!adminSection) {
+        console.error('❌ 관리자 섹션을 찾을 수 없음');
+        alert('관리자 섹션을 찾을 수 없습니다. 페이지를 새로고침해주세요.');
+        return;
+      }
       
       try {
-        changeSection('admin');
-        console.log('✅ changeSection 호출 완료');
+        // 모든 섹션 숨기기
+        document.querySelectorAll('.section').forEach(section => {
+          section.style.display = 'none';
+          console.log('🔍 섹션 숨김:', section.id);
+        });
         
-        // 관리자 섹션이 표시되었는지 확인
-        setTimeout(() => {
-          const adminSection = document.getElementById('admin');
-          if (adminSection) {
-            console.log('✅ 관리자 섹션 찾음:', adminSection);
-            console.log('🔍 관리자 섹션 표시 상태:', adminSection.style.display);
-            console.log('🔍 관리자 섹션 클래스:', adminSection.className);
-          } else {
-            console.log('❌ 관리자 섹션을 찾을 수 없음');
-          }
-        }, 100);
+        // 관리자 섹션 표시
+        adminSection.style.display = 'block';
+        console.log('✅ 관리자 섹션 표시 완료');
+        
+        // 관리자 로그인 폼 확인
+        const adminLogin = document.getElementById('adminLogin');
+        console.log('🔍 관리자 로그인 폼 존재 여부:', adminLogin);
+        
+        if (adminLogin) {
+          adminLogin.style.display = 'flex';
+          console.log('✅ 관리자 로그인 폼 표시 완료');
+        } else {
+          console.error('❌ 관리자 로그인 폼을 찾을 수 없음');
+        }
+        
+        // 페이지 맨 위로 스크롤
+        window.scrollTo(0, 0);
         
       } catch (error) {
-        console.error('❌ changeSection 호출 오류:', error);
+        console.error('❌ 관리자 섹션 표시 오류:', error);
+        alert('관리자 섹션을 표시하는 중 오류가 발생했습니다.');
       }
     }
     
