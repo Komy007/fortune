@@ -51,7 +51,17 @@ app.use('/image', express.static(path.join(__dirname, 'public', 'img')));
 
 // 데이터베이스 초기화 (Render 호환)
 const dbPath = process.env.NODE_ENV === 'production' ? '/tmp/app.db' : './data/app.db';
-const db = new sqlite3.Database(dbPath);
+console.log('📊 데이터베이스 경로:', dbPath);
+console.log('🌍 환경:', process.env.NODE_ENV);
+
+const db = new sqlite3.Database(dbPath, (err) => {
+  if (err) {
+    console.error('❌ 데이터베이스 연결 실패:', err);
+  } else {
+    console.log('✅ 데이터베이스 연결 성공');
+  }
+});
+
 db.exec('PRAGMA journal_mode = WAL;');
 
 // 테이블 생성
@@ -246,6 +256,8 @@ app.post('/api/auth/register', (req, res) => {
   console.log('📧 이메일:', req.body.email);
   console.log('👤 이름:', req.body.name);
   console.log('🔒 비밀번호 길이:', req.body.password?.length);
+  console.log('🌍 환경:', process.env.NODE_ENV);
+  console.log('📊 데이터베이스 경로:', dbPath);
   
   try {
     const { email, name, username, password, birth_year, birth_month, birth_day, birth_hour, birthplace, calendar_type, sex, time_accuracy, birth_time } = req.body;
@@ -266,14 +278,16 @@ app.post('/api/auth/register', (req, res) => {
     }
 
     // 이메일 중복 체크
+    console.log('🔍 이메일 중복 체크 시작:', email);
     db.get('SELECT id FROM users WHERE email = ?', [email], (err, existingUser) => {
       if (err) {
-        console.error('이메일 중복 체크 실패:', err);
+        console.error('❌ 이메일 중복 체크 실패:', err);
         return res.status(500).json({ 
           error: 'database_error',
           message: '데이터베이스 오류가 발생했습니다.' 
         });
       }
+      console.log('✅ 이메일 중복 체크 완료, 결과:', existingUser);
       
       if (existingUser) {
         console.log('❌ 회원가입 실패: 이미 존재하는 이메일');
@@ -322,12 +336,13 @@ app.post('/api/auth/register', (req, res) => {
           }
           
           // 사용자 생성 (비동기)
+          console.log('👤 사용자 생성 시작:', { email, name, username, birth_year, birth_month, birth_day, birth_hour });
           db.run(`
             INSERT INTO users (email, name, username, password_hash, birth_year, birth_month, birth_day, birth_hour) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
           `, [email, name, username, passwordHash, birth_year, birth_month, birth_day, birth_hour], function(err) {
             if (err) {
-              console.error('사용자 생성 실패:', err);
+              console.error('❌ 사용자 생성 실패:', err);
               return res.status(500).json({ 
                 error: 'user_creation_failed',
                 message: '사용자 생성 중 오류가 발생했습니다.' 
