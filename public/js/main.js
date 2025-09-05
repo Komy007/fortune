@@ -3785,6 +3785,15 @@ function changeSection(sectionId) {
           console.log('📱 스마트폰 여부:', window.innerWidth <= 768);
           syncFormsWithUser(userToUse);
           console.log('🚀 performBaziAnalysis 호출 시작');
+          console.log('🔍 전달할 사용자 정보:', {
+            uid: userToUse.uid,
+            name: userToUse.name,
+            email: userToUse.email,
+            birthYear: userToUse.birthYear || userToUse.birth_year,
+            birthMonth: userToUse.birthMonth || userToUse.birth_month,
+            birthDay: userToUse.birthDay || userToUse.birth_day,
+            birthHour: userToUse.birthHour || userToUse.birth_hour
+          });
           performBaziAnalysis(userToUse);
           
 
@@ -3884,6 +3893,15 @@ function changeSection(sectionId) {
             authToken = storedToken;
             userToUse = user;
             console.log('✅ 파싱된 사용자 정보:', user);
+            console.log('🔍 사용자 ID:', user.uid || user.id);
+            console.log('🔍 사용자 이름:', user.name);
+            console.log('🔍 사용자 이메일:', user.email);
+            console.log('🔍 사용자 생년월일:', {
+              birthYear: user.birthYear || user.birth_year,
+              birthMonth: user.birthMonth || user.birth_month,
+              birthDay: user.birthDay || user.birth_day,
+              birthHour: user.birthHour || user.birth_hour
+            });
           } catch (error) {
             console.error('❌ 사용자 정보 파싱 오류:', error);
           }
@@ -4825,6 +4843,11 @@ async function performBaziAnalysis(user) {
     console.log('❌ 사용자 정보가 없습니다.');
     return;
   }
+  
+  // 사용자 정보 검증 및 로깅
+  console.log('🔍 사용자 ID:', user.uid || user.id);
+  console.log('🔍 사용자 이름:', user.name);
+  console.log('🔍 사용자 이메일:', user.email);
   
   // 사용자 생년월일 정보 추출 (서버 응답 형식에 맞춤)
   const birthYear = user.birthYear || user.birth_year;
