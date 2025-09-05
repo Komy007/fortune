@@ -139,6 +139,15 @@
           </div>
         </div>
         
+        <div class="dropdown" id="galleryDropdown">
+          <button class="dropdown-btn" onclick="toggleDropdown('galleryDropdown')">
+            🖼️ Gallery <span class="arrow">▼</span>
+          </button>
+          <div class="dropdown-content">
+            <a href="#gallery" class="dropdown-item">🖼️ 모델사진</a>
+          </div>
+        </div>
+        
         <div class="dropdown" id="profileDropdown">
           <button class="dropdown-btn" onclick="toggleDropdown('profileDropdown')">
             👤 내 정보 <span class="arrow">▼</span>
@@ -3213,6 +3222,48 @@
         </div>
       </section>
 
+      <!-- Gallery/모델사진 섹션 -->
+      <section id="gallery" class="section">
+        <div class="gallery-container">
+                       <div class="gallery-header">
+               <h1 class="gallery-title">🖼️ Gallery / 모델사진</h1>
+               <p class="gallery-subtitle">아름다운 Fortune Teller 모델입니다.</p>
+             </div>
+          
+          <div class="gallery-content">
+            <!-- 갤러리 필터 -->
+            <div class="gallery-filters">
+              <button class="filter-btn active" data-filter="all">전체</button>
+              <button class="filter-btn" data-filter="lady4">Lady 4</button>
+              <button class="filter-btn" data-filter="lady5">Lady 5</button>
+              <button class="filter-btn" data-filter="lady6">Lady 6</button>
+              <button class="filter-btn" data-filter="lady7">Lady 7</button>
+              <button class="filter-btn" data-filter="lady8">Lady 8</button>
+            </div>
+            
+            <!-- 갤러리 그리드 -->
+            <div class="gallery-grid" id="galleryGrid">
+              <!-- 이미지들이 여기에 동적으로 로드됩니다 -->
+              <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <p>갤러리를 불러오는 중...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 갤러리 모달 -->
+      <div id="galleryModal" class="gallery-modal" style="display: none;">
+        <div class="gallery-modal-content">
+          <span class="gallery-modal-close">&times;</span>
+          <img id="galleryModalImage" src="" alt="">
+          <div class="gallery-modal-info">
+            <h3 id="galleryModalTitle"></h3>
+          </div>
+        </div>
+      </div>
+
       <!-- 스마트폰 하단 메뉴 (최후방 배치로 보호) -->
       <nav class="mobile-bottom-nav" id="mobileBottomNav">
         <button class="mobile-tab-item" data-section="about-us" onclick="changeSection('about-us')">
@@ -3232,6 +3283,11 @@
           </select>
         </div>
         
+        
+        <button class="mobile-tab-item" data-section="gallery" onclick="changeSection('gallery')">
+          <span class="mobile-tab-icon">🖼️</span>
+          <span class="mobile-tab-text">Gallery</span>
+        </button>
         
         <button class="mobile-tab-item" data-section="announcements" onclick="changeSection('announcements')">
           <span class="mobile-tab-icon">📢</span>

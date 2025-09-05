@@ -3815,6 +3815,23 @@ function changeSection(sectionId) {
     }, 100);
   }
   
+  // 갤러리 섹션으로 이동할 때 갤러리 로드
+  if (sectionId === 'gallery') {
+    console.log('🖼️ 갤러리 섹션으로 이동 - 강제 스크롤 적용');
+    // 즉시 스크롤 + 약간의 지연 후 재스크롤
+    window.scrollTo(0, 0);
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+      document.getElementById('gallery').scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+    
+    // 갤러리 로드
+    setTimeout(() => {
+      loadGallery();
+      console.log('📸 갤러리 로드 완료');
+    }, 200);
+  }
+  
   // 모바일 탭 상태 업데이트
   if (isMobile) {
     updateMobileTabState(sectionId);
@@ -3830,6 +3847,9 @@ function changeSection(sectionId) {
     section.style.display = 'none';
     section.classList.remove('active');
   });
+  
+  // 갤러리 애니메이션 초기화
+  
   
   // 모든 네비게이션 링크 비활성화
   document.querySelectorAll('.nav-link').forEach(link => {
@@ -8168,6 +8188,30 @@ function attachEventListeners() {
   // 초기 언어 설정
   changeLanguage(currentLanguage);
   
+  // 갤러리 모달 이벤트 리스너
+  const galleryModal = document.getElementById('galleryModal');
+  const galleryModalClose = document.querySelector('.gallery-modal-close');
+  
+  if (galleryModalClose) {
+    galleryModalClose.addEventListener('click', closeGalleryModal);
+  }
+  
+  if (galleryModal) {
+    // 모달 배경 클릭 시 닫기
+    galleryModal.addEventListener('click', (e) => {
+      if (e.target === galleryModal) {
+        closeGalleryModal();
+      }
+    });
+    
+    // ESC 키로 모달 닫기
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && galleryModal.style.display === 'flex') {
+        closeGalleryModal();
+      }
+    });
+  }
+  
   console.log('✅ 이벤트 리스너 등록 완료');
 }
 
@@ -8571,6 +8615,168 @@ function updateDateTime() {
   if (timeElement) {
     timeElement.textContent = timeString;
   }
+}
+
+// 갤러리 이미지 데이터
+const galleryImages = [
+  // Lady 4 시리즈
+  { src: 'img/gallery/lady4 (1).png', title: 'Lady 4 - 1', category: 'lady4' },
+  { src: 'img/gallery/lady4 (2).png', title: 'Lady 4 - 2', category: 'lady4' },
+  { src: 'img/gallery/lady4 (3).png', title: 'Lady 4 - 3', category: 'lady4' },
+  { src: 'img/gallery/lady4 (5).png', title: 'Lady 4 - 5', category: 'lady4' },
+  { src: 'img/gallery/lady4 (7).png', title: 'Lady 4 - 7', category: 'lady4' },
+  { src: 'img/gallery/lady4 (8).png', title: 'Lady 4 - 8', category: 'lady4' },
+  
+  // Lady 5 시리즈
+  { src: 'img/gallery/lady5 (2).png', title: 'Lady 5 - 2', category: 'lady5' },
+  { src: 'img/gallery/lady5 (3).png', title: 'Lady 5 - 3', category: 'lady5' },
+  { src: 'img/gallery/lady5 (4).png', title: 'Lady 5 - 4', category: 'lady5' },
+  
+  // Lady 6 시리즈
+  { src: 'img/gallery/lady6 (1).png', title: 'Lady 6 - 1', category: 'lady6' },
+  { src: 'img/gallery/lady6 (2).png', title: 'Lady 6 - 2', category: 'lady6' },
+  { src: 'img/gallery/lady6 (3).png', title: 'Lady 6 - 3', category: 'lady6' },
+  { src: 'img/gallery/lady6 (4).png', title: 'Lady 6 - 4', category: 'lady6' },
+  { src: 'img/gallery/lady6 (5).png', title: 'Lady 6 - 5', category: 'lady6' },
+  { src: 'img/gallery/lady6 (6).png', title: 'Lady 6 - 6', category: 'lady6' },
+  { src: 'img/gallery/lady6 (7).png', title: 'Lady 6 - 7', category: 'lady6' },
+  { src: 'img/gallery/lady6 (8).png', title: 'Lady 6 - 8', category: 'lady6' },
+  { src: 'img/gallery/lady6 (9).png', title: 'Lady 6 - 9', category: 'lady6' },
+  
+  // Lady 7 시리즈
+  { src: 'img/gallery/lady7 (1).png', title: 'Lady 7 - 1', category: 'lady7' },
+  { src: 'img/gallery/lady7 (2).png', title: 'Lady 7 - 2', category: 'lady7' },
+  { src: 'img/gallery/lady7 (3).png', title: 'Lady 7 - 3', category: 'lady7' },
+  { src: 'img/gallery/lady7 (4).png', title: 'Lady 7 - 4', category: 'lady7' },
+  { src: 'img/gallery/lady7 (5).png', title: 'Lady 7 - 5', category: 'lady7' },
+  { src: 'img/gallery/lady7 (6).png', title: 'Lady 7 - 6', category: 'lady7' },
+  { src: 'img/gallery/lady7 (7).png', title: 'Lady 7 - 7', category: 'lady7' },
+  { src: 'img/gallery/lady7 (8).png', title: 'Lady 7 - 8', category: 'lady7' },
+  { src: 'img/gallery/lady7 (9).png', title: 'Lady 7 - 9', category: 'lady7' },
+  { src: 'img/gallery/lady7 (10).png', title: 'Lady 7 - 10', category: 'lady7' },
+  
+  // Lady 8 시리즈
+  { src: 'img/gallery/lady8 (1).png', title: 'Lady 8 - 1', category: 'lady8' },
+  { src: 'img/gallery/lady8 (2).png', title: 'Lady 8 - 2', category: 'lady8' },
+  { src: 'img/gallery/lady8 (3).png', title: 'Lady 8 - 3', category: 'lady8' },
+  { src: 'img/gallery/lady8 (4).png', title: 'Lady 8 - 4', category: 'lady8' },
+  { src: 'img/gallery/lady8 (5).png', title: 'Lady 8 - 5', category: 'lady8' },
+  { src: 'img/gallery/lady8 (6).png', title: 'Lady 8 - 6', category: 'lady8' }
+];
+
+// 갤러리 로드 함수
+function loadGallery() {
+  console.log('🖼️ 갤러리 로드 시작');
+  
+  const galleryGrid = document.getElementById('galleryGrid');
+  if (!galleryGrid) {
+    console.error('❌ 갤러리 그리드 요소를 찾을 수 없습니다');
+    return;
+  }
+  
+  // 로딩 상태 표시
+  galleryGrid.innerHTML = `
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>갤러리를 불러오는 중...</p>
+    </div>
+  `;
+  
+  // 이미지 로드
+  setTimeout(() => {
+    displayGalleryImages(galleryImages);
+    setupGalleryFilters();
+    console.log('✅ 갤러리 로드 완료');
+  }, 500);
+}
+
+// 갤러리 이미지 표시 함수
+function displayGalleryImages(images) {
+  const galleryGrid = document.getElementById('galleryGrid');
+  if (!galleryGrid) return;
+  
+  if (images.length === 0) {
+    galleryGrid.innerHTML = `
+      <div class="loading-container">
+        <p>표시할 이미지가 없습니다.</p>
+      </div>
+    `;
+    return;
+  }
+  
+  galleryGrid.innerHTML = images.map(image => `
+    <div class="gallery-item" data-category="${image.category}">
+      <img src="${image.src}" alt="${image.title}" loading="lazy" onerror="this.style.display='none'" onclick="openGalleryModal('${image.src}', '${image.title}')">
+      <div class="gallery-item-info">
+        <h3 class="gallery-item-title">${image.title}</h3>
+      </div>
+    </div>
+  `).join('');
+}
+
+// 갤러리 모달 열기
+function openGalleryModal(imageSrc, imageTitle) {
+  console.log('🖼️ 갤러리 모달 열기:', imageSrc, imageTitle);
+  
+  const modal = document.getElementById('galleryModal');
+  const modalImage = document.getElementById('galleryModalImage');
+  const modalTitle = document.getElementById('galleryModalTitle');
+  
+  if (modal && modalImage && modalTitle) {
+    modalImage.src = imageSrc;
+    modalImage.alt = imageTitle;
+    modalTitle.textContent = imageTitle;
+    modal.style.display = 'flex';
+    
+    // 모달 열릴 때 스크롤 방지
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+// 갤러리 모달 닫기
+function closeGalleryModal() {
+  console.log('❌ 갤러리 모달 닫기');
+  
+  const modal = document.getElementById('galleryModal');
+  if (modal) {
+    modal.style.display = 'none';
+    
+    // 모달 닫힐 때 스크롤 복원
+    document.body.style.overflow = 'auto';
+  }
+}
+
+// 갤러리 필터 설정
+function setupGalleryFilters() {
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  
+  filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      // 활성 버튼 변경
+      filterButtons.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+      
+      // 필터 적용
+      const filter = button.getAttribute('data-filter');
+      filterGalleryImages(filter);
+    });
+  });
+}
+
+// 갤러리 이미지 필터링
+function filterGalleryImages(filter) {
+  const galleryItems = document.querySelectorAll('.gallery-item');
+  
+  galleryItems.forEach(item => {
+    const category = item.getAttribute('data-category');
+    
+    if (filter === 'all' || category === filter) {
+      item.style.display = 'block';
+      item.style.animation = 'fadeIn 0.5s ease-in';
+    } else {
+      item.style.display = 'none';
+    }
+  });
 }
 
 // 페이지 로드 시 초기화
