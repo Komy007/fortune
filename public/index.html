@@ -152,6 +152,11 @@
       
       <!-- 오른쪽: 사용자 메뉴 및 언어 선택기 -->
       <div class="nav-right">
+        <!-- 관리자 버튼 (PC 전용) -->
+        <button id="adminAccessBtn" class="admin-access-btn" onclick="showAdminLogin()" title="관리자 모드">
+          ⚙️
+        </button>
+        
         <!-- 사용자 정보/인증 버튼 -->
         <div id="userInfo" class="user-info" style="display: none;">
           <span id="userName" class="user-name"></span>
@@ -1765,6 +1770,12 @@
   </div>
 
   <script>
+    // PC에서 관리자 로그인 화면 표시
+    function showAdminLogin() {
+      console.log('🔐 PC에서 관리자 로그인 화면 표시');
+      changeSection('admin');
+    }
+    
     // 실제 관리자 로그인 함수
     async function realAdminLogin() {
       console.log('🔐 실제 관리자 로그인 시작');
