@@ -792,6 +792,10 @@ const translations = {
 let currentStep = 1;
 const totalSteps = 2;
 
+// 전역 DOM 요소들
+let formSteps = null;
+let progressSteps = null;
+
 // 전역 변수들
 let currentLanguage = 'ko';
 let currentUser = null;
@@ -4042,6 +4046,15 @@ function changeSection(sectionId) {
 // 회원가입 단계 관리
 function updateStep(newStep) {
   console.log('🔄 updateStep 호출됨, newStep:', newStep, 'currentStep:', currentStep);
+  
+  // DOM 요소들이 초기화되었는지 확인
+  if (!formSteps || !progressSteps) {
+    console.error('❌ DOM 요소들이 초기화되지 않았습니다. formSteps:', formSteps, 'progressSteps:', progressSteps);
+    // DOM 요소들을 다시 찾기
+    formSteps = document.querySelectorAll('.form-step');
+    progressSteps = document.querySelectorAll('.step');
+    console.log('🔄 DOM 요소들 재초기화 완료');
+  }
   
   // 현재 단계 비활성화
   formSteps.forEach(step => step.classList.remove('active'));
@@ -7573,8 +7586,11 @@ function attachEventListeners() {
   const switchToRegister = document.getElementById('switchToRegister');
   const switchToLogin = document.getElementById('switchToLogin');
   const closeButtons = document.querySelectorAll('.close');
-  const progressSteps = document.querySelectorAll('.step');
-  const formSteps = document.querySelectorAll('.form-step');
+  
+  // 전역 변수 초기화
+  progressSteps = document.querySelectorAll('.step');
+  formSteps = document.querySelectorAll('.form-step');
+  
   const nextStepBtns = document.querySelectorAll('.next-step-btn');
   const prevStepBtns = document.querySelectorAll('.prev-step-btn');
   
