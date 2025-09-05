@@ -5882,22 +5882,42 @@ async function register(formData) {
       console.log(`  ${key}: ${value}`);
     }
     
+    // 필드 값 직접 추출 (더 안전한 방법)
+    const email = formData.get('email') || document.getElementById('registerEmail')?.value;
+    const password = formData.get('password') || document.getElementById('registerPassword')?.value;
+    const name = formData.get('name') || document.getElementById('registerNameSignup')?.value;
+    const birthYear = formData.get('birthYear') || document.getElementById('registerYearSignup')?.value;
+    const birthMonth = formData.get('birthMonth') || document.getElementById('registerMonthSignup')?.value;
+    const birthDay = formData.get('birthDay') || document.getElementById('registerDaySignup')?.value;
+    const birthTime = formData.get('birthTime') || document.getElementById('registerBirthTimeSignup')?.value;
+    const birthplace = formData.get('birthplace') || document.getElementById('registerBirthplaceSignup')?.value;
+    
+    console.log('🔍 직접 추출한 필드 값들:');
+    console.log('  email:', email);
+    console.log('  password:', password);
+    console.log('  name:', name);
+    console.log('  birthYear:', birthYear);
+    console.log('  birthMonth:', birthMonth);
+    console.log('  birthDay:', birthDay);
+    console.log('  birthTime:', birthTime);
+    console.log('  birthplace:', birthplace);
+    
     const data = {
-      name: formData.get('name'),
-      username: formData.get('username') || formData.get('email'), // username이 없으면 email 사용
-      email: formData.get('email'),
-      password: formData.get('password'),
-      birth_year: parseInt(formData.get('birthYear')),
-      birth_month: parseInt(formData.get('birthMonth')),
-      birth_day: parseInt(formData.get('birthDay')),
-      birth_hour: parseBirthTime(formData.get('birthTime') || formData.get('birthHour') || 0),
-      birthplace: formData.get('birthplace'),
-      calendar_type: formData.get('calendarType') || 'solar',
-      sex: formData.get('sex') || 'male',
-      time_accuracy: formData.get('timeAccuracy') || 'exact'
+      name: name,
+      username: email, // username은 email과 동일하게 설정
+      email: email,
+      password: password,
+      birth_year: parseInt(birthYear) || 0,
+      birth_month: parseInt(birthMonth) || 0,
+      birth_day: parseInt(birthDay) || 0,
+      birth_hour: parseBirthTime(birthTime) || 0,
+      birthplace: birthplace || '',
+      calendar_type: 'solar',
+      sex: 'male',
+      time_accuracy: 'exact'
     };
     
-    console.log('📝 회원가입 데이터:', data);
+    console.log('📝 최종 회원가입 데이터:', data);
     console.log('📧 이메일:', data.email);
     console.log('👤 이름:', data.name);
     console.log('🔒 비밀번호 길이:', data.password?.length);
@@ -5963,9 +5983,17 @@ async function login(formData) {
       console.log(`  ${key}: ${value}`);
     }
     
+    // 필드 값 직접 추출 (더 안전한 방법)
+    const email = formData.get('email') || document.getElementById('loginEmail')?.value;
+    const password = formData.get('password') || document.getElementById('loginPassword')?.value;
+    
+    console.log('🔍 직접 추출한 로그인 필드 값들:');
+    console.log('  email:', email);
+    console.log('  password:', password);
+    
     const data = {
-      email: formData.get('email'),
-      password: formData.get('password')
+      email: email,
+      password: password
     };
     
     console.log('🔐 로그인 시도:', data.email);

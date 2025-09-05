@@ -196,7 +196,10 @@ function authenticateToken(req, res, next) {
 
 // 회원가입 API
 app.post('/api/auth/register', (req, res) => {
-  console.log('📝 회원가입 요청 받음:', { email: req.body.email, name: req.body.name });
+  console.log('📝 회원가입 요청 받음:', req.body);
+  console.log('📧 이메일:', req.body.email);
+  console.log('👤 이름:', req.body.name);
+  console.log('🔒 비밀번호 길이:', req.body.password?.length);
   
   try {
     const { email, name, username, password, birth_year, birth_month, birth_day, birth_hour, birthplace, calendar_type, sex, time_accuracy, birth_time } = req.body;
@@ -397,7 +400,9 @@ app.post('/api/auth/register', (req, res) => {
 
 // 로그인 API
 app.post('/api/auth/login', (req, res) => {
-  console.log('🔐 로그인 요청 받음:', { email: req.body.email, hasPassword: !!req.body.password });
+  console.log('🔐 로그인 요청 받음:', req.body);
+  console.log('📧 이메일:', req.body.email);
+  console.log('🔒 비밀번호 길이:', req.body.password?.length);
   
   try {
     const { email, password } = req.body;
@@ -871,9 +876,9 @@ app.get('/api/readings', authenticateToken, (req, res) => {
       ORDER BY created_at DESC
     `).all(req.user.uid);
     
-    const formattedReadings = readings.map(reading => ({
+    const formattedReadings = (readings || []).map(reading => ({
       ...reading,
-      result: JSON.parse(reading.result)
+      result: reading.result ? JSON.parse(reading.result) : null
     }));
     
     // 신규 관계 테이블도 함께 반환
@@ -881,8 +886,8 @@ app.get('/api/readings', authenticateToken, (req, res) => {
       SELECT id, name, birth_year, birth_month, birth_day, birth_hour, birth_time, birthplace, sex, relationship_type, result, created_at
       FROM relationships WHERE user_id = ? ORDER BY created_at DESC
     `).all(req.user.uid);
-    const formattedRels = rels.map(r => ({ ...r, result: r.result ? JSON.parse(r.result) : null, type: 'relationship' }));
-    res.json({ readings: formattedReadings.concat(formattedRels) });
+    const formattedRels = (rels || []).map(r => ({ ...r, result: r.result ? JSON.parse(r.result) : null, type: 'relationship' }));
+    res.json({ readings: [...formattedReadings, ...formattedRels] });
   } catch (error) {
     console.error('Get readings error:', error);
     res.status(500).json({ error: 'get_readings_failed' });
