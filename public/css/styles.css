@@ -2313,67 +2313,10 @@ body[data-section="numerology"] {
   transform: scale(0.95);
 }
 
-/* PC 전용 관리자 링크 */
-.admin-link-pc {
-  color: #FFD700;
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 600;
-  padding: 8px 12px;
-  border-radius: 6px;
-  background: rgba(255, 215, 0, 0.1);
-  border: 1px solid rgba(255, 215, 0, 0.3);
-  transition: all 0.3s ease;
-  margin-left: 15px;
-  display: inline-block;
-}
-
-.admin-link-pc:hover {
-  background: rgba(255, 215, 0, 0.2);
-  border-color: #FFD700;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
-}
-
-/* PC 전용 관리자 버튼 (더 명확한 버튼) */
-.admin-btn-pc {
-  background: linear-gradient(135deg, #FFD700, #FFA500);
-  border: 2px solid #FFD700;
-  border-radius: 8px;
-  padding: 10px 16px;
-  color: #000;
-  font-weight: 700;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-left: 10px;
-  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.admin-btn-pc:hover {
-  background: linear-gradient(135deg, #FFA500, #FFD700);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.5);
-}
-
-.admin-btn-pc:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
-}
 
 /* 관리자 버튼 모바일에서 숨김 */
 @media (max-width: 768px) {
   .admin-access-btn {
-    display: none !important;
-  }
-  
-  .admin-link-pc {
-    display: none !important;
-  }
-  
-  .admin-btn-pc {
     display: none !important;
   }
 }
@@ -11170,14 +11113,6 @@ body[data-section="numerology"] {
   word-break: break-all;
 }
 
-/* 관리자 섹션 강제 표시 */
-#admin.section {
-  display: block !important;
-}
-
-#admin .admin-login-simple {
-  display: flex !important;
-}
 
 /* 모바일 반응형 스타일 */
 @media (max-width: 768px) {

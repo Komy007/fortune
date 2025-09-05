@@ -110,10 +110,6 @@
       <div class="nav-logo">
         <span class="logo-text" data-i18n="logo"><span class="random-color-char">운</span>세마스터</span>
         <button class="about-us-btn" onclick="showAboutUs()">About_Us</button>
-        <!-- PC 전용 관리자 링크 -->
-        <a href="javascript:void(0)" class="admin-link-pc" onclick="showAdminLogin()" title="관리자 모드">⚙️ 관리자</a>
-        <!-- PC 전용 관리자 버튼 (더 명확한 버튼) -->
-        <button class="admin-btn-pc" onclick="showAdminLogin()" title="관리자 모드">관리자 로그인</button>
       </div>
       
       <!-- 드롭다운 메뉴 -->
@@ -1781,7 +1777,7 @@
       // 관리자 섹션 찾기
       const adminSection = document.getElementById('admin');
       if (!adminSection) {
-        alert('관리자 섹션을 찾을 수 없습니다.');
+        console.error('❌ 관리자 섹션을 찾을 수 없음');
         return;
       }
       
@@ -1791,19 +1787,15 @@
         section.style.display = 'none';
       });
       
-      // 관리자 섹션 강제 표시
+      // 관리자 섹션 표시
       adminSection.style.display = 'block';
-      adminSection.style.visibility = 'visible';
-      adminSection.style.opacity = '1';
-      console.log('✅ 관리자 섹션 강제 표시됨');
+      console.log('✅ 관리자 섹션 표시됨');
       
-      // 관리자 로그인 폼 강제 표시
+      // 관리자 로그인 폼 표시
       const adminLogin = document.getElementById('adminLogin');
       if (adminLogin) {
         adminLogin.style.display = 'flex';
-        adminLogin.style.visibility = 'visible';
-        adminLogin.style.opacity = '1';
-        console.log('✅ 관리자 로그인 폼 강제 표시됨');
+        console.log('✅ 관리자 로그인 폼 표시됨');
       }
       
       // 관리자 대시보드 숨기기 (로그인 전이므로)
@@ -1815,9 +1807,7 @@
       // 페이지 맨 위로 스크롤
       window.scrollTo(0, 0);
       
-      // 성공 메시지
-      console.log('🎯 관리자 로그인 화면이 강제로 표시되었습니다.');
-      alert('관리자 로그인 화면이 표시되었습니다. 비밀번호: 12341234');
+      console.log('🎯 관리자 로그인 화면이 표시되었습니다.');
     }
     
     // 실제 관리자 로그인 함수
