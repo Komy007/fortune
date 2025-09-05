@@ -4398,6 +4398,13 @@ function populateFormOptions() {
       select.appendChild(option);
     }
   });
+  
+  // 출생시간 필드 기본값 설정 (오전 9시)
+  const birthTimeInput = document.getElementById('registerBirthTimeSignup');
+  if (birthTimeInput && !birthTimeInput.value) {
+    birthTimeInput.value = '09:00';
+    console.log('⏰ 출생시간 기본값 설정: 09:00 (오전 9시)');
+  }
 }
 
 // 로딩 스피너 제어
