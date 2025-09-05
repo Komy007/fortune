@@ -922,17 +922,33 @@ app.get('/api/readings', authenticateToken, (req, res) => {
       ORDER BY created_at DESC
     `).all(req.user.uid);
     
-    const formattedReadings = (readings || []).map(reading => ({
-      ...reading,
-      result: reading.result ? JSON.parse(reading.result) : null
-    }));
+    // readings가 null이거나 undefined인 경우 빈 배열로 처리
+    const safeReadings = Array.isArray(readings) ? readings : [];
+    const formattedReadings = safeReadings.map(reading => {
+      if (!reading) return null; // reading이 null인 경우 처리
+      return {
+        ...reading,
+        result: reading.result ? JSON.parse(reading.result) : null
+      };
+    }).filter(reading => reading !== null); // null 값 제거
     
     // 신규 관계 테이블도 함께 반환
     const rels = db.prepare(`
       SELECT id, name, birth_year, birth_month, birth_day, birth_hour, birth_time, birthplace, sex, relationship_type, result, created_at
       FROM relationships WHERE user_id = ? ORDER BY created_at DESC
     `).all(req.user.uid);
-    const formattedRels = (rels || []).map(r => ({ ...r, result: r.result ? JSON.parse(r.result) : null, type: 'relationship' }));
+    
+    // rels도 안전하게 처리
+    const safeRels = Array.isArray(rels) ? rels : [];
+    const formattedRels = safeRels.map(r => {
+      if (!r) return null; // r이 null인 경우 처리
+      return { 
+        ...r, 
+        result: r.result ? JSON.parse(r.result) : null, 
+        type: 'relationship' 
+      };
+    }).filter(r => r !== null); // null 값 제거
+    
     res.json({ readings: [...formattedReadings, ...formattedRels] });
   } catch (error) {
     console.error('Get readings error:', error);
