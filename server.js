@@ -19,6 +19,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const LLM_BASE_URL = (process.env.LLM_BASE_URL || 'http://127.0.0.1:8080/v1').replace(/\/$/, '');
 
+// JWT Secret 설정 (Render 환경 대응)
+const JWT_SECRET = process.env.JWT_SECRET || 'fortune-teller-default-secret-key-2024';
+console.log('🔐 JWT Secret:', process.env.JWT_SECRET ? '환경변수에서 설정됨' : '기본값 사용');
+
 // CORS 미들웨어 설정 (스마트폰 접속 허용)
 app.use((req, res, next) => {
   // 모든 도메인에서 접근 허용 (개발 환경)
@@ -210,7 +214,7 @@ function authenticateToken(req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(finalToken, process.env.JWT_SECRET);
+    const decoded = jwt.verify(finalToken, JWT_SECRET);
     req.user = decoded;
     console.log('✅ 인증 성공:', decoded);
     next();
@@ -425,7 +429,7 @@ app.post('/api/auth/register', (req, res) => {
               // JWT 토큰 생성
               const token = jwt.sign(
                 { uid: userId, email, name },
-                process.env.JWT_SECRET,
+                JWT_SECRET,
                 { expiresIn: '7d' }
               );
               
@@ -529,7 +533,7 @@ app.post('/api/auth/login', (req, res) => {
         // JWT 토큰 생성
         const token = jwt.sign(
           { uid: user.id, email: user.email, name: user.name },
-          process.env.JWT_SECRET,
+          JWT_SECRET,
           { expiresIn: '7d' }
         );
         
@@ -3958,6 +3962,6 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Fortune Teller App 서버가 http://localhost:${PORT} 에서 실행 중입니다.`);
   console.log(`🌐 외부 접속: http://192.168.1.17:${PORT}`);
   console.log(`📊 데이터베이스: ./data/app.db`);
-  console.log(`🔐 JWT Secret: ${process.env.JWT_SECRET ? '설정됨' : '설정 필요'}`);
+  console.log(`🔐 JWT Secret: ${process.env.JWT_SECRET ? '환경변수에서 설정됨' : '기본값 사용'}`);
   console.log(`🔮 점성술 API: /api/astro/*`);
 });
