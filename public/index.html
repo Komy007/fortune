@@ -1773,14 +1773,45 @@
     // PC에서 관리자 로그인 화면 표시
     function showAdminLogin() {
       console.log('🔐 PC에서 관리자 로그인 화면 표시');
-      changeSection('admin');
+      console.log('🔍 현재 화면 너비:', window.innerWidth);
+      console.log('🔍 관리자 섹션 존재 여부:', document.getElementById('admin'));
+      console.log('🔍 changeSection 함수 존재 여부:', typeof changeSection);
+      
+      try {
+        changeSection('admin');
+        console.log('✅ changeSection 호출 완료');
+        
+        // 관리자 섹션이 표시되었는지 확인
+        setTimeout(() => {
+          const adminSection = document.getElementById('admin');
+          if (adminSection) {
+            console.log('✅ 관리자 섹션 찾음:', adminSection);
+            console.log('🔍 관리자 섹션 표시 상태:', adminSection.style.display);
+            console.log('🔍 관리자 섹션 클래스:', adminSection.className);
+          } else {
+            console.log('❌ 관리자 섹션을 찾을 수 없음');
+          }
+        }, 100);
+        
+      } catch (error) {
+        console.error('❌ changeSection 호출 오류:', error);
+      }
     }
     
     // 실제 관리자 로그인 함수
     async function realAdminLogin() {
       console.log('🔐 실제 관리자 로그인 시작');
       
-      const password = document.getElementById('adminPassword').value;
+      const passwordField = document.getElementById('adminPassword');
+      console.log('🔍 비밀번호 필드 존재 여부:', passwordField);
+      
+      if (!passwordField) {
+        console.error('❌ 비밀번호 필드를 찾을 수 없음');
+        alert('관리자 로그인 폼을 찾을 수 없습니다. 페이지를 새로고침해주세요.');
+        return;
+      }
+      
+      const password = passwordField.value;
       console.log('🔐 입력된 비밀번호:', password);
       
       if (!password) {
