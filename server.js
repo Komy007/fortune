@@ -50,15 +50,28 @@ app.use('/image', express.static(path.join(__dirname, 'public', 'image')));
 app.use('/image', express.static(path.join(__dirname, 'public', 'img')));
 
 // 데이터베이스 초기화 (Render 호환)
-const dbPath = process.env.NODE_ENV === 'production' ? '/tmp/app.db' : './data/app.db';
+let dbPath;
+if (process.env.NODE_ENV === 'production') {
+  // Render 환경에서는 메모리 데이터베이스 사용 (영구 저장이 필요하면 다른 방법 사용)
+  dbPath = ':memory:';
+  console.log('📊 Render 환경: 메모리 데이터베이스 사용');
+} else {
+  dbPath = './data/app.db';
+  console.log('📊 개발 환경: 파일 데이터베이스 사용');
+}
 console.log('📊 데이터베이스 경로:', dbPath);
 console.log('🌍 환경:', process.env.NODE_ENV);
+
+// 메모리 데이터베이스 사용 시 디렉토리 생성 불필요
 
 const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
     console.error('❌ 데이터베이스 연결 실패:', err);
+    console.error('❌ 오류 상세:', err.message);
+    console.error('❌ 오류 코드:', err.code);
   } else {
     console.log('✅ 데이터베이스 연결 성공');
+    console.log('✅ 데이터베이스 경로:', dbPath);
   }
 });
 
@@ -131,9 +144,12 @@ db.exec(`
   );
 `, (err) => {
   if (err) {
-    console.error('Database initialization error:', err);
+    console.error('❌ 데이터베이스 테이블 생성 오류:', err);
+    console.error('❌ 오류 상세:', err.message);
   } else {
-    console.log('Database tables created successfully');
+    console.log('✅ 데이터베이스 테이블 생성 성공');
+    console.log('✅ 환경:', process.env.NODE_ENV);
+    console.log('✅ 데이터베이스 경로:', dbPath);
   }
 });
 
@@ -258,6 +274,15 @@ app.post('/api/auth/register', (req, res) => {
   console.log('🔒 비밀번호 길이:', req.body.password?.length);
   console.log('🌍 환경:', process.env.NODE_ENV);
   console.log('📊 데이터베이스 경로:', dbPath);
+  
+  // 데이터베이스 연결 상태 확인
+  if (!db) {
+    console.error('❌ 데이터베이스 연결이 없음');
+    return res.status(500).json({ 
+      error: 'database_not_connected',
+      message: '데이터베이스 연결이 없습니다.' 
+    });
+  }
   
   try {
     const { email, name, username, password, birth_year, birth_month, birth_day, birth_hour, birthplace, calendar_type, sex, time_accuracy, birth_time } = req.body;
