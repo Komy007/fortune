@@ -909,19 +909,19 @@ function setupNumerologyTabs() {
             showLuckyNumbersModal(currentUser);
             break;
           case 'phone-analysis':
-            showPhoneAnalysisModal();
+            showPhoneAnalysisModal(currentUser);
             break;
           case 'car-analysis':
-            showCarAnalysisModal();
+            showCarAnalysisModal(currentUser);
             break;
           case 'personal-number':
-            showPersonalNumberModal();
+            showPersonalNumberModal(currentUser);
             break;
           case 'date-selection':
-            showDateSelectionModal();
+            showDateSelectionModal(currentUser);
             break;
           case 'comprehensive':
-            showComprehensiveModal();
+            showComprehensiveModal(currentUser);
             break;
           default:
             console.log('❌ 알 수 없는 탭:', tabName);
@@ -1038,23 +1038,23 @@ window.switchTab = function(tabName) {
           break;
         case 'phone-analysis':
           console.log('📱 전화번호 분석 모달 팝업');
-          showPhoneAnalysisModal();
+          showPhoneAnalysisModal(currentUser);
           break;
         case 'car-analysis':
           console.log('🚗 차량번호 분석 모달 팝업');
-          showCarAnalysisModal();
+          showCarAnalysisModal(currentUser);
           break;
         case 'personal-number':
           console.log('👤 개인숫자 분석 모달 팝업');
-          showPersonalNumberModal();
+          showPersonalNumberModal(currentUser);
           break;
         case 'date-selection':
           console.log('📅 택일 서비스 모달 팝업');
-          showDateSelectionModal();
+          showDateSelectionModal(currentUser);
           break;
         case 'comprehensive':
           console.log('🔮 종합 분석 모달 팝업');
-          showComprehensiveModal();
+          showComprehensiveModal(currentUser);
           break;
         default:
           console.log('❌ 알 수 없는 탭:', tabName);
@@ -2571,6 +2571,32 @@ function calculateLuckyNumbers(user) {
   return uniqueNumbers.slice(0, 5);
 }
 
+// 개인숫자 계산 함수
+function calculatePersonalNumbers(user) {
+  if (!user) {
+    return [7, 14, 21, 28]; // 기본값
+  }
+  
+  const birthYear = parseInt(user.birthYear || user.birth_year);
+  const birthMonth = parseInt(user.birthMonth || user.birth_month);
+  const birthDay = parseInt(user.birthDay || user.birth_day);
+  const birthHour = parseInt(user.birthHour || user.birth_hour || 0);
+  
+  // 생년월일시를 이용한 개인숫자 계산
+  const personalNumbers = [];
+  
+  // 기본 개인숫자들 (생년월일시 기반)
+  personalNumbers.push((birthYear % 30) + 1); // 1-30 범위
+  personalNumbers.push((birthMonth * 2) % 30 + 1); // 1-30 범위
+  personalNumbers.push((birthDay * 3) % 30 + 1); // 1-30 범위
+  personalNumbers.push((birthHour * 4) % 30 + 1); // 1-30 범위
+  
+  // 중복 제거 및 정렬
+  const uniqueNumbers = [...new Set(personalNumbers)].sort((a, b) => a - b);
+  
+  return uniqueNumbers.slice(0, 4);
+}
+
 // 최적 요일 계산 함수
 function calculateOptimalDays(user) {
   if (!user) {
@@ -2675,8 +2701,9 @@ function showLuckyNumbersModal(user = null) {
   showResultModal('⭐ 길한 숫자 분석 결과', content);
 }
 
-function showPhoneAnalysisModal() {
-  const userInfo = currentUser ? `(${currentUser.birthYear}년 ${currentUser.birthMonth}월 ${currentUser.birthDay}일)` : '';
+function showPhoneAnalysisModal(user = null) {
+  const userToUse = user || currentUser;
+  const userInfo = userToUse ? `(${userToUse.birthYear || userToUse.birth_year}년 ${userToUse.birthMonth || userToUse.birth_month}월 ${userToUse.birthDay || userToUse.birth_day}일)` : '';
   
   // 전화번호 입력 폼 표시
   const content = `
@@ -2773,8 +2800,9 @@ function analyzePhoneNumberModal() {
   resultDiv.style.display = 'block';
 }
 
-function showCarAnalysisModal() {
-  const userInfo = currentUser ? `(${currentUser.birthYear}년 ${currentUser.birthMonth}월 ${currentUser.birthDay}일)` : '';
+function showCarAnalysisModal(user = null) {
+  const userToUse = user || currentUser;
+  const userInfo = userToUse ? `(${userToUse.birthYear || userToUse.birth_year}년 ${userToUse.birthMonth || userToUse.birth_month}월 ${userToUse.birthDay || userToUse.birth_day}일)` : '';
   
   // 차량번호 입력 폼 표시
   const content = `
@@ -2871,17 +2899,22 @@ function analyzeCarNumberModal() {
   resultDiv.style.display = 'block';
 }
 
-function showPersonalNumberModal() {
+function showPersonalNumberModal(user = null) {
+  const userToUse = user || currentUser;
+  const userInfo = userToUse ? `(${userToUse.birthYear || userToUse.birth_year}년 ${userToUse.birthMonth || userToUse.birth_month}월 ${userToUse.birthDay || userToUse.birth_day}일)` : '';
+  
+  // 사용자별 개인숫자 계산
+  const personalNumbers = calculatePersonalNumbers(userToUse);
+  
   const content = `
+    <div style="margin-bottom: 20px; padding: 15px; background: rgba(255, 215, 0, 0.1); border-radius: 10px; border: 1px solid rgba(255, 215, 0, 0.3);">
+      <h4 style="color: #ffd700; margin: 0;">👤 개인숫자 분석 ${userInfo}</h4>
+    </div>
     <div class="modal-result-grid">
       <div class="modal-result-card">
         <h5><i class="fas fa-star"></i> 추천 행운 숫자</h5>
         <div class="modal-number-list">
-          <span class="modal-number-item">7</span>
-          <span class="modal-number-item">3</span>
-          <span class="modal-number-item">9</span>
-          <span class="modal-number-item">1</span>
-          <span class="modal-number-item">5</span>
+          ${personalNumbers.map(num => `<span class="modal-number-item">${num}</span>`).join('')}
         </div>
       </div>
       <div class="modal-result-card">
@@ -2901,8 +2934,9 @@ function showPersonalNumberModal() {
   showResultModal('👤 개인숫자 분석 결과', content);
 }
 
-function showDateSelectionModal() {
-  const userInfo = currentUser ? `(${currentUser.birthYear}년 ${currentUser.birthMonth}월 ${currentUser.birthDay}일)` : '';
+function showDateSelectionModal(user = null) {
+  const userToUse = user || currentUser;
+  const userInfo = userToUse ? `(${userToUse.birthYear || userToUse.birth_year}년 ${userToUse.birthMonth || userToUse.birth_month}월 ${userToUse.birthDay || userToUse.birth_day}일)` : '';
   
   // 택일 서비스 입력 폼 표시
   const content = `
@@ -3120,8 +3154,9 @@ function recommendGoodDates(purpose, period) {
   resultDiv.style.display = 'block';
 }
 
-function showComprehensiveModal() {
-  const userInfo = currentUser ? `(${currentUser.birthYear}년 ${currentUser.birthMonth}월 ${currentUser.birthDay}일)` : '';
+function showComprehensiveModal(user = null) {
+  const userToUse = user || currentUser;
+  const userInfo = userToUse ? `(${userToUse.birthYear || userToUse.birth_year}년 ${userToUse.birthMonth || userToUse.birth_month}월 ${userToUse.birthDay || userToUse.birth_day}일)` : '';
   
   // 분석 가능한 항목들 확인
   const availableAnalyses = [];
