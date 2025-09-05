@@ -4082,8 +4082,9 @@ function nextStep() {
     console.log('✅ 단계 진행 가능, 유효성 검사 시작');
     if (validateCurrentStep()) {
       console.log('✅ 유효성 검사 통과, 다음 단계로 이동');
-      updateStep(currentStep + 1);
-      if (currentStep === 2) {
+      const nextStepNumber = currentStep + 1;
+      updateStep(nextStepNumber);
+      if (nextStepNumber === 2) {
         console.log('📋 2단계 도달, 회원가입 준비 완료');
       }
     } else {
@@ -4138,38 +4139,34 @@ function validateCurrentStep() {
   
   // 특별한 유효성 검사
   if (currentStep === 1) {
+    console.log('🔍 1단계 특별 유효성 검사 시작');
+    
     const emailElement = document.getElementById('registerEmail');
     const passwordElement = document.getElementById('registerPassword');
     
     console.log('🔍 이메일 요소:', emailElement);
     console.log('🔍 비밀번호 요소:', passwordElement);
     
-    if (!emailElement) {
-      console.error('❌ 이메일 입력 필드를 찾을 수 없습니다');
-      alert('이메일 입력 필드를 찾을 수 없습니다.');
+    if (!emailElement || !passwordElement) {
+      console.error('❌ 필수 입력 필드를 찾을 수 없습니다');
+      alert('입력 필드를 찾을 수 없습니다. 페이지를 새로고침해주세요.');
       return false;
     }
     
-    if (!passwordElement) {
-      console.error('❌ 비밀번호 입력 필드를 찾을 수 없습니다');
-      alert('비밀번호 입력 필드를 찾을 수 없습니다.');
-      return false;
-    }
+    const email = emailElement.value?.trim();
+    const password = passwordElement.value?.trim();
     
-    const email = emailElement.value;
-    const password = passwordElement.value;
+    console.log('📧 이메일 값:', email);
+    console.log('🔒 비밀번호 길이:', password?.length);
     
-    console.log('📧 이메일 검사:', email);
-    console.log('🔒 비밀번호 검사:', password.length, '자');
-    
-    if (!email || email.trim() === '') {
+    if (!email) {
       console.log('❌ 이메일이 비어있음');
       alert('이메일을 입력해주세요.');
       emailElement.focus();
       return false;
     }
     
-    if (!password || password.trim() === '') {
+    if (!password) {
       console.log('❌ 비밀번호가 비어있음');
       alert('비밀번호를 입력해주세요.');
       passwordElement.focus();
@@ -4189,6 +4186,8 @@ function validateCurrentStep() {
       passwordElement.focus();
       return false;
     }
+    
+    console.log('✅ 1단계 유효성 검사 통과');
   }
   
   // 2단계 유효성 검사
