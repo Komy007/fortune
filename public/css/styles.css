@@ -2313,9 +2313,35 @@ body[data-section="numerology"] {
   transform: scale(0.95);
 }
 
+/* PC 전용 관리자 링크 */
+.admin-link-pc {
+  color: #FFD700;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  transition: all 0.3s ease;
+  margin-left: 15px;
+  display: inline-block;
+}
+
+.admin-link-pc:hover {
+  background: rgba(255, 215, 0, 0.2);
+  border-color: #FFD700;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+}
+
 /* 관리자 버튼 모바일에서 숨김 */
 @media (max-width: 768px) {
   .admin-access-btn {
+    display: none !important;
+  }
+  
+  .admin-link-pc {
     display: none !important;
   }
 }
