@@ -2292,7 +2292,7 @@ body[data-section="numerology"] {
   border-radius: 50%;
   width: 45px;
   height: 45px;
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
@@ -2300,6 +2300,8 @@ body[data-section="numerology"] {
   transition: all 0.3s ease;
   color: #FFD700;
   box-shadow: 0 2px 8px rgba(255, 215, 0, 0.2);
+  z-index: 1000;
+  position: relative;
 }
 
 .admin-access-btn:hover {

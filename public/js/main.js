@@ -5624,6 +5624,7 @@ function updateUserState(user, token, forceHomeRedirect = true) {
     // UI 업데이트
     const userInfo = document.querySelector('.user-info');
     const authButtons = document.querySelector('.auth-buttons');
+    const adminAccessBtn = document.getElementById('adminAccessBtn');
     
     if (userInfo) {
       userInfo.innerHTML = `
@@ -5635,6 +5636,14 @@ function updateUserState(user, token, forceHomeRedirect = true) {
     
     if (authButtons) {
       authButtons.style.display = 'none';
+    }
+    
+    // 관리자 버튼 표시 (PC에서만)
+    if (adminAccessBtn) {
+      adminAccessBtn.style.display = 'flex';
+      console.log('✅ 관리자 버튼 표시됨');
+    } else {
+      console.log('❌ 관리자 버튼을 찾을 수 없음');
     }
     
     console.log('🎨 UI updated for logged in user');
@@ -5678,6 +5687,7 @@ function updateUserState(user, token, forceHomeRedirect = true) {
     // 로그아웃 상태일 때 UI 업데이트
     const userInfo = document.querySelector('.user-info');
     const authButtons = document.querySelector('.auth-buttons');
+    const adminAccessBtn = document.getElementById('adminAccessBtn');
     
     if (userInfo) {
       userInfo.style.display = 'none';
@@ -5685,6 +5695,12 @@ function updateUserState(user, token, forceHomeRedirect = true) {
     
     if (authButtons) {
       authButtons.style.display = 'flex';
+    }
+    
+    // 관리자 버튼 숨김 (로그아웃 상태)
+    if (adminAccessBtn) {
+      adminAccessBtn.style.display = 'none';
+      console.log('❌ 관리자 버튼 숨김 (로그아웃 상태)');
     }
     
     // 모바일 헤더 업데이트
