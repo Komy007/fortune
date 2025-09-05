@@ -8580,11 +8580,13 @@ async function deleteUser(userId) {
   if (!confirm('정말로 이 사용자를 삭제하시겠습니까?')) return;
   
   try {
-    const response = await fetch(`/api/admin/users/${userId}`, {
+    console.log('🗑️ 사용자 삭제 요청:', userId);
+    
+    const result = await apiRequest(`/api/admin/users/${userId}`, {
       method: 'DELETE'
     });
     
-    const result = await response.json();
+    console.log('🗑️ 사용자 삭제 응답:', result);
     
     if (result.success) {
       alert('사용자가 삭제되었습니다.');
@@ -8593,8 +8595,8 @@ async function deleteUser(userId) {
       alert('사용자 삭제에 실패했습니다: ' + result.error);
     }
   } catch (error) {
-    console.error('Delete user error:', error);
-    alert('사용자 삭제에 실패했습니다.');
+    console.error('❌ 사용자 삭제 오류:', error);
+    alert('사용자 삭제에 실패했습니다: ' + error.message);
   }
 }
 

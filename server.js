@@ -1486,21 +1486,30 @@ app.get('/api/admin/system', authenticateAdmin, (req, res) => {
 app.delete('/api/admin/users/:id', (req, res) => {
   try {
     const userId = parseInt(req.params.id);
+    console.log('🗑️ 관리자 사용자 삭제 요청:', userId);
     
     // 사용자의 분석 기록 먼저 삭제
-    db.prepare('DELETE FROM readings WHERE user_id = ?').run(userId);
-    db.prepare('DELETE FROM user_kv WHERE user_id = ?').run(userId);
+    console.log('🗑️ 사용자 분석 기록 삭제 중...');
+    const readingsResult = db.prepare('DELETE FROM readings WHERE user_id = ?').run(userId);
+    console.log('🗑️ readings 삭제 결과:', readingsResult.changes);
+    
+    const kvResult = db.prepare('DELETE FROM user_kv WHERE user_id = ?').run(userId);
+    console.log('🗑️ user_kv 삭제 결과:', kvResult.changes);
     
     // 사용자 삭제
+    console.log('🗑️ 사용자 삭제 중...');
     const result = db.prepare('DELETE FROM users WHERE id = ?').run(userId);
+    console.log('🗑️ 사용자 삭제 결과:', result.changes);
     
     if (result.changes > 0) {
+      console.log('✅ 사용자 삭제 성공:', userId);
       res.json({ success: true, message: '사용자가 삭제되었습니다.' });
     } else {
+      console.log('❌ 사용자를 찾을 수 없음:', userId);
       res.status(404).json({ error: 'user_not_found' });
     }
   } catch (error) {
-    console.error('Admin delete user error:', error);
+    console.error('❌ 관리자 사용자 삭제 오류:', error);
     res.status(500).json({ error: 'admin_delete_user_failed' });
   }
 });
