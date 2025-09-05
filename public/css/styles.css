@@ -5754,9 +5754,10 @@ body[data-section="numerology"] {
   border: 2px solid rgba(255,255,255,0.5) !important;
   border-radius: 8px;
   font-size: 16px;
-  background: rgba(255,255,255,0.2) !important;
-  color: #fff !important;
+  background: rgba(255,255,255,0.95) !important; /* 더 불투명한 흰색 배경 */
+  color: #333333 !important; /* 검정색 글씨로 가독성 향상 */
   transition: var(--transition);
+  font-weight: 500 !important;
 }
 
 .form-group select:focus,
@@ -5764,6 +5765,14 @@ body[data-section="numerology"] {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+  background: rgba(255,255,255,1) !important; /* 포커스 시 완전 불투명한 흰색 배경 */
+  color: #333333 !important; /* 포커스 상태에서도 검정색 글씨 유지 */
+}
+
+/* Placeholder 텍스트 색상 조정 */
+.form-group input::placeholder {
+  color: #666666 !important; /* 흰색 배경에 어두운 회색 placeholder */
+  opacity: 0.8 !important;
 }
 
 .submit-btn {
@@ -9015,6 +9024,25 @@ body[data-section="numerology"] {
   background: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: blur(10px) !important;
   box-sizing: border-box !important;
+  color: #333333 !important; /* 흰색 배경에 검정색 글씨 */
+  font-weight: 500 !important;
+}
+
+/* 드롭다운 옵션 색상 */
+.bazi-form .field select option {
+  color: #333333 !important; /* 검정색 글씨 */
+  background: #ffffff !important; /* 흰색 배경 */
+}
+
+/* 시간 정확도 드롭다운 색상 */
+#timeAccuracy {
+  color: #333333 !important; /* 검정색 글씨 */
+  background: rgba(255, 255, 255, 0.95) !important; /* 흰색 배경 */
+}
+
+#timeAccuracy option {
+  color: #333333 !important; /* 검정색 글씨 */
+  background: #ffffff !important; /* 흰색 배경 */
 }
 
 .bazi-form .field input:focus,
@@ -9023,6 +9051,8 @@ body[data-section="numerology"] {
   border-color: #8B4513 !important;
   box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1) !important;
   transform: translateY(-1px) !important;
+  color: #333333 !important; /* 포커스 상태에서도 검정색 글씨 유지 */
+  background: rgba(255, 255, 255, 1) !important; /* 포커스 시 배경을 더 불투명하게 */
 }
 
 /* Name input - reduced width to show year and month better */
@@ -9046,8 +9076,9 @@ body[data-section="numerology"] {
   display: block !important;
   margin-bottom: 8px !important;
   font-weight: 600 !important;
-  color: var(--text-primary) !important;
+  color: #FFFFFF !important; /* 흰색 글씨로 가독성 향상 */
   font-size: 0.9rem !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important; /* 텍스트 그림자로 가독성 향상 */
 }
 
 /* ===== Responsive ===== */

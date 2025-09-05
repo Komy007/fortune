@@ -4320,9 +4320,9 @@ function populateSummary() {
 
 // 폼 옵션 생성 함수
 function populateFormOptions() {
-  const yearSelects = document.querySelectorAll('#baziYear, #astroYear, #profileYear, #registerYear');
-  const monthSelects = document.querySelectorAll('#baziMonth, #astroMonth, #profileMonth, #registerMonth');
-  const daySelects = document.querySelectorAll('#baziDay, #astroDay, #profileDay, #registerDay');
+  const yearSelects = document.querySelectorAll('#baziYear, #astroYear, #profileYear, #registerYear, #registerYearSignup');
+  const monthSelects = document.querySelectorAll('#baziMonth, #astroMonth, #profileMonth, #registerMonth, #registerMonthSignup');
+  const daySelects = document.querySelectorAll('#baziDay, #astroDay, #profileDay, #registerDay, #registerDaySignup');
   const hourSelects = document.querySelectorAll('#baziHour, #astroHour, #profileHour, #registerHour');
   
   // 년도 옵션 (1900-2024)
@@ -9888,8 +9888,7 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('🌐 모바일 언어 변경:', selectedLanguage);
       changeLanguage(selectedLanguage);
     });
-
-이메넣넣고번  }
+  }
 });
 
 // 간단한 탭 상태 확인 함수

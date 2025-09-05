@@ -233,7 +233,7 @@ app.post('/api/auth/register', (req, res) => {
         console.log('❌ 회원가입 실패: 이미 존재하는 이메일');
         return res.status(409).json({ 
           error: 'email_exists',
-          message: '이미 사용 중인 이메일입니다.' 
+          message: '⚠️ 이미 가입된 이메일입니다!\n다른 이메일 주소를 사용해주세요.' 
         });
       }
       
@@ -252,7 +252,7 @@ app.post('/api/auth/register', (req, res) => {
             console.log('❌ 회원가입 실패: 이미 존재하는 사용자명');
             return res.status(409).json({ 
               error: 'username_exists',
-              message: '이미 사용 중인 사용자명입니다.' 
+              message: '⚠️ 이미 사용 중인 사용자명입니다!\n다른 사용자명을 사용해주세요.' 
             });
           }
           
