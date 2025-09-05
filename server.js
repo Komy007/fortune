@@ -1383,81 +1383,28 @@ app.get('/api/admin/stats', authenticateAdmin, (req, res) => {
 
 // 관리자 사용자 목록 API
 app.get('/api/admin/users', (req, res) => {
-  try {
-    const users = db.prepare(`
-      SELECT id, name, email, username, birth_year, birth_month, birth_day, birth_hour, created_at
-      FROM users 
-      ORDER BY created_at DESC
-    `).all();
+  console.log('👥 관리자 사용자 목록 요청 받음');
+  db.all(`
+    SELECT id, name, email, username, birth_year, birth_month, birth_day, birth_hour, created_at
+    FROM users 
+    ORDER BY created_at DESC
+  `, (err, users) => {
+    if (err) {
+      console.error('❌ Admin users error:', err);
+      return res.status(500).json({ error: 'admin_users_failed' });
+    }
+    
+    console.log('👥 조회된 사용자 수:', users.length);
+    console.log('👥 사용자 데이터 타입:', typeof users, Array.isArray(users));
+    if (users.length > 0) {
+      console.log('👥 첫 번째 사용자:', users[0]);
+    }
     
     res.json({ success: true, users });
-  } catch (error) {
-    console.error('Admin users error:', error);
-    res.status(500).json({ error: 'admin_users_failed' });
-  }
+  });
 });
 
-// 관리자 분석 기록 API
-app.get('/api/admin/readings', (req, res) => {
-  console.log('📋 관리자 분석 기록 요청 받음');
-  try {
-    const readings = db.prepare(`
-      SELECT r.id, r.type, r.created_at, u.name as user_name, u.email
-      FROM readings r
-      JOIN users u ON r.user_id = u.id
-      ORDER BY r.created_at DESC
-    `).all();
-    
-    console.log('📋 분석 기록 조회 결과:', readings.length, '개');
-    if (readings.length > 0) {
-      console.log('📋 첫 번째 기록:', readings[0]);
-    }
-    
-    res.json({ success: true, readings });
-  } catch (error) {
-    console.error('❌ Admin readings error:', error);
-    res.status(500).json({ success: false, error: 'admin_readings_failed' });
-  }
-});
 
-// 테스트용 분석 기록 생성 API
-app.post('/api/admin/readings/test', (req, res) => {
-  console.log('🧪 테스트용 분석 기록 생성 요청');
-  try {
-    // 기존 사용자 중 첫 번째 사용자 찾기
-    const user = db.prepare('SELECT id, name FROM users LIMIT 1').get();
-    
-    if (!user) {
-      return res.status(400).json({ success: false, error: '사용자가 없습니다.' });
-    }
-    
-    // 테스트용 분석 기록 생성
-    const stmt = db.prepare(`
-      INSERT INTO readings (user_id, type, result, created_at) 
-      VALUES (?, ?, ?, CURRENT_TIMESTAMP)
-    `);
-    
-    const testTypes = ['사주', '타로', '운세', '꿈해몽'];
-    const createdReadings = [];
-    
-    for (let i = 0; i < 3; i++) {
-      const type = testTypes[i % testTypes.length];
-      const testResult = `테스트 ${type} 분석 결과 - ${new Date().toLocaleString()}`;
-      const result = stmt.run(user.id, type, testResult);
-      createdReadings.push({
-        id: result.lastInsertRowid,
-        type: type,
-        user_name: user.name
-      });
-    }
-    
-    console.log('✅ 테스트용 분석 기록 생성 완료:', createdReadings.length, '개');
-    res.json({ success: true, created: createdReadings });
-  } catch (error) {
-    console.error('❌ 테스트용 분석 기록 생성 오류:', error);
-    res.status(500).json({ success: false, error: '테스트 기록 생성에 실패했습니다.' });
-  }
-});
 
 // 관리자: 관계(인연보기) 목록
 app.get('/api/admin/relationships', authenticateAdmin, (req, res) => {
@@ -1502,31 +1449,6 @@ app.delete('/api/admin/relationships', authenticateAdmin, (req, res) => {
   }
 });
 
-// 관리자: readings 일괄 삭제
-app.delete('/api/admin/readings', (req, res) => {
-  console.log('🗑️ 분석 기록 일괄 삭제 요청 받음:', req.body);
-  
-  try {
-    const ids = Array.isArray(req.body?.ids) ? req.body.ids.map(x=>parseInt(x)) : [];
-    console.log('삭제할 ID들:', ids);
-    
-    if (!ids.length) {
-      console.log('❌ 삭제할 ID가 없음');
-      return res.status(400).json({ success: false, error: '삭제할 분석 기록을 선택해주세요.' });
-    }
-    
-    const placeholders = ids.map(() => '?').join(',');
-    const stmt = db.prepare(`DELETE FROM readings WHERE id IN (${placeholders})`);
-    const result = stmt.run(...ids);
-    
-    console.log('✅ 삭제 완료:', result.changes, '개');
-    return res.json({ success: true, deleted: result.changes });
-  } catch (e) {
-    console.error('❌ Admin bulk delete readings error:', e);
-    res.status(500).json({ success: false, error: '분석 기록 일괄 삭제에 실패했습니다.' });
-  }
-});
-
 // 관리자 시스템 정보 API
 app.get('/api/admin/system', authenticateAdmin, (req, res) => {
   try {
@@ -1565,23 +1487,6 @@ app.delete('/api/admin/users/:id', (req, res) => {
   } catch (error) {
     console.error('Admin delete user error:', error);
     res.status(500).json({ error: 'admin_delete_user_failed' });
-  }
-});
-
-// 관리자 분석 기록 삭제 API
-app.delete('/api/admin/readings/:id', (req, res) => {
-  try {
-    const readingId = parseInt(req.params.id);
-    const result = db.prepare('DELETE FROM readings WHERE id = ?').run(readingId);
-    
-    if (result.changes > 0) {
-      res.json({ success: true, message: '분석 기록이 삭제되었습니다.' });
-    } else {
-      res.status(404).json({ error: 'reading_not_found' });
-    }
-  } catch (error) {
-    console.error('Admin delete reading error:', error);
-    res.status(500).json({ error: 'admin_delete_reading_failed' });
   }
 });
 
@@ -3816,46 +3721,30 @@ app.post('/api/relationship/detailed', (req, res) => {
   }
 });
 
-// 공지사항 API
-app.get('/api/announcements', (req, res) => {
-  try {
-    const stmt = db.prepare(`
-      SELECT a.*, u.name as author_name 
-      FROM announcements a 
-      JOIN users u ON a.author_id = u.id 
-      WHERE a.is_active = 1 
-      ORDER BY a.priority DESC, a.created_at DESC 
-      LIMIT 5
-    `);
-    const announcements = stmt.all();
-    res.json({ success: true, announcements });
-  } catch (error) {
-    console.error('공지사항 조회 오류:', error);
-    res.status(500).json({ success: false, error: '공지사항을 불러올 수 없습니다.' });
-  }
-});
-
-// 기존 공지사항 등록 API 비활성화 - 관리자용 API만 사용
-// app.post('/api/announcements', (req, res) => {
-//   res.status(404).json({ success: false, error: '이 API는 더 이상 사용되지 않습니다. 관리자용 API를 사용하세요.' });
-// });
-
 // 사용자용 공지사항 목록 API (활성화된 공지사항만)
 app.get('/api/announcements', (req, res) => {
-  try {
-    const announcements = db.prepare(`
-      SELECT a.*, u.name as author_name 
-      FROM announcements a 
-      LEFT JOIN users u ON a.author_id = u.id 
-      WHERE a.is_active = 1
-      ORDER BY a.priority DESC, a.created_at DESC
-    `).all();
+  console.log('📢 사용자 공지사항 목록 요청 받음');
+  
+  db.all(`
+    SELECT a.*, u.name as author_name 
+    FROM announcements a 
+    LEFT JOIN users u ON a.author_id = u.id 
+    WHERE a.is_active = 1
+    ORDER BY a.priority DESC, a.created_at DESC
+  `, (err, announcements) => {
+    if (err) {
+      console.error('❌ 사용자 공지사항 목록 오류:', err);
+      return res.status(500).json({ success: false, error: '공지사항 목록을 불러올 수 없습니다.' });
+    }
+    
+    console.log('📢 사용자 공지사항 조회 결과:', announcements.length, '개');
+    console.log('📢 사용자 공지사항 데이터 타입:', typeof announcements, Array.isArray(announcements));
+    if (announcements.length > 0) {
+      console.log('📢 첫 번째 공지사항:', announcements[0]);
+    }
     
     res.json({ success: true, announcements });
-  } catch (error) {
-    console.error('사용자 공지사항 목록 오류:', error);
-    res.status(500).json({ success: false, error: '공지사항 목록을 불러올 수 없습니다.' });
-  }
+  });
 });
 
 // 관리자용 공지사항 등록 API
@@ -3893,19 +3782,26 @@ app.post('/api/admin/announcements', (req, res) => {
 
 // 관리자용 공지사항 목록 API
 app.get('/api/admin/announcements', (req, res) => {
-  try {
-    const announcements = db.prepare(`
-      SELECT a.*, u.name as author_name 
-      FROM announcements a 
-      LEFT JOIN users u ON a.author_id = u.id 
-      ORDER BY a.priority DESC, a.created_at DESC
-    `).all();
+  console.log('📢 관리자 공지사항 목록 요청 받음');
+  db.all(`
+    SELECT a.*, u.name as author_name 
+    FROM announcements a 
+    LEFT JOIN users u ON a.author_id = u.id 
+    ORDER BY a.priority DESC, a.created_at DESC
+  `, (err, announcements) => {
+    if (err) {
+      console.error('❌ 관리자 공지사항 목록 오류:', err);
+      return res.status(500).json({ success: false, error: '공지사항 목록을 불러올 수 없습니다.' });
+    }
+    
+    console.log('📢 공지사항 조회 결과:', announcements.length, '개');
+    console.log('📢 공지사항 데이터 타입:', typeof announcements, Array.isArray(announcements));
+    if (announcements.length > 0) {
+      console.log('📢 첫 번째 공지사항:', announcements[0]);
+    }
     
     res.json({ success: true, announcements });
-  } catch (error) {
-    console.error('관리자 공지사항 목록 오류:', error);
-    res.status(500).json({ success: false, error: '공지사항 목록을 불러올 수 없습니다.' });
-  }
+  });
 });
 
 // 관리자용 공지사항 상세 조회 API

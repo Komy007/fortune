@@ -45,7 +45,7 @@ const announcements = [
 
 // 공지사항 표시 함수
 function displayAnnouncements() {
-  const announcementList = document.getElementById('announcementList');
+  const announcementList = document.getElementById('announcementsList');
   if (!announcementList) return;
   
   if (announcements.length === 0) {
@@ -3796,10 +3796,11 @@ function changeSection(sectionId) {
   console.log('📱 스마트폰 여부:', window.innerWidth <= 768);
   console.log('🔍 현재 URL:', window.location.href);
   
-  // 홈 섹션으로 이동할 때 맨 위로 스크롤
+  // 홈 섹션으로 이동할 때 맨 위로 스크롤 및 날짜/시간 업데이트
   if (sectionId === 'home') {
     console.log('🏠 홈 섹션으로 이동 - 맨 위로 스크롤');
     window.scrollTo(0, 0); // 맨 위로 스크롤
+    updateDateTime(); // 날짜/시간 업데이트
     // return 제거 - 홈 섹션 표시 계속 진행
   }
   
@@ -3827,6 +3828,7 @@ function changeSection(sectionId) {
   // 모든 섹션 숨기기
   document.querySelectorAll('.section').forEach(section => {
     section.style.display = 'none';
+    section.classList.remove('active');
   });
   
   // 모든 네비게이션 링크 비활성화
@@ -3974,7 +3976,8 @@ function changeSection(sectionId) {
       
       // DOM이 완전히 로드된 후 실행
       setTimeout(() => {
-        loadAnnouncementsForMobile();
+        console.log('📢 공지사항 로드 시작 (PC/모바일 공통)');
+        loadAnnouncements();
       }, 100);
     }
     
@@ -5647,6 +5650,10 @@ function updateUserState(user, token, forceHomeRedirect = true) {
     console.log('✅ updateUserState completed successfully');
   } else {
     console.log('❌ updateUserState: Invalid user or token - 로그아웃 상태로 설정');
+    
+    // 전역 변수 초기화
+    currentUser = null;
+    authToken = null;
     
     // 로그아웃 상태일 때 UI 업데이트
     const userInfo = document.querySelector('.user-info');
@@ -8132,16 +8139,15 @@ function attachEventListeners() {
       
       // 선택된 탭 활성화
       btn.classList.add('active');
-      const targetTab = document.getElementById(tabName);
+      const targetTab = document.getElementById(`${tabName}Tab`);
       if (targetTab) {
         targetTab.classList.add('active');
       } else {
-        console.warn(`⚠️ 탭 요소를 찾을 수 없습니다: ${tabName}`);
+        console.warn(`⚠️ 탭 요소를 찾을 수 없습니다: ${tabName}Tab`);
       }
       
       // 공지사항 탭이 선택되면 공지사항 로드
       if (tabName === 'announcements') {
-        loadAdminAnnouncements();
       }
     });
   });
@@ -8181,17 +8187,20 @@ function logout() {
   // localStorage 정리
   localStorage.removeItem('currentUser');
   localStorage.removeItem('authToken');
+  console.log('🗑️ localStorage 정리 완료');
   
   // 로컬 상태 정리
-  updateUserState(null, null);
-  
-  // 모바일 헤더 업데이트
-  updateMobileHeader();
+  updateUserState(null, null, false);
+  console.log('🔄 사용자 상태 초기화 완료');
   
   // 홈 화면으로 이동
   changeSection('home');
+  console.log('🏠 홈 화면으로 이동 완료');
   
-  alert('로그아웃되었습니다.');
+  // UI 업데이트 완료 후 알림 표시
+  setTimeout(() => {
+    alert('로그아웃되었습니다.');
+  }, 100);
 }
 
 // 테스트용 관리자 로그인 함수
@@ -8369,77 +8378,92 @@ function switchAdminTab(tabName) {
     activeContent.classList.add('active');
   }
   
-  // 특정 탭에 대한 추가 작업
-  if (tabName === 'announcements') {
-    loadAdminAnnouncements();
+  // 탭 전환 시에는 UI만 전환 (데이터는 이미 로드됨)
+  console.log('✅ 탭 UI 전환 완료:', tabName);
+  
+  console.log('✅ 탭 전환 완료:', tabName);
+}
+
+// 사용자 데이터만 로드하는 함수
+async function loadUsersData() {
+  console.log('👥 사용자 데이터 로드 중...');
+  
+  try {
+    const usersResponse = await fetch('/api/admin/users');
+    if (usersResponse.ok) {
+      const usersResult = await usersResponse.json();
+      if (usersResult.success && Array.isArray(usersResult.users)) {
+        displayUsersTable(usersResult.users);
+        console.log('✅ 사용자 목록 로드 완료:', usersResult.users.length, '명');
+      } else {
+        console.error('❌ 사용자 데이터가 배열이 아님:', usersResult);
+        displayUsersTable([]);
+      }
+    } else {
+      console.error('❌ 사용자 목록 로드 실패:', usersResponse.status);
+      displayUsersTable([]);
+    }
+  } catch (error) {
+    console.error('❌ 사용자 데이터 로드 오류:', error);
+    displayUsersTable([]);
   }
 }
 
-// 관리자 데이터 로드 - 안전한 버전
+// 관리자 데이터 로드 - 모든 데이터를 한 번에 로드
 async function loadAdminData() {
   console.log('🔄 관리자 데이터 로드 시작');
   
   try {
-    // 통계 로드
-    console.log('📊 통계 데이터 로드 중...');
+    // 1. 전체 사용자 수 로드
+    console.log('📊 전체 사용자 수 로드 중...');
     const statsResponse = await fetch('/api/admin/stats');
     if (statsResponse.ok) {
       const statsResult = await statsResponse.json();
       if (statsResult.success) {
         const totalUsersEl = document.getElementById('totalUsers');
-        const totalReadingsEl = document.getElementById('totalReadings');
-        const todayReadingsEl = document.getElementById('todayReadings');
-        
         if (totalUsersEl) totalUsersEl.textContent = statsResult.stats.totalUsers;
-        if (totalReadingsEl) totalReadingsEl.textContent = statsResult.stats.totalReadings;
-        if (todayReadingsEl) todayReadingsEl.textContent = statsResult.stats.todayReadings;
-        
-        console.log('✅ 통계 데이터 로드 완료');
+        console.log('✅ 전체 사용자 수 로드 완료:', statsResult.stats.totalUsers);
       }
     }
     
-    // 사용자 목록 로드
+    // 2. 사용자 목록 로드
     console.log('👥 사용자 목록 로드 중...');
     const usersResponse = await fetch('/api/admin/users');
     if (usersResponse.ok) {
       const usersResult = await usersResponse.json();
-      if (usersResult.success) {
+      if (usersResult.success && Array.isArray(usersResult.users)) {
         displayUsersTable(usersResult.users);
-        console.log('✅ 사용자 목록 로드 완료');
+        console.log('✅ 사용자 목록 로드 완료:', usersResult.users.length, '명');
+      } else {
+        console.error('❌ 사용자 데이터가 배열이 아님:', usersResult);
+        displayUsersTable([]);
       }
+    } else {
+      console.error('❌ 사용자 목록 로드 실패:', usersResponse.status);
+      displayUsersTable([]);
     }
     
-    // 분석 기록 로드
-    console.log('📋 분석 기록 로드 중...');
-    const readingsResponse = await fetch('/api/admin/readings');
-    if (readingsResponse.ok) {
-      const readingsResult = await readingsResponse.json();
-      if (readingsResult.success) {
-        displayReadingsTable(readingsResult.readings);
-        console.log('✅ 분석 기록 로드 완료');
+    // 3. 공지사항 목록 로드
+    console.log('📢 공지사항 목록 로드 중...');
+    const announcementsResponse = await fetch('/api/admin/announcements');
+    if (announcementsResponse.ok) {
+      const announcementsResult = await announcementsResponse.json();
+      if (announcementsResult.success && Array.isArray(announcementsResult.announcements)) {
+        displayAdminAnnouncements(announcementsResult.announcements);
+        console.log('✅ 공지사항 목록 로드 완료:', announcementsResult.announcements.length, '개');
+      } else {
+        console.error('❌ 공지사항 데이터가 배열이 아님:', announcementsResult);
+        displayAdminAnnouncements([]);
       }
-    }
-    
-    // 시스템 정보 로드 (선택적)
-    console.log('⚙️ 시스템 정보 로드 중...');
-    try {
-      const systemResponse = await fetch('/api/admin/system');
-      if (systemResponse.ok) {
-        const systemResult = await systemResponse.json();
-        if (systemResult.success) {
-          displaySystemInfo(systemResult.systemInfo);
-          console.log('✅ 시스템 정보 로드 완료');
-        }
-      }
-    } catch (systemError) {
-      console.log('⚠️ 시스템 정보 로드 실패 (무시됨):', systemError);
+    } else {
+      console.error('❌ 공지사항 목록 로드 실패:', announcementsResponse.status);
+      displayAdminAnnouncements([]);
     }
     
     console.log('✅ 모든 관리자 데이터 로드 완료');
     
   } catch (error) {
     console.error('❌ 관리자 데이터 로드 오류:', error);
-    // 에러가 발생해도 UI는 유지
     console.log('⚠️ 데이터 로드 실패했지만 UI는 유지됨');
   }
 }
@@ -8447,6 +8471,17 @@ async function loadAdminData() {
 // 사용자 테이블 표시
 function displayUsersTable(users) {
   const tbody = document.getElementById('usersTableBody');
+  
+  if (!tbody) {
+    console.error('❌ usersTableBody 요소를 찾을 수 없음');
+    return;
+  }
+  
+  // users가 배열이 아니면 빈 배열로 처리
+  if (!Array.isArray(users)) {
+    console.error('❌ displayUsersTable: users가 배열이 아님:', users);
+    users = [];
+  }
   
   tbody.innerHTML = users.map(user => {
     // 생년월일시 정보 포맷팅
@@ -8479,34 +8514,6 @@ function displayUsersTable(users) {
 }
 
 // 분석 기록 테이블 표시 - 체크박스 추가
-function displayReadingsTable(readings) {
-  const tbody = document.getElementById('readingsTableBody');
-  
-  console.log('📋 분석 기록 테이블 렌더링 시작, 개수:', readings.length);
-  
-  tbody.innerHTML = readings.map((reading, index) => {
-    console.log(`📋 ${index + 1}번째 기록 렌더링:`, reading);
-    return `
-      <tr>
-        <td><input type="checkbox" value="${reading.id}" onclick="event.stopPropagation();"></td>
-        <td>${reading.id} / ${reading.user_name || 'N/A'}</td>
-        <td>${reading.type === 'bazi' ? '사주명리학' : reading.type === 'astrology' ? '서양점성술' : reading.type}</td>
-        <td>${new Date(reading.created_at).toLocaleDateString('ko-KR')}</td>
-        <td>
-          <button class="action-btn delete-btn" onclick="deleteReading(${reading.id})">삭제</button>
-        </td>
-      </tr>
-    `;
-  }).join('');
-}
-
-// 시스템 정보 표시
-function displaySystemInfo(systemInfo) {
-  document.getElementById('serverStatus').textContent = systemInfo.serverStatus;
-  document.getElementById('dbStatus').textContent = systemInfo.dbStatus;
-  document.getElementById('serverStartTime').textContent = new Date(systemInfo.serverStartTime).toLocaleString('ko-KR');
-  document.getElementById('memoryUsage').textContent = systemInfo.memoryUsage;
-}
 
 // 사용자 삭제
 async function deleteUser(userId) {
@@ -8531,26 +8538,38 @@ async function deleteUser(userId) {
   }
 }
 
-// 분석 기록 삭제
-async function deleteReading(readingId) {
-  if (!confirm('정말로 이 분석 기록을 삭제하시겠습니까?')) return;
+
+// 날짜/시간 업데이트 함수
+function updateDateTime() {
+  const now = new Date();
   
-  try {
-    const response = await fetch(`/api/admin/readings/${readingId}`, {
-      method: 'DELETE'
-    });
-    
-    const result = await response.json();
-    
-    if (result.success) {
-      alert('분석 기록이 삭제되었습니다.');
-      loadAdminData(); // 데이터 새로고침
-    } else {
-      alert('분석 기록 삭제에 실패했습니다: ' + result.error);
-    }
-  } catch (error) {
-    console.error('Delete reading error:', error);
-    alert('분석 기록 삭제에 실패했습니다.');
+  // 날짜와 요일
+  const dateOptions = { 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric',
+    weekday: 'long'
+  };
+  const dateString = now.toLocaleDateString('ko-KR', dateOptions);
+  
+  // 시간 (시:분)
+  const timeOptions = { 
+    hour: '2-digit', 
+    minute: '2-digit',
+    hour12: false
+  };
+  const timeString = now.toLocaleTimeString('ko-KR', timeOptions);
+  
+  // DOM 요소 업데이트
+  const dateElement = document.getElementById('currentDate');
+  const timeElement = document.getElementById('currentTime');
+  
+  if (dateElement) {
+    dateElement.textContent = dateString;
+  }
+  
+  if (timeElement) {
+    timeElement.textContent = timeString;
   }
 }
 
@@ -8584,6 +8603,13 @@ document.addEventListener('DOMContentLoaded', async function() {
     checkAuthFromCookie();
     console.log('✅ 인증 상태 확인 완료');
     
+    // 날짜/시간 표시 초기화
+    console.log('🕐 날짜/시간 표시 초기화 시작');
+    updateDateTime();
+    // 1분마다 시간 업데이트
+    setInterval(updateDateTime, 60000);
+    console.log('✅ 날짜/시간 표시 초기화 완료');
+    
     // 홈 화면 초기 상태 설정
     console.log('🏠 홈 화면 초기화 시작');
     updateHomeContent(currentUser);
@@ -8606,8 +8632,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     // 공지사항 로드
     console.log('📢 공지사항 로드 시작');
     try {
-    loadAnnouncements();
-    console.log('✅ 공지사항 로드 완료');
+      loadAnnouncements();
+      console.log('✅ 공지사항 로드 완료');
     } catch (error) {
       console.log('⚠️ 공지사항 로드 실패 (무시됨):', error.message);
     }
@@ -8702,33 +8728,62 @@ function applyModalStyles() {
 
 // 공지사항 관련 함수들
 async function loadAnnouncements() {
+  console.log('📢 loadAnnouncements 함수 호출됨');
+  
+  const announcementsList = document.getElementById('announcementsList');
+  if (!announcementsList) {
+    console.error('❌ announcementsList 요소를 찾을 수 없음');
+    return;
+  }
+  
   try {
+    // 로딩 표시
+    announcementsList.innerHTML = `
+      <div class="loading-container">
+        <div class="loading-spinner"></div>
+        <p>공지사항을 불러오는 중...</p>
+      </div>
+    `;
+    
     const response = await fetch('/api/announcements');
     const result = await response.json();
     
+    console.log('📢 API 응답:', result);
+    
     if (result.success && result.announcements && result.announcements.length > 0) {
       displayAnnouncements(result.announcements);
+      console.log('✅ 서버 공지사항 표시 완료:', result.announcements.length, '개');
     } else {
-      // 서버에 공지사항이 없으면 로컬 데이터 사용
-      displayAnnouncements(announcements);
+      // 서버에 공지사항이 없으면 빈 메시지 표시
+      announcementList.innerHTML = `
+        <div style="text-align: center; padding: 2rem; color: rgba(255, 255, 255, 0.7);">
+          <p>📢 등록된 공지사항이 없습니다.</p>
+          <p style="font-size: 0.9rem; margin-top: 0.5rem;">새로운 소식이 있을 때 알려드리겠습니다!</p>
+        </div>
+      `;
+      console.log('📢 서버에 공지사항이 없어서 빈 메시지 표시');
     }
   } catch (error) {
     console.error('공지사항 로드 오류:', error);
     // 오류 시 기본 공지사항 표시
     displayAnnouncements(announcements);
+    console.log('✅ 오류 시 로컬 공지사항 표시 완료');
   }
 }
 
 function displayAnnouncements(announcements) {
-  const announcementList = document.getElementById('announcementList');
+  console.log('📢 displayAnnouncements 함수 호출됨, 공지사항 수:', announcements ? announcements.length : 0);
+  
+  const announcementList = document.getElementById('announcementsList');
   
   if (!announcementList) {
-    console.log('⚠️ announcementList 요소를 찾을 수 없음 - 공지사항 표시 건너뜀');
+    console.log('⚠️ announcementsList 요소를 찾을 수 없음 - 공지사항 표시 건너뜀');
     return;
   }
   
   if (!announcements || announcements.length === 0) {
     announcementList.innerHTML = '<p class="no-announcement">등록된 공지사항이 없습니다.</p>';
+    console.log('📢 공지사항이 없어서 빈 메시지 표시');
     return;
   }
   
@@ -8736,8 +8791,26 @@ function displayAnnouncements(announcements) {
     // 서버 데이터와 로컬 데이터 모두 처리
     const title = announcement.title || announcement.name || '';
     const content = announcement.content || announcement.description || '';
-    const date = announcement.created_at ? new Date(announcement.created_at).toLocaleDateString('ko-KR') : 
-                 announcement.date || new Date().toLocaleDateString('ko-KR');
+    
+    // 날짜 처리 개선
+    let date;
+    if (announcement.created_at) {
+      // 서버에서 받은 created_at 날짜 처리
+      const dateObj = new Date(announcement.created_at);
+      date = dateObj.toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      console.log('📅 날짜 변환:', announcement.created_at, '->', date);
+    } else if (announcement.date) {
+      // 로컬 데이터의 date 처리
+      date = announcement.date;
+    } else {
+      // 기본값
+      date = new Date().toLocaleDateString('ko-KR');
+    }
+    
     const priority = announcement.priority || 0;
     const type = announcement.type || '';
     
@@ -8814,7 +8887,6 @@ async function createAnnouncement(formData) {
     if (result.success) {
       alert('공지사항이 등록되었습니다.');
       hideAnnouncementForm();
-      loadAnnouncements();
       loadAdminAnnouncements();
     } else {
       alert('공지사항 등록에 실패했습니다: ' + result.error);
@@ -8825,23 +8897,17 @@ async function createAnnouncement(formData) {
   }
 }
 
-async function loadAdminAnnouncements() {
-  try {
-    const response = await fetch('/api/admin/announcements');
-    const result = await response.json();
-    
-    if (result.success) {
-      displayAdminAnnouncements(result.announcements);
-    }
-  } catch (error) {
-    console.error('관리자 공지사항 로드 오류:', error);
-  }
-}
 
 function displayAdminAnnouncements(announcements) {
   const tbody = document.getElementById('announcementsTableBody');
   
   if (!tbody) return;
+  
+  // announcements가 배열이 아니면 빈 배열로 처리
+  if (!Array.isArray(announcements)) {
+    console.error('❌ displayAdminAnnouncements: announcements가 배열이 아님:', announcements);
+    announcements = [];
+  }
   
   const rows = announcements.map(announcement => {
     const priorityText = announcement.priority === 2 ? '긴급' : announcement.priority === 1 ? '중요' : '일반';
@@ -8867,13 +8933,12 @@ function displayAdminAnnouncements(announcements) {
   tbody.innerHTML = rows;
 }
 
-async function deleteAnnouncement(id) {
-  if (!confirm('정말로 이 공지사항을 삭제하시겠습니까?')) {
-    return;
-  }
+// 공지사항 삭제
+async function deleteAnnouncement(announcementId) {
+  if (!confirm('정말로 이 공지사항을 삭제하시겠습니까?')) return;
   
   try {
-    const response = await fetch(`/api/admin/announcements/${id}`, {
+    const response = await fetch(`/api/admin/announcements/${announcementId}`, {
       method: 'DELETE'
     });
     
@@ -8881,17 +8946,23 @@ async function deleteAnnouncement(id) {
     
     if (result.success) {
       alert('공지사항이 삭제되었습니다.');
-      loadAnnouncements();
-      loadAdminAnnouncements();
-      closeAnnouncementDetail();
+      // 데이터 새로고침
+      const announcementsResponse = await fetch('/api/admin/announcements');
+      if (announcementsResponse.ok) {
+        const announcementsResult = await announcementsResponse.json();
+        if (announcementsResult.success && Array.isArray(announcementsResult.announcements)) {
+          displayAdminAnnouncements(announcementsResult.announcements);
+        }
+      }
     } else {
       alert('공지사항 삭제에 실패했습니다: ' + result.error);
     }
   } catch (error) {
-    console.error('공지사항 삭제 오류:', error);
-    alert('공지사항 삭제 중 오류가 발생했습니다.');
+    console.error('Delete announcement error:', error);
+    alert('공지사항 삭제에 실패했습니다.');
   }
 }
+
 
 // 공지사항 상세 보기 관련 함수들
 let currentAnnouncementId = null;
