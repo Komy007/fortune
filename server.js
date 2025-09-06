@@ -97,6 +97,21 @@ const db = new sqlite3.Database(dbPath, (err) => {
   }
 });
 
+// 데이터베이스 연결 상태 확인 함수
+function checkDatabaseConnection() {
+  return new Promise((resolve, reject) => {
+    db.get('SELECT 1', (err, row) => {
+      if (err) {
+        console.error('❌ 데이터베이스 연결 상태 확인 실패:', err);
+        reject(err);
+      } else {
+        console.log('✅ 데이터베이스 연결 상태 정상');
+        resolve(true);
+      }
+    });
+  });
+}
+
 db.exec('PRAGMA journal_mode = WAL;');
 
 // 테이블 생성
@@ -622,9 +637,15 @@ app.get('/api/me', authenticateToken, (req, res) => {
     // user_kv 로드
     const kvRows = db.prepare('SELECT k, v FROM user_kv WHERE user_id = ?').all(req.user.uid);
     const user_kv = {};
-    kvRows.forEach(row => {
-      try { user_kv[row.k] = JSON.parse(row.v); } catch { user_kv[row.k] = row.v; }
-    });
+    
+    // kvRows가 배열인지 확인
+    if (Array.isArray(kvRows)) {
+      kvRows.forEach(row => {
+        try { user_kv[row.k] = JSON.parse(row.v); } catch { user_kv[row.k] = row.v; }
+      });
+    } else {
+      console.error('kvRows is not an array:', typeof kvRows, kvRows);
+    }
     
     res.json({ 
       success: true, 
@@ -1055,7 +1076,10 @@ app.get('/api/relationships', authenticateToken, (req, res) => {
       SELECT id, name, birth_year, birth_month, birth_day, birth_hour, birth_time, birthplace, sex, relationship_type, result, created_at
       FROM relationships WHERE user_id = ? ORDER BY created_at DESC
     `).all(req.user.uid);
-    const list = rels.map(r => ({
+    
+    // rels가 배열인지 확인
+    const safeRels = Array.isArray(rels) ? rels : [];
+    const list = safeRels.map(r => ({
       id: r.id,
       name: r.name,
       relationshipType: r.relationship_type,
@@ -1099,7 +1123,10 @@ app.post('/api/readings/delete-by', authenticateToken, (req, res) => {
       const sel2 = db.prepare('SELECT id, name FROM relationships WHERE user_id = ?').all(req.user.uid);
       let deleted = 0;
       const target = normalizeString(friendName);
-      for (const row of sel) {
+      
+      // sel이 배열인지 확인
+      const safeSel = Array.isArray(sel) ? sel : [];
+      for (const row of safeSel) {
         try {
           const rr = JSON.parse(row.result);
           const a = rr.friendName ? normalizeString(rr.friendName) : '';
@@ -1115,7 +1142,10 @@ app.post('/api/readings/delete-by', authenticateToken, (req, res) => {
           }
         } catch {}
       }
-      for (const r of sel2) {
+      
+      // sel2도 배열인지 확인
+      const safeSel2 = Array.isArray(sel2) ? sel2 : [];
+      for (const r of safeSel2) {
         const nm = normalizeString(r.name);
         if (nm && nm === target) {
           const del2 = db.prepare('DELETE FROM relationships WHERE id = ? AND user_id = ?').run(r.id, req.user.uid);
@@ -1273,12 +1303,24 @@ app.get('/api/kv/:k', authenticateToken, (req, res) => {
 });
 
 // 헬스체크 API
-app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
-    timestamp: new Date().toISOString(),
-    database: 'connected'
-  });
+app.get('/api/health', async (req, res) => {
+  try {
+    await checkDatabaseConnection();
+    res.json({ 
+      status: 'ok', 
+      timestamp: new Date().toISOString(),
+      database: 'connected',
+      environment: process.env.NODE_ENV || 'development'
+    });
+  } catch (error) {
+    console.error('❌ 헬스체크 실패:', error);
+    res.status(500).json({ 
+      status: 'error', 
+      timestamp: new Date().toISOString(),
+      database: 'disconnected',
+      error: error.message
+    });
+  }
 });
 
 // LLM 게이트웨이 프록시 (test)
