@@ -1806,6 +1806,28 @@ body {
   line-height: 1.6;
   overflow-x: hidden;
   position: relative;
+}
+
+/* 배경 이미지에 저작권 표시 */
+body::after {
+  content: "By KY. BAE";
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  color: white;
+  font-size: 14px;
+  font-weight: 300;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+body:hover::after {
+  opacity: 1;
+}
+  position: relative;
   min-height: 100vh;
 }
 
@@ -1818,6 +1840,13 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
+  }
+  
+  /* 모바일에서 저작권 표시 크기 조정 */
+  body::after {
+    font-size: 12px;
+    bottom: 15px;
+    right: 15px;
   }
   
   body[data-section="home"] {
