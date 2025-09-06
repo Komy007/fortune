@@ -139,6 +139,9 @@ function showMobileMenuModal(currentSection) {
             <button class="mobile-menu-item" onclick="changeSection('donation'); closeMobileMenu();">
               💝 Donation / 기부
             </button>
+            <button class="mobile-menu-item" onclick="showAboutUs(); closeMobileMenu();">
+              ℹ️ About_Us
+            </button>
           </div>
           <div class="mobile-menu-section">
             <h4>👤 계정</h4>
