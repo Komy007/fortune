@@ -23,12 +23,21 @@ const LLM_BASE_URL = (process.env.LLM_BASE_URL || 'http://127.0.0.1:8080/v1').re
 const JWT_SECRET = process.env.JWT_SECRET || 'fortune-teller-default-secret-key-2024';
 console.log('🔐 JWT Secret:', process.env.JWT_SECRET ? '환경변수에서 설정됨' : '기본값 사용');
 
-// CORS 미들웨어 설정 (스마트폰 접속 허용)
+// CORS 미들웨어 설정 (Render 환경 호환)
 app.use((req, res, next) => {
-  // 모든 도메인에서 접근 허용 (개발 환경)
-  res.header('Access-Control-Allow-Origin', '*');
+  // Render 환경에서는 특정 도메인만 허용, 개발 환경에서는 모든 도메인 허용
+  const allowedOrigins = process.env.NODE_ENV === 'production' 
+    ? ['https://fortune-teller-app.onrender.com', 'https://*.onrender.com']
+    : ['*'];
+  
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin || '*');
+  }
+  
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true'); // 쿠키 허용
   
   // OPTIONS 요청 처리 (preflight)
   if (req.method === 'OPTIONS') {
@@ -46,7 +55,16 @@ app.use((req, res, next) => {
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookieParser());
-app.use(express.static('public'));
+// 정적 파일 서빙 (캐시 방지)
+app.use(express.static('public', {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.js') || path.endsWith('.css')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
+  }
+}));
 // 정적 이미지 폴더(img)를 /img 경로로 서빙
 app.use('/img', express.static(path.join(__dirname, 'img')));
 // 호환용: /image 경로를 public/image 우선, 없으면 public/img에서 서빙
@@ -433,13 +451,16 @@ app.post('/api/auth/register', (req, res) => {
                 { expiresIn: '7d' }
               );
               
-              // 보안 쿠키 설정
-              res.cookie('token', token, {
+              // 보안 쿠키 설정 (Render 환경 호환)
+              const cookieOptions = {
                 httpOnly: true,
                 sameSite: 'lax',
                 maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
-                secure: process.env.NODE_ENV === 'production'
-              });
+                secure: process.env.NODE_ENV === 'production',
+                path: '/'
+              };
+              
+              res.cookie('token', token, cookieOptions);
               
               res.json({ 
                 success: true, 
@@ -537,13 +558,23 @@ app.post('/api/auth/login', (req, res) => {
           { expiresIn: '7d' }
         );
         
-        // 보안 쿠키 설정
-        res.cookie('token', token, {
+        // 보안 쿠키 설정 (Render 환경 호환)
+        const cookieOptions = {
           httpOnly: true,
           sameSite: 'lax',
           maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
-          secure: process.env.NODE_ENV === 'production'
-        });
+          secure: process.env.NODE_ENV === 'production',
+          path: '/'
+        };
+        
+        // Render 환경에서는 도메인 설정 제거
+        if (process.env.NODE_ENV === 'production') {
+          console.log('🍪 Render 환경: 쿠키 설정 (secure: true)');
+        } else {
+          console.log('🍪 개발 환경: 쿠키 설정 (secure: false)');
+        }
+        
+        res.cookie('token', token, cookieOptions);
         
         console.log('✅ 로그인 성공:', user.name);
         

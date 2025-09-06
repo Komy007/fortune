@@ -237,8 +237,66 @@ router.post('/signup/complete', async (req: Request, res: Response) => {
 });
 
 /**
- * POST /api/auth/login
+ * POST /api/auth/login-extended
  * 로그인 (확장된 정보 포함)
+ */
+router.post('/login-extended', async (req: Request, res: Response) => {
+  try {
+    // 입력 데이터 검증
+    const validatedData = LoginSchema.parse(req.body);
+
+    // 로그인 처리
+    const result = await loginExtended(validatedData);
+
+    // HttpOnly 쿠키 설정
+    res.cookie('token', result.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7일
+    });
+
+    // 응답
+    res.status(200).json({
+      success: true,
+      ...result
+    });
+  } catch (error: any) {
+    console.error('Login error:', error);
+
+    if (error.name === 'ZodError') {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: error.errors[0]?.message || '입력 데이터가 올바르지 않습니다'
+        }
+      });
+    }
+
+    if (error.message === '이메일 또는 비밀번호가 올바르지 않습니다') {
+      return res.status(401).json({
+        success: false,
+        error: {
+          code: 'INVALID_CREDENTIALS',
+          message: error.message
+        }
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: '서버 오류가 발생했습니다'
+      }
+    });
+  }
+});
+
+/**
+ * POST /api/auth/login
+ * 로그인 (기본)
  */
 router.post('/login', async (req: Request, res: Response) => {
   try {

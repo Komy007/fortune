@@ -18,30 +18,8 @@ window.addEventListener('unhandledrejection', function(event) {
   event.preventDefault();
 });
 
-// 공지사항 데이터
-const announcements = [
-  {
-    id: 1,
-    title: "🎉 새로운 타로 점 서비스 오픈!",
-    content: "신비로운 타로 카드로 운세와 조언을 받아보세요. 전문가다운 상세한 해설을 제공합니다.",
-    date: "2024-12-21",
-    type: "new"
-  },
-  {
-    id: 2,
-    title: "🔮 사주명리학 서비스 개선",
-    content: "더 정확하고 상세한 사주 분석을 제공합니다. 인연궁합 분석 기능도 추가되었습니다.",
-    date: "2024-12-20",
-    type: "update"
-  },
-  {
-    id: 3,
-    title: "⭐ 점성술 서비스 업데이트",
-    content: "서양 점성술 분석이 더욱 정교해졌습니다. 행성의 영향과 운세를 자세히 분석해드립니다.",
-    date: "2024-12-19",
-    type: "update"
-  }
-];
+// 공지사항 데이터 (비어있음)
+const announcements = [];
 
 // 공지사항 표시 함수
 function displayAnnouncements() {
@@ -553,10 +531,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (birthInfo.birthYear && birthInfo.birthMonth && birthInfo.birthDay) {
           console.log('🚀 명리학 분석 실행');
           
-          // API URL 확인
-          const isMobile = window.innerWidth <= 768;
-          const apiBaseUrl = isMobile ? 'http://192.168.1.17:3000' : 'http://localhost:3000';
-          console.log('🌐 사용할 API URL:', apiBaseUrl);
+          // API URL 확인 (상대 경로 사용)
+          console.log('🌐 상대 경로 API 사용');
           
           performBaziAnalysis(user);
         } else {
@@ -5065,80 +5041,20 @@ async function performBaziAnalysis(user) {
     };
     console.log('📤 전송할 데이터:', requestData);
     console.log('🔑 인증 토큰:', localStorage.getItem('authToken'));
-    console.log('🌐 API URL:', 'http://localhost:3000/api/bazi');
+    console.log('🌐 API URL: /api/bazi (상대 경로)');
     
-    // 명리학 API 호출 (서버 형식에 맞춤)
+    // 명리학 API 호출 (상대 경로 사용)
     console.log('🌐 API 호출 시작');
-    console.log('🌐 요청 URL:', 'http://localhost:3000/api/bazi');
-    console.log('🌐 요청 헤더:', {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-    });
     
-    // 스마트폰에서 접근 가능한 API URL 결정
-    const isMobile = window.innerWidth <= 768;
-    const apiBaseUrl = isMobile ? 'http://192.168.1.17:3000' : 'http://localhost:3000';
-    const apiUrl = `${apiBaseUrl}/api/bazi`;
+    // 현재 도메인을 사용하여 API URL 결정
+    const apiUrl = '/api/bazi';
     
     console.log('🌐 API URL 결정:', apiUrl);
-    console.log('📱 모바일 여부:', isMobile);
     
-    // 스마트폰에서 네트워크 타임아웃 설정
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30초 타임아웃
-    
-    const response = await fetch(apiUrl, {
+    const result = await apiRequest(apiUrl, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-      },
-      body: JSON.stringify(requestData),
-      signal: controller.signal
-    }).catch(error => {
-      clearTimeout(timeoutId);
-      console.error('❌ Fetch 오류:', error);
-      console.error('❌ 오류 타입:', error.name);
-      console.error('❌ 오류 메시지:', error.message);
-      
-      if (error.name === 'AbortError') {
-        throw new Error('네트워크 타임아웃: 서버 응답이 30초를 초과했습니다.');
-      } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        throw new Error('네트워크 연결 실패: 인터넷 연결을 확인해주세요.');
-      } else {
-        throw error;
-      }
+      body: JSON.stringify(requestData)
     });
-    
-    clearTimeout(timeoutId);
-    
-    console.log('📥 응답 상태:', response.status, response.statusText);
-    
-    if (!response.ok) {
-      let errorText;
-      try {
-        errorText = await response.text();
-      } catch (textError) {
-        errorText = '응답 텍스트를 읽을 수 없습니다.';
-      }
-      console.error('❌ 서버 오류 응답:', errorText);
-      
-      if (response.status === 401) {
-        console.log('🔐 토큰 만료 또는 무효, 자동 로그아웃 실행');
-        logout();
-        throw new Error('인증 오류: 로그인이 필요합니다. 다시 로그인해주세요.');
-      } else if (response.status === 403) {
-        throw new Error('권한 오류: 접근이 거부되었습니다.');
-      } else if (response.status === 404) {
-        throw new Error('API 엔드포인트를 찾을 수 없습니다.');
-      } else if (response.status === 500) {
-        throw new Error('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-      } else {
-        throw new Error(`서버 오류 (${response.status}): ${errorText}`);
-      }
-    }
-    
-    const result = await response.json();
     console.log('✅ 명리학 분석 결과:', result);
     
     if (result.success && result.result) {
@@ -5200,70 +5116,17 @@ async function performBaziAnalysisFallback(user) {
     };
     console.log('📤 폴백 API 전송 데이터:', fallbackData);
     
-    // 스마트폰에서 접근 가능한 API URL 결정 (폴백)
-    const isMobile = window.innerWidth <= 768;
-    const apiBaseUrl = isMobile ? 'http://192.168.1.17:3000' : 'http://localhost:3000';
-    const fallbackApiUrl = `${apiBaseUrl}/api/bazi/simple`;
+    // 현재 도메인을 사용하여 API URL 결정 (폴백)
+    const fallbackApiUrl = '/api/bazi/simple';
     
     console.log('🌐 폴백 API URL 결정:', fallbackApiUrl);
-    console.log('📱 모바일 여부:', isMobile);
     
-    // 스마트폰에서 네트워크 타임아웃 설정 (폴백)
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30초 타임아웃
-    
-    const response = await fetch(fallbackApiUrl, {
+    // apiRequest를 사용하여 폴백 API 호출
+    const data = await apiRequest(fallbackApiUrl, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-      },
-      body: JSON.stringify(fallbackData),
-      signal: controller.signal
-    }).catch(error => {
-      clearTimeout(timeoutId);
-      console.error('❌ 폴백 Fetch 오류:', error);
-      console.error('❌ 오류 타입:', error.name);
-      console.error('❌ 오류 메시지:', error.message);
-      
-      if (error.name === 'AbortError') {
-        throw new Error('폴백 네트워크 타임아웃: 서버 응답이 30초를 초과했습니다.');
-      } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        throw new Error('폴백 네트워크 연결 실패: 인터넷 연결을 확인해주세요.');
-      } else {
-        throw error;
-      }
+      body: JSON.stringify(fallbackData)
     });
     
-    clearTimeout(timeoutId);
-    
-    console.log('📥 폴백 응답 상태:', response.status, response.statusText);
-    
-    if (!response.ok) {
-      let errorText;
-      try {
-        errorText = await response.text();
-      } catch (textError) {
-        errorText = '응답 텍스트를 읽을 수 없습니다.';
-      }
-      console.error('❌ 폴백 서버 오류 응답:', errorText);
-      
-      if (response.status === 401) {
-        console.log('🔐 토큰 만료 또는 무효, 자동 로그아웃 실행');
-        logout();
-        throw new Error('폴백 인증 오류: 로그인이 필요합니다. 다시 로그인해주세요.');
-      } else if (response.status === 403) {
-        throw new Error('폴백 권한 오류: 접근이 거부되었습니다.');
-      } else if (response.status === 404) {
-        throw new Error('폴백 API 엔드포인트를 찾을 수 없습니다.');
-      } else if (response.status === 500) {
-        throw new Error('폴백 서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-      } else {
-        throw new Error(`폴백 서버 오류 (${response.status}): ${errorText}`);
-      }
-    }
-    
-    const data = await response.json();
     console.log('🔮 Bazi 분석 결과 (폴백):', data);
     
     if (data.success && data.result) {
@@ -6027,7 +5890,8 @@ async function apiRequest(url, options = {}) {
     headers: {
       'Content-Type': 'application/json',
     },
-    credentials: 'include' // 쿠키 포함
+    credentials: 'include', // 쿠키 포함
+    mode: 'cors' // CORS 모드 명시적 설정
   };
   
   // Authorization 헤더는 제거하고 쿠키를 사용
@@ -6036,6 +5900,7 @@ async function apiRequest(url, options = {}) {
   try {
     const response = await fetch(url, { ...defaultOptions, ...options });
     console.log('📡 API 응답 상태:', response.status, response.statusText);
+    console.log('🍪 쿠키 포함 여부:', response.headers.get('set-cookie') ? '쿠키 설정됨' : '쿠키 없음');
     
     const data = await response.json().catch(() => ({}));
     console.log('📡 API 응답 데이터:', data);
@@ -6044,6 +5909,7 @@ async function apiRequest(url, options = {}) {
       // 인증 오류인 경우 로그인 상태 초기화
       if (response.status === 401) {
         console.log('❌ 인증 오류, 로그인 상태 초기화');
+        console.log('🔍 인증 오류 상세:', data);
         localStorage.removeItem('authToken');
         localStorage.removeItem('currentUser');
         currentUser = null;
@@ -6055,6 +5921,7 @@ async function apiRequest(url, options = {}) {
     
     return data;
   } catch (err) {
+    console.error('❌ API 요청 오류:', err);
     if (err instanceof TypeError) {
       // 네트워크 오류 또는 서버 미실행
       throw new Error('서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.');
@@ -6500,10 +6367,15 @@ function displayAnalysisHistory(readings) {
 
 // 사주 분석 함수
 async function analyzeBazi(formData) {
+  console.log('🔮 사주 분석 시작');
+  console.log('🔑 인증 토큰:', authToken ? '있음' : '없음');
+  console.log('👤 현재 사용자:', currentUser ? '있음' : '없음');
+  
   if (!authToken) {
     alert('로그인이 필요합니다.');
     return;
   }
+  
   showLoading();
   try {
     const data = {
@@ -6515,10 +6387,17 @@ async function analyzeBazi(formData) {
     
     console.log('🔮 Bazi 분석 데이터:', data);
     
+    // 데이터 유효성 검사
+    if (!data.birth_year || !data.birth_month || !data.birth_day) {
+      throw new Error('생년월일 정보가 부족합니다.');
+    }
+    
     const result = await apiRequest('/api/bazi', {
       method: 'POST',
       body: JSON.stringify(data)
     });
+    
+    console.log('📡 API 응답:', result);
     
     if (result.success) {
       console.log('✅ Bazi 분석 성공:', result);
@@ -6529,10 +6408,10 @@ async function analyzeBazi(formData) {
       if (c) c.innerHTML = `<p style="color:red">사주 분석 실패: ${result.error}</p>`;
     }
   } catch (error) {
-    console.error('Bazi analysis error:', error);
+    console.error('❌ Bazi analysis error:', error);
     const c = document.getElementById('baziResult');
     if (c) c.innerHTML = `<p style="color:red">사주 분석 실패: ${error.message}</p>`;
-    alert(error.message);
+    alert('사주 분석 중 오류가 발생했습니다: ' + error.message);
   } finally {
     hideLoading();
   }

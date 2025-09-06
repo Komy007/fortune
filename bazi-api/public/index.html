@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔮 운명 해석소 - 당신의 미래를 알아보세요</title>
+    
+    <!-- 성능 최적화 메타 태그 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+    <!-- 프리로드 중요 리소스 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    
+    <!-- PWA 메타 태그 -->
+    <meta name="description" content="전통 명리학과 현대 기술이 만나 개인 맞춤형 운세를 제공합니다. 지인들과 함께 나누며 더 깊은 관계를 만들어보세요.">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="포춘텔러">
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- PWA 아이콘 -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png">
+    <link rel="shortcut icon" href="/icons/icon-192x192.png">
+    
+    <!-- iOS Safari 전용 메타 태그 -->
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- Microsoft Edge/IE -->
+    <meta name="msapplication-TileColor" content="#667eea">
+    <meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1rem;
+            position: relative;
+        }
+
+        /* 홈 버튼 아이콘 스타일 */
+        .home-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+            position: relative;
+            z-index: 1002;
+        }
+
+        .home-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #5a6de8 0%, #6b4a9e 100%);
+        }
+
+        .home-btn:active {
+            transform: translateY(0);
+        }
+
+        .home-btn svg {
+            transition: transform 0.2s ease;
+        }
+
+        .home-btn:hover svg {
+            transform: scale(1.1);
+        }
+
+        .logo {
+            font-size: 1.35rem;
+            font-weight: bold;
+            color: #667eea;
+            z-index: 1001;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        /* 터치 최적화 스타일 */
+        .btn, .nav-link, button, a {
+            -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3);
+            touch-action: manipulation;
+        }
+
+        .btn {
+            min-height: 48px;
+            min-width: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-link {
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+        }
+
+        /* 터치 영역 확장 */
+        .mobile-menu-toggle {
+            min-width: 48px;
+            min-height: 48px;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.75rem;
+            z-index: 1001;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .mobile-menu-toggle:hover {
+            background-color: rgba(102, 126, 234, 0.1);
+        }
+
+        /* 포커스 스타일 개선 */
+        .btn:focus, .nav-link:focus, button:focus {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+        }
+
+        .mobile-menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: #667eea;
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 3px;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+
+        .nav-link {
+            color: #495057;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link:hover {
+            color: #667eea;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 5rem 2rem;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3.15rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero .btn {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+        }
+
+        .features {
+            background: white;
+            padding: 5rem 2rem;
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #495057;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #495057;
+        }
+
+        .feature-card p {
+            color: #6c757d;
+            line-height: 1.6;
+        }
+
+        /* About Us 섹션 스타일 */
+        .about-section {
+            margin-bottom: 4rem;
+        }
+
+        .about-section h3 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #495057;
+        }
+
+        .feature-card h4 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #495057;
+        }
+
+        .mission-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .mission-section h3 {
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .mission-content p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            opacity: 0.95;
+        }
+
+        /* 모바일 하단 메뉴바 */
+        .mobile-bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #e9ecef;
+            display: none;
+            justify-content: space-around;
+            padding: 0.5rem 0;
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #6c757d;
+            transition: all 0.3s;
+            padding: 0.5rem;
+            min-width: 60px;
+        }
+
+        .bottom-nav-item:hover,
+        .bottom-nav-item.active {
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .bottom-nav-icon {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .bottom-nav-item span {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* 지인등록 및 인증 섹션 스타일 */
+        .contacts {
+            background: white;
+            padding: 5rem 2rem;
+        }
+
+        .auth-section {
+            background: #f8f9fa;
+            padding: 5rem 2rem;
+        }
+
+        .contact-form-container,
+        .auth-tabs-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .contact-form-card,
+        .auth-form-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .contact-form-card h3 {
+            color: #495057;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            min-height: 48px;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .birth-info {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .birth-info h4 {
+            color: #495057;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .col {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* 탭 스타일 */
+        .tab-container {
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 8px 8px 0 0;
+            overflow: hidden;
+            margin-bottom: 0;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            background: #f8f9fa;
+            color: #6c757d;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .tab:hover:not(.active) {
+            background: #e9ecef;
+        }
+
+        .auth-form-content {
+            display: none;
+        }
+
+        .auth-form-content.active {
+            display: block;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #cce7ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+
+        .mission {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5rem 2rem;
+            text-align: center;
+        }
+
+        .mission-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .mission h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .mission p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            opacity: 0.95;
+        }
+
+        .footer {
+            background: #2d3748;
+            color: white;
+            padding: 3rem 2rem 1rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #a0aec0;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .user-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.2rem;
+                padding: 0 1rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+                padding: 0 1rem;
+            }
+
+            .hero {
+                padding: 3rem 1rem;
+            }
+
+            .nav-container {
+                padding: 0 1rem;
+                grid-template-columns: auto 1fr auto;
+                display: grid;
+                align-items: center;
+            }
+
+            /* 모바일에서 홈 버튼 최적화 */
+            .home-btn {
+                width: 40px;
+                height: 40px;
+                border-radius: 10px;
+                grid-column: 1;
+            }
+
+            .logo {
+                grid-column: 2;
+                justify-self: center;
+                font-size: 1.1rem;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+                grid-column: 3;
+                justify-self: end;
+            }
+
+            .nav-menu {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 100%;
+                height: 100vh;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(10px);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 2rem;
+                transition: right 0.3s ease;
+                z-index: 1000;
+                box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-menu.active {
+                right: 0;
+            }
+
+            .nav-link {
+                font-size: 1.2rem;
+                padding: 1rem;
+                text-align: center;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .auth-buttons {
+                flex-direction: column;
+                gap: 1rem;
+                width: 80%;
+                max-width: 300px;
+            }
+
+            .btn {
+                padding: 1rem 2rem;
+                font-size: 1.1rem;
+                min-height: 48px;
+            }
+
+            .user-info {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+                padding: 1rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .feature-card {
+                padding: 1.5rem;
+            }
+
+            .container, .features-container, .mission-container, .footer-content {
+                padding: 0 1rem;
+            }
+
+            /* 모바일 하단 메뉴바 표시 */
+            .mobile-bottom-nav {
+                display: flex;
+            }
+
+            /* 모바일에서 body 하단 여백 추가 */
+            body {
+                padding-bottom: 70px;
+            }
+
+            /* 새로운 섹션들 모바일 최적화 */
+            .contacts, .auth-section {
+                padding: 3rem 1rem;
+            }
+
+            .contact-form-container,
+            .auth-tabs-container {
+                max-width: 100%;
+            }
+
+            .contact-form-card,
+            .auth-form-card {
+                padding: 1.5rem;
+            }
+
+            .birth-info {
+                padding: 1rem;
+            }
+
+            .row {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .col {
+                min-width: 100%;
+            }
+
+            .tab {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero p {
+                font-size: 0.9rem;
+            }
+
+            .logo {
+                font-size: 1.1rem;
+            }
+
+            .btn {
+                padding: 0.875rem 1.5rem;
+            }
+
+            .feature-card {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="nav-container">
+            <!-- 홈 버튼 아이콘 -->
+            <a href="/" class="home-btn" title="홈으로 돌아가기">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9 22V12H15V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+            
+            <div class="logo">🔮 포춘텔러/FortuneTeller</div>
+            
+            <!-- 모바일 햄버거 메뉴 -->
+            <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <nav class="nav-menu" id="navMenu">
+                <a href="#hero" class="nav-link" onclick="closeMobileMenu()">홈</a>
+                <a href="#services" class="nav-link" onclick="closeMobileMenu()">서비스</a>
+                <a href="#contacts" class="nav-link" onclick="closeMobileMenu()">지인등록</a>
+                <a href="#auth" class="nav-link" onclick="closeMobileMenu()">로그인</a>
+                <a href="#mission" class="nav-link" onclick="closeMobileMenu()">미션</a>
+                <a href="/admin-dashboard.html" class="nav-link" id="adminLink" style="display: none;" onclick="closeMobileMenu()">관리자</a>
+                
+                <!-- 로그인 전 버튼들 -->
+                <div class="auth-buttons" id="authButtons">
+                    <a href="/auth.html" class="btn btn-outline" onclick="closeMobileMenu()">로그인</a>
+                    <a href="/auth.html" class="btn btn-primary" onclick="closeMobileMenu()">회원가입</a>
+                </div>
+                
+                <!-- 로그인 후 사용자 정보 -->
+                <div class="user-info hidden" id="userInfo">
+                    <span id="userName">사용자</span>님 환영합니다!
+                    <button class="btn btn-outline" onclick="logout()" style="margin-left: 1rem; padding: 0.25rem 1rem;">로그아웃</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- 홈 섹션 -->
+        <section class="hero" id="hero">
+            <h1>🔮 당신의 미래를 알아보세요</h1>
+            <p>전통 명리학과 현대 기술이 만나 개인 맞춤형 운세를 제공합니다. 지인들과 함께 나누며 더 깊은 관계를 만들어보세요.</p>
+            <div class="hero-buttons">
+                <a href="/auth.html" class="btn btn-primary" id="heroRegisterBtn">무료로 시작하기</a>
+                <a href="/test-bazi.html" class="btn btn-outline">체험해보기</a>
+            </div>
+        </section>
+
+        <!-- 서비스 섹션 -->
+        <section class="features" id="services">
+            <div class="features-container">
+                <h2>🌟 주요 서비스</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h4>개인 명리학 분석</h4>
+                        <p>사주팔자를 기반으로 한 정확한 명리학 분석으로 당신의 성격, 재능, 운세를 알아보세요.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">👥</div>
+                        <h4>지인 관계 분석</h4>
+                        <p>가족, 친구, 동료들의 정보를 등록하고 서로의 궁합과 관계를 분석해보세요.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🌍</div>
+                        <h4>다국어 지원</h4>
+                        <p>한국어, 영어, 중국어로 서비스를 이용할 수 있으며, 곧 캄보디아어, 베트남어, 태국어도 지원 예정입니다.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h4>맞춤형 조언</h4>
+                        <p>당신의 현재 상황과 목표에 맞춘 개인화된 조언과 가이드를 제공합니다.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">📱</div>
+                        <h4>모바일 최적화</h4>
+                        <p>언제 어디서나 편리하게 이용할 수 있는 반응형 웹 서비스를 제공합니다.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <h4>개인정보 보호</h4>
+                        <p>최고 수준의 보안으로 당신의 소중한 개인정보를 안전하게 보호합니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 지인등록 섹션 -->
+        <section class="contacts" id="contacts">
+            <div class="features-container">
+                <h2>👥 지인 등록</h2>
+                <div class="contact-form-container">
+                    <div class="contact-form-card">
+                        <h3>새로운 지인 추가</h3>
+                        <form id="contactForm">
+                            <div class="form-group">
+                                <label for="contactName">이름 *</label>
+                                <input type="text" id="contactName" class="form-control" placeholder="지인의 이름을 입력하세요" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="contactRelation">관계 *</label>
+                                <select id="contactRelation" class="form-control" required>
+                                    <option value="">관계를 선택하세요</option>
+                                    <option value="family">가족</option>
+                                    <option value="friend">친구</option>
+                                    <option value="colleague">동료</option>
+                                    <option value="romantic">연인</option>
+                                    <option value="other">기타</option>
+                                </select>
+                            </div>
+                            
+                            <div class="birth-info">
+                                <h4>📅 출생 정보</h4>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="contactBirthDate">생년월일 *</label>
+                                            <input type="date" id="contactBirthDate" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="contactBirthTime">출생시간</label>
+                                            <input type="time" id="contactBirthTime" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="contactBirthPlace">출생지</label>
+                                            <input type="text" id="contactBirthPlace" class="form-control" placeholder="출생 도시">
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="contactGender">성별 *</label>
+                                            <select id="contactGender" class="form-control" required>
+                                                <option value="">선택하세요</option>
+                                                <option value="male">남성</option>
+                                                <option value="female">여성</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="contactNotes">메모</label>
+                                <textarea id="contactNotes" class="form-control" rows="3" placeholder="특별한 메모가 있다면 입력하세요"></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">지인 등록하기</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 로그인/회원가입 섹션 -->
+        <section class="auth-section" id="auth">
+            <div class="features-container">
+                <h2>🔐 로그인 / 회원가입</h2>
+                <div class="auth-tabs-container">
+                    <div class="tab-container">
+                        <button class="tab active" onclick="showAuthTab('login')">로그인</button>
+                        <button class="tab" onclick="showAuthTab('register')">회원가입</button>
+                    </div>
+                    
+                    <!-- 로그인 폼 -->
+                    <div id="authLoginForm" class="auth-form-content active">
+                        <div class="auth-form-card">
+                            <div id="authLoginAlert"></div>
+                            <form id="authLoginFormElement">
+                                <div class="form-group">
+                                    <label for="authLoginEmail">이메일</label>
+                                    <input type="email" id="authLoginEmail" class="form-control" placeholder="이메일을 입력하세요" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="authLoginPassword">비밀번호</label>
+                                    <input type="password" id="authLoginPassword" class="form-control" placeholder="비밀번호를 입력하세요" required>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">로그인</button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- 회원가입 폼 -->
+                    <div id="authRegisterForm" class="auth-form-content">
+                        <div class="auth-form-card">
+                            <div id="authRegisterAlert"></div>
+                            <form id="authRegisterFormElement">
+                                <div class="form-group">
+                                    <label for="authRegisterEmail">이메일 *</label>
+                                    <input type="email" id="authRegisterEmail" class="form-control" placeholder="이메일을 입력하세요" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="authRegisterPassword">비밀번호 * (8자 이상)</label>
+                                    <input type="password" id="authRegisterPassword" class="form-control" placeholder="비밀번호를 입력하세요" required minlength="8">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="authRegisterDisplayName">표시명 *</label>
+                                    <input type="text" id="authRegisterDisplayName" class="form-control" placeholder="사용할 이름을 입력하세요" required>
+                                </div>
+                                
+                                <div class="birth-info">
+                                    <h4>📅 출생 정보 (명리학 분석용)</h4>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label for="authBirthDate">생년월일 *</label>
+                                                <input type="date" id="authBirthDate" class="form-control" required>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label for="authBirthTime">출생시간 *</label>
+                                                <input type="time" id="authBirthTime" class="form-control" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label for="authBirthPlace">출생지 *</label>
+                                                <input type="text" id="authBirthPlace" class="form-control" placeholder="출생 도시" required>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label for="authSexAtBirth">성별 *</label>
+                                                <select id="authSexAtBirth" class="form-control" required>
+                                                    <option value="">선택하세요</option>
+                                                    <option value="male">남성</option>
+                                                    <option value="female">여성</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">회원가입</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 미션 섹션 -->
+        <section class="mission" id="mission">
+            <div class="mission-container">
+                <h2>💝 우리의 미션</h2>
+                <p>
+                    포춘텔러/FortuneTeller는 단순한 운세 서비스를 넘어 사람들 간의 이해와 소통을 돕고, 
+                    더 나은 미래를 만들어가는 것을 목표로 합니다. 
+                    서비스 수익금은 캄보디아의 어려운 환경에 있는 청소년들을 돕는 데 사용되어, 
+                    여러분의 관심이 세상을 더 따뜻하게 만드는 힘이 됩니다.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- 모바일 하단 메뉴바 -->
+    <nav class="mobile-bottom-nav" id="mobileBottomNav">
+        <a href="#hero" class="bottom-nav-item">
+            <div class="bottom-nav-icon">🏠</div>
+            <span>홈</span>
+        </a>
+        <a href="#services" class="bottom-nav-item">
+            <div class="bottom-nav-icon">⚡</div>
+            <span>서비스</span>
+        </a>
+        <a href="#mission" class="bottom-nav-item">
+            <div class="bottom-nav-icon">💝</div>
+            <span>미션</span>
+        </a>
+        <a href="#contacts" class="bottom-nav-item">
+            <div class="bottom-nav-icon">👥</div>
+            <span>지인등록</span>
+        </a>
+        <a href="#auth" class="bottom-nav-item">
+            <div class="bottom-nav-icon">👤</div>
+            <span>로그인</span>
+        </a>
+    </nav>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="/auth.html">로그인/회원가입</a>
+                <a href="#services">서비스</a>
+                <a href="#mission">미션</a>
+                <a href="/test-contacts.html">지인 등록</a>
+                <a href="/announcements/public">공지사항</a>
+            </div>
+            <p>&copy; 2024 포춘텔러/FortuneTeller. 모든 권리 보유. | 상일이가 소개해준 특별한 서비스 💝</p>
+        </div>
+    </footer>
+
+    <script>
+        // Service Worker 등록
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', async () => {
+                try {
+                    const registration = await navigator.serviceWorker.register('/sw.js');
+                    console.log('✅ SW registered: ', registration);
+                    
+                    // PWA 설치 프롬프트 처리
+                    let deferredPrompt;
+                    window.addEventListener('beforeinstallprompt', (e) => {
+                        e.preventDefault();
+                        deferredPrompt = e;
+                        showInstallButton();
+                    });
+                    
+                    // 설치 완료 감지
+                    window.addEventListener('appinstalled', () => {
+                        console.log('📱 PWA was installed');
+                        hideInstallButton();
+                    });
+                    
+                } catch (error) {
+                    console.log('❌ SW registration failed: ', error);
+                }
+            });
+        }
+
+        // PWA 설치 버튼 표시
+        function showInstallButton() {
+            const installButton = document.createElement('button');
+            installButton.innerText = '📱 앱으로 설치';
+            installButton.className = 'btn btn-outline install-btn';
+            installButton.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                z-index: 1000;
+                border-radius: 25px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                background: white;
+                color: #667eea;
+                border: 2px solid #667eea;
+            `;
+            
+            installButton.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`User response to the install prompt: ${outcome}`);
+                    deferredPrompt = null;
+                    hideInstallButton();
+                }
+            });
+            
+            document.body.appendChild(installButton);
+        }
+
+        // PWA 설치 버튼 숨기기
+        function hideInstallButton() {
+            const installButton = document.querySelector('.install-btn');
+            if (installButton) {
+                installButton.remove();
+            }
+        }
+
+        // 이미지 레이지 로딩 최적화
+        function optimizeImages() {
+            const images = document.querySelectorAll('img[data-src]');
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.classList.remove('lazy');
+                        imageObserver.unobserve(img);
+                    }
+                });
+            });
+            
+            images.forEach(img => imageObserver.observe(img));
+        }
+
+        // 성능 매트릭 수집
+        function collectPerformanceMetrics() {
+            if ('performance' in window) {
+                window.addEventListener('load', () => {
+                    setTimeout(() => {
+                        const perfData = performance.getEntriesByType('navigation')[0];
+                        const metrics = {
+                            loadTime: perfData.loadEventEnd - perfData.loadEventStart,
+                            domContentLoaded: perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart,
+                            firstPaint: performance.getEntriesByType('paint').find(entry => entry.name === 'first-paint')?.startTime || 0,
+                            firstContentfulPaint: performance.getEntriesByType('paint').find(entry => entry.name === 'first-contentful-paint')?.startTime || 0
+                        };
+                        
+                        console.log('📊 성능 매트릭:', metrics);
+                        
+                        // 성능 데이터를 서버로 전송 (선택사항)
+                        // fetch('/api/analytics/performance', {
+                        //     method: 'POST',
+                        //     headers: { 'Content-Type': 'application/json' },
+                        //     body: JSON.stringify(metrics)
+                        // }).catch(() => {});
+                    }, 1000);
+                });
+            }
+        }
+
+        // 네트워크 상태 모니터링
+        function monitorNetworkStatus() {
+            function updateNetworkStatus() {
+                const status = navigator.onLine ? '온라인' : '오프라인';
+                console.log('🌐 네트워크 상태:', status);
+                
+                if (!navigator.onLine) {
+                    // 오프라인 알림 표시
+                    showOfflineNotice();
+                } else {
+                    hideOfflineNotice();
+                }
+            }
+            
+            window.addEventListener('online', updateNetworkStatus);
+            window.addEventListener('offline', updateNetworkStatus);
+            updateNetworkStatus();
+        }
+
+        function showOfflineNotice() {
+            if (document.querySelector('.offline-notice')) return;
+            
+            const notice = document.createElement('div');
+            notice.className = 'offline-notice';
+            notice.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                background: #dc3545;
+                color: white;
+                padding: 10px;
+                text-align: center;
+                z-index: 10000;
+                font-size: 14px;
+            `;
+            notice.textContent = '🚫 인터넷 연결이 끊어졌습니다. 일부 기능이 제한될 수 있습니다.';
+            
+            document.body.insertBefore(notice, document.body.firstChild);
+        }
+
+        function hideOfflineNotice() {
+            const notice = document.querySelector('.offline-notice');
+            if (notice) {
+                notice.remove();
+            }
+        }
+
+        // 페이지 로드 시 전체 초기화
+        document.addEventListener('DOMContentLoaded', async function() {
+            // 전체 초기화 작업
+            await checkLoginStatus();
+            optimizeImages();
+            collectPerformanceMetrics();
+            monitorNetworkStatus();
+            
+            // 하단 메뉴바 초기화
+            initBottomNavigation();
+        });
+
+        // 하단 메뉴바 초기화 및 활성화
+        function initBottomNavigation() {
+            const bottomNavItems = document.querySelectorAll('.bottom-nav-item');
+            const sections = document.querySelectorAll('section[id]');
+
+            // 하단 메뉴 클릭 이벤트
+            bottomNavItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    
+                    // 내부 링크인 경우
+                    if (href.startsWith('#')) {
+                        e.preventDefault();
+                        const targetId = href.substring(1);
+                        const targetElement = document.getElementById(targetId);
+                        
+                        if (targetElement) {
+                            // 부드러운 스크롤
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                            
+                            // 활성 상태 업데이트
+                            updateActiveBottomNav(href);
+                        }
+                    }
+                });
+            });
+
+            // 스크롤 시 활성 상태 업데이트
+            window.addEventListener('scroll', updateActiveOnScroll);
+            
+            // 초기 활성 상태 설정
+            updateActiveOnScroll();
+        }
+
+        // 하단 메뉴 활성 상태 업데이트
+        function updateActiveBottomNav(activeHref) {
+            document.querySelectorAll('.bottom-nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === activeHref) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        // 스크롤 시 활성 섹션 감지
+        function updateActiveOnScroll() {
+            const sections = document.querySelectorAll('section[id]');
+            const scrollPos = window.scrollY + window.innerHeight / 3;
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionBottom = sectionTop + section.offsetHeight;
+                const sectionId = section.getAttribute('id');
+
+                if (scrollPos >= sectionTop && scrollPos < sectionBottom) {
+                    updateActiveBottomNav(`#${sectionId}`);
+                }
+            });
+        }
+
+        // 로그인 상태 확인
+        async function checkLoginStatus() {
+            try {
+                const response = await fetch('/api/auth/me', {
+                    credentials: 'include' // 쿠키 포함
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.user) {
+                        // 로그인된 상태
+                        document.getElementById('authButtons').classList.add('hidden');
+                        document.getElementById('userInfo').classList.remove('hidden');
+                        document.getElementById('userName').textContent = result.user.displayName;
+                        document.getElementById('heroRegisterBtn').textContent = '내 정보 보기';
+                        document.getElementById('heroRegisterBtn').href = '/profile.html';
+
+                        // 관리자인 경우 관리자 링크 표시
+                        if (result.user.role === 'admin' || result.user.role === 'super_admin') {
+                            document.getElementById('adminLink').style.display = 'block';
+                        }
+                    }
+                }
+            } catch (error) {
+                console.log('로그인 상태 확인 실패:', error);
+            }
+        }
+
+        // 로그아웃
+        async function logout() {
+            try {
+                await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+
+                // UI 업데이트
+                document.getElementById('authButtons').classList.remove('hidden');
+                document.getElementById('userInfo').classList.add('hidden');
+                document.getElementById('adminLink').style.display = 'none';
+                document.getElementById('heroRegisterBtn').textContent = '무료로 시작하기';
+                document.getElementById('heroRegisterBtn').href = '/auth.html';
+
+                // 페이지 새로고침
+                window.location.reload();
+            } catch (error) {
+                console.error('로그아웃 실패:', error);
+            }
+        }
+
+        // 모바일 메뉴 토글
+        function toggleMobileMenu() {
+            const navMenu = document.getElementById('navMenu');
+            const menuToggle = document.querySelector('.mobile-menu-toggle');
+            
+            navMenu.classList.toggle('active');
+            menuToggle.classList.toggle('active');
+            
+            // 바디 스크롤 제어
+            if (navMenu.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+
+        // 모바일 메뉴 닫기
+        function closeMobileMenu() {
+            const navMenu = document.getElementById('navMenu');
+            const menuToggle = document.querySelector('.mobile-menu-toggle');
+            
+            navMenu.classList.remove('active');
+            menuToggle.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // ESC 키로 모바일 메뉴 닫기
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeMobileMenu();
+            }
+        });
+
+        // 모바일 메뉴 외부 클릭시 닫기
+        document.addEventListener('click', function(e) {
+            const navMenu = document.getElementById('navMenu');
+            const menuToggle = document.querySelector('.mobile-menu-toggle');
+            
+            if (navMenu.classList.contains('active') && 
+                !navMenu.contains(e.target) && 
+                !menuToggle.contains(e.target)) {
+                closeMobileMenu();
+            }
+        });
+
+        // 부드러운 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+                // 모바일에서 스크롤 후 메뉴 닫기
+                closeMobileMenu();
+            });
+            
+            // 인증 탭 전환 함수
+            function showAuthTab(tabName) {
+                // 모든 탭 및 컨텐츠 비활성화
+                document.querySelectorAll('.auth-section .tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelectorAll('.auth-form-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+            
+                // 선택된 탭 및 컨텐츠 활성화
+                document.querySelector(`.auth-section .tab:${tabName === 'login' ? 'first-child' : 'last-child'}`).classList.add('active');
+                document.getElementById(`auth${tabName.charAt(0).toUpperCase() + tabName.slice(1)}Form`).classList.add('active');
+            }
+            
+            // 지인 등록 폼 처리
+            document.addEventListener('DOMContentLoaded', function() {
+                const contactForm = document.getElementById('contactForm');
+                if (contactForm) {
+                    contactForm.addEventListener('submit', async function(e) {
+                        e.preventDefault();
+                                
+                        const contactData = {
+                            name: document.getElementById('contactName').value,
+                            relation: document.getElementById('contactRelation').value,
+                            birthDate: document.getElementById('contactBirthDate').value,
+                            birthTime: document.getElementById('contactBirthTime').value,
+                            birthPlace: document.getElementById('contactBirthPlace').value,
+                            gender: document.getElementById('contactGender').value,
+                            notes: document.getElementById('contactNotes').value
+                        };
+                                
+                        try {
+                            const response = await fetch('/api/contacts', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                credentials: 'include',
+                                body: JSON.stringify(contactData)
+                            });
+                                    
+                            if (response.ok) {
+                                alert('지인이 성공적으로 등록되었습니다!');
+                                contactForm.reset();
+                            } else {
+                                const error = await response.json();
+                                alert('오류: ' + (error.message || '지인 등록에 실패했습니다.'));
+                            }
+                        } catch (error) {
+                            console.error('지인 등록 오류:', error);
+                            alert('네트워크 오류가 발생했습니다.');
+                        }
+                    });
+                }
+            
+                // 로그인 폼 처리
+                const authLoginForm = document.getElementById('authLoginFormElement');
+                if (authLoginForm) {
+                    authLoginForm.addEventListener('submit', async function(e) {
+                        e.preventDefault();
+                                
+                        const loginData = {
+                            email: document.getElementById('authLoginEmail').value,
+                            password: document.getElementById('authLoginPassword').value
+                        };
+                                
+                        try {
+                            const response = await fetch('/api/auth/login', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                credentials: 'include',
+                                body: JSON.stringify(loginData)
+                            });
+                                    
+                            if (response.ok) {
+                                alert('로그인이 성공했습니다!');
+                                window.location.reload();
+                            } else {
+                                const error = await response.json();
+                                document.getElementById('authLoginAlert').innerHTML = 
+                                    `<div class="alert alert-error">오류: ${error.message || '로그인에 실패했습니다.'}</div>`;
+                            }
+                        } catch (error) {
+                            console.error('로그인 오류:', error);
+                            document.getElementById('authLoginAlert').innerHTML = 
+                                '<div class="alert alert-error">네트워크 오류가 발생했습니다.</div>';
+                        }
+                    });
+                }
+            
+                // 회원가입 폼 처리
+                const authRegisterForm = document.getElementById('authRegisterFormElement');
+                if (authRegisterForm) {
+                    authRegisterForm.addEventListener('submit', async function(e) {
+                        e.preventDefault();
+                                
+                        const registerData = {
+                            email: document.getElementById('authRegisterEmail').value,
+                            password: document.getElementById('authRegisterPassword').value,
+                            displayName: document.getElementById('authRegisterDisplayName').value,
+                            birthDate: document.getElementById('authBirthDate').value,
+                            birthTime: document.getElementById('authBirthTime').value,
+                            birthPlace: document.getElementById('authBirthPlace').value,
+                            sexAtBirth: document.getElementById('authSexAtBirth').value
+                        };
+                                
+                        try {
+                            const response = await fetch('/api/auth/register', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                credentials: 'include',
+                                body: JSON.stringify(registerData)
+                            });
+                                    
+                            if (response.ok) {
+                                document.getElementById('authRegisterAlert').innerHTML = 
+                                    '<div class="alert alert-success">회원가입이 성공했습니다! 이제 로그인해주세요.</div>';
+                                        
+                                // 3초 후 로그인 탭으로 전환
+                                setTimeout(() => {
+                                    showAuthTab('login');
+                                    document.getElementById('authLoginEmail').value = registerData.email;
+                                }, 3000);
+                            } else {
+                                const error = await response.json();
+                                document.getElementById('authRegisterAlert').innerHTML = 
+                                    `<div class="alert alert-error">오류: ${error.message || '회원가입에 실패했습니다.'}</div>`;
+                            }
+                        } catch (error) {
+                            console.error('회원가입 오류:', error);
+                            document.getElementById('authRegisterAlert').innerHTML = 
+                                '<div class="alert alert-error">네트워크 오류가 발생했습니다.</div>';
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

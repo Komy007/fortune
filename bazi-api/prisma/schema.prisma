@@ -15,12 +15,21 @@ model User {
   email        String    @unique
   passwordHash String
   displayName  String
+  role         String    @default("user") // "user" | "admin" | "super_admin"
+  isActive     Boolean   @default(true)
+  lastLoginAt  DateTime?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
   // Relations
   prefs UserPrefs?
   birthData BirthData?
+  
+  // 내가 등록한 지인들
+  contacts Contact[] @relation("UserContacts")
+  
+  // 나를 등록한 사람들
+  contactedBy Contact[] @relation("ContactUser")
 
   @@map("users")
 }
@@ -82,4 +91,71 @@ model BirthData {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("birth_data")
+}
+
+// 지인/가족 등록 시스템
+model Contact {
+  id              String   @id @default(cuid())
+  
+  // 등록한 사용자
+  registeredBy    String
+  registeredUser  User     @relation("UserContacts", fields: [registeredBy], references: [id], onDelete: Cascade)
+  
+  // 지인 정보
+  name            String
+  relationship    String   // "가족", "친구", "동료", "연인", "배우자" 등
+  email           String?
+  phone           String?
+  notes           String?
+  
+  // 출생 정보 (선택사항)
+  birthDate       String?  // YYYY-MM-DD
+  birthTime       String?  // HH:mm
+  birthPlace      String?
+  birthCountry    String?
+  birthTimezone   String?
+  sexAtBirth      String?  // "male" | "female"
+  
+  // 등록된 사용자인지 확인 (이메일로 가입한 경우)
+  userId          String?  // 실제 가입한 사용자라면 연결
+  user            User?    @relation("ContactUser", fields: [userId], references: [id], onDelete: SetNull)
+  
+  // 권한 및 상태
+  isVisible       Boolean  @default(true)
+  canViewProfile  Boolean  @default(false) // 상대방이 내 프로필을 볼 수 있는지
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@map("contacts")
+}
+
+// 공지사항 시스템
+model Announcement {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  priority    String   @default("normal") // "low" | "normal" | "high" | "urgent"
+  isActive    Boolean  @default(true)
+  isSticky    Boolean  @default(false) // 상단 고정 여부
+  
+  // 다국어 지원
+  titleKo     String?
+  contentKo   String?
+  titleEn     String?
+  contentEn   String?
+  titleZh     String?
+  contentZh   String?
+  
+  // 게시 기간
+  publishAt   DateTime @default(now())
+  expiresAt   DateTime?
+  
+  // 작성자 (관리자)
+  createdBy   String
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("announcements")
 }

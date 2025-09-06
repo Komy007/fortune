@@ -8,6 +8,7 @@
     "dev": "ts-node --transpile-only src/server.ts",
     "start": "node dist/server.js",
     "generate-jieqi": "ts-node scripts/generate-jieqi.ts",
+    "setup-admin": "ts-node scripts/setup-admin.ts",
     "fetch-ephe": "tsx scripts/fetch-ephe.ts",
     "prisma:migrate": "prisma migrate dev --name init-auth",
     "prisma:studio": "prisma studio",

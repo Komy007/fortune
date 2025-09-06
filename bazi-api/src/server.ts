@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -12,6 +13,10 @@ import {
   BirthData
 } from './types';
 import authExtendedRouter from './auth/routes-extended';
+import adminRouter from './auth/admin-routes';
+import contactsRouter from './auth/contacts-routes';
+import announcementsRouter from './auth/announcements-routes';
+import exportRouter from './auth/export-routes';
 import astroRouter from './astro/routes';
 import physioRouter from './physio/routes';
 
@@ -48,6 +53,18 @@ try {
 
 // Auth 라우터 연결
 app.use('/api/auth', authExtendedRouter);
+
+// Admin 라우터 연결
+app.use('/api/admin', adminRouter);
+
+// Admin Export 라우터 연결
+app.use('/api/admin/export', exportRouter);
+
+// Contacts 라우터 연결
+app.use('/api/contacts', contactsRouter);
+
+// Announcements 라우터 연결
+app.use('/api/announcements', announcementsRouter);
 
 // Astrology 라우터 연결
 app.use('/api/astro', astroRouter);

@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔮 운명 해석소 - 회원가입 & 로그인</title>
+    
+    <!-- PWA 메타 태그 -->
+    <meta name="description" content="포춘텔러 회원가입 및 로그인 - 전통 명리학 운세 서비스">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="포춘텔러">
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- PWA 아이콘 -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png">
+    <link rel="shortcut icon" href="/icons/icon-192x192.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            margin: 0;
+        }
+
+        .auth-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+            margin: 1rem 0;
+        }
+
+        /* 홈 버튼 스타일 */
+        .home-button-wrapper {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            z-index: 10;
+        }
+
+        .home-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #667eea;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .home-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .home-btn:active {
+            transform: translateY(0);
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 1.5rem 1rem;
+        }
+
+        .auth-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .tab-container {
+            display: flex;
+            background: #f8f9fa;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            background: #f8f9fa;
+            color: #6c757d;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: none;
+            outline: none;
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .tab:hover:not(.active) {
+            background: #e9ecef;
+        }
+
+        .form-container {
+            padding: 1.5rem;
+            min-height: 400px;
+        }
+
+        .form-content {
+            display: none;
+        }
+
+        .form-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            min-height: 48px;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .form-check input {
+            margin-right: 0.5rem;
+            transform: scale(1.2);
+        }
+
+        .form-check label {
+            margin-bottom: 0;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            min-height: 52px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #cce7ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+
+        .birth-info {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .birth-info h4 {
+            color: #495057;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .row {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .col {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .features {
+            background: #f8f9fa;
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .features h4 {
+            color: #495057;
+            margin-bottom: 1rem;
+        }
+
+        .features ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .features li {
+            margin: 0.5rem 0;
+        }
+
+        .features li::before {
+            content: '✨ ';
+            margin-right: 0.5rem;
+        }
+
+        .footer-link {
+            text-align: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .footer-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            body {
+                padding: 0.5rem;
+                align-items: flex-start;
+                padding-top: 2rem;
+            }
+
+            .auth-container {
+                border-radius: 15px;
+                margin: 0;
+                min-height: auto;
+            }
+
+            .auth-header {
+                padding: 1.25rem 1rem;
+            }
+
+            .auth-header h1 {
+                font-size: 1.4rem;
+            }
+
+            .auth-header p {
+                font-size: 0.85rem;
+            }
+
+            .form-container {
+                padding: 1rem;
+            }
+
+            .form-group {
+                margin-bottom: 1rem;
+            }
+
+            .birth-info {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .birth-info h4 {
+                font-size: 1rem;
+            }
+
+            .row {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .col {
+                min-width: 100%;
+            }
+
+            .tab {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .features {
+                padding: 0.75rem;
+            }
+
+            .features h4 {
+                font-size: 0.9rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .features ul {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 0.25rem;
+                padding-top: 1rem;
+            }
+
+            .auth-container {
+                border-radius: 12px;
+            }
+
+            .auth-header h1 {
+                font-size: 1.2rem;
+            }
+
+            .auth-header p {
+                font-size: 0.8rem;
+            }
+
+            .form-container {
+                padding: 0.75rem;
+            }
+
+            .form-control {
+                padding: 0.875rem;
+                font-size: 16px; /* iOS zoom 방지 */
+            }
+
+            .btn {
+                font-size: 1rem;
+                padding: 0.875rem;
+            }
+
+            .birth-info {
+                padding: 0.75rem;
+            }
+
+            .tab {
+                padding: 0.625rem 0.75rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* iOS Safari 전용 스타일 */
+        @supports (-webkit-touch-callout: none) {
+            .form-control {
+                -webkit-appearance: none;
+                border-radius: 8px;
+            }
+
+            input[type="date"], input[type="time"] {
+                -webkit-appearance: none;
+                min-height: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <!-- 홈 버튼 -->
+        <div class="home-button-wrapper">
+            <a href="/" class="home-btn" title="홈으로 돌아가기">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9 22V12H15V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+        </div>
+
+        <div class="auth-header">
+            <h1 style="font-size: 1.62rem;">🔮 포춘텔러/FortuneTeller</h1>
+            <p>당신의 미래를 알아보고 지인들과 함께 나누세요</p>
+        </div>
+
+        <div class="tab-container">
+            <button class="tab active" onclick="showTab('login')">로그인</button>
+            <button class="tab" onclick="showTab('register')">회원가입</button>
+        </div>
+
+        <div class="form-container">
+            <!-- 로그인 폼 -->
+            <div id="loginForm" class="form-content active">
+                <div id="loginAlert"></div>
+                
+                <form id="loginFormElement">
+                    <div class="form-group">
+                        <label for="loginEmail">이메일</label>
+                        <input type="email" id="loginEmail" class="form-control" placeholder="이메일을 입력하세요" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loginPassword">비밀번호</label>
+                        <input type="password" id="loginPassword" class="form-control" placeholder="비밀번호를 입력하세요" required>
+                    </div>
+
+                    <div class="loading" id="loginLoading">로그인 중...</div>
+
+                    <button type="submit" class="btn" id="loginBtn">로그인</button>
+                </form>
+
+                <div class="footer-link">
+                    <a href="#" onclick="showTab('register')">계정이 없으신가요? 회원가입하기</a>
+                </div>
+            </div>
+
+            <!-- 회원가입 폼 -->
+            <div id="registerForm" class="form-content">
+                <div id="registerAlert"></div>
+                
+                <form id="registerFormElement">
+                    <!-- 기본 정보 -->
+                    <div class="form-group">
+                        <label for="registerEmail">이메일 *</label>
+                        <input type="email" id="registerEmail" class="form-control" placeholder="이메일을 입력하세요" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="registerPassword">비밀번호 * (8자 이상)</label>
+                        <input type="password" id="registerPassword" class="form-control" placeholder="비밀번호를 입력하세요" required minlength="8">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="registerDisplayName">표시명 *</label>
+                        <input type="text" id="registerDisplayName" class="form-control" placeholder="사용할 이름을 입력하세요" required>
+                    </div>
+
+                    <!-- 출생 정보 -->
+                    <div class="birth-info">
+                        <h4>📅 출생 정보 (명리학 분석용)</h4>
+                        
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="birthDate">생년월일 *</label>
+                                    <input type="date" id="birthDate" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="birthTime">출생시간 *</label>
+                                    <input type="time" id="birthTime" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="birthPlace">출생지 *</label>
+                                    <input type="text" id="birthPlace" class="form-control" placeholder="출생 도시" required>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="sexAtBirth">성별 *</label>
+                                    <select id="sexAtBirth" class="form-control" required>
+                                        <option value="">선택하세요</option>
+                                        <option value="male">남성</option>
+                                        <option value="female">여성</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="timeAccuracy">시간 정확도</label>
+                            <select id="timeAccuracy" class="form-control">
+                                <option value="exact">정확함</option>
+                                <option value="about">대략적</option>
+                                <option value="unknown">모름</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 개인 설정 -->
+                    <div class="form-group">
+                        <label for="language">언어</label>
+                        <select id="language" class="form-control">
+                            <option value="ko">한국어</option>
+                            <option value="en">English</option>
+                            <option value="zh">中文</option>
+                        </select>
+                    </div>
+
+                    <!-- 동의 사항 -->
+                    <div class="form-check">
+                        <input type="checkbox" id="termsAgree" required>
+                        <label for="termsAgree">이용약관에 동의합니다 *</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input type="checkbox" id="privacyAgree" required>
+                        <label for="privacyAgree">개인정보처리방침에 동의합니다 *</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input type="checkbox" id="birthDataConsent" required>
+                        <label for="birthDataConsent">출생 정보 처리에 동의합니다 *</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input type="checkbox" id="emailOptIn">
+                        <label for="emailOptIn">이메일 알림 수신에 동의합니다 (선택)</label>
+                    </div>
+
+                    <div class="loading" id="registerLoading">계정 생성 중...</div>
+
+                    <button type="submit" class="btn" id="registerBtn">회원가입</button>
+                </form>
+
+                <div class="footer-link">
+                    <a href="#" onclick="showTab('login')">이미 계정이 있으신가요? 로그인하기</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 서비스 소개 -->
+        <div class="features">
+            <h4>🌟 포춘텔러/FortuneTeller에서 제공하는 서비스</h4>
+            <ul>
+                <li>개인 맞춤형 명리학 분석</li>
+                <li>지인 등록 및 관계 분석</li>
+                <li>다국어 운세 서비스</li>
+                <li>캄보디아 청소년 지원 기부</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 탭 전환
+        function showTab(tabName) {
+            // 탭 버튼 상태 변경
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // 폼 내용 전환
+            document.querySelectorAll('.form-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName + 'Form').classList.add('active');
+            
+            // 알림 메시지 초기화
+            clearAlerts();
+        }
+
+        // 로그인 폼 이벤트
+        document.getElementById('loginFormElement').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const loading = document.getElementById('loginLoading');
+
+            // 버튼 비활성화 및 로딩 표시
+            loginBtn.disabled = true;
+            loading.style.display = 'block';
+            clearAlerts();
+
+            try {
+                const response = await fetch('/api/auth/login-extended', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    showAlert('loginAlert', `환영합니다, ${result.user.displayName}님! 메인 페이지로 이동합니다.`, 'success');
+                    
+                    // 메인 페이지로 리다이렉트 (2초 후)
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                } else {
+                    showAlert('loginAlert', result.message || '로그인에 실패했습니다.', 'error');
+                }
+            } catch (error) {
+                console.error('로그인 오류:', error);
+                showAlert('loginAlert', '서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.', 'error');
+            } finally {
+                loginBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        });
+
+        // 회원가입 폼 이벤트
+        document.getElementById('registerFormElement').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const registerData = {
+                email: document.getElementById('registerEmail').value,
+                password: document.getElementById('registerPassword').value,
+                displayName: document.getElementById('registerDisplayName').value,
+                termsAccepted: document.getElementById('termsAgree').checked,
+                privacyAccepted: document.getElementById('privacyAgree').checked,
+                consentProcessingBirthData: document.getElementById('birthDataConsent').checked,
+                birthDate: document.getElementById('birthDate').value,
+                birthTime: document.getElementById('birthTime').value,
+                birthPlace: document.getElementById('birthPlace').value,
+                birthCountry: '대한민국',
+                birthTimezone: 'Asia/Seoul',
+                sexAtBirth: document.getElementById('sexAtBirth').value,
+                timeAccuracy: document.getElementById('timeAccuracy').value || 'exact',
+                language: document.getElementById('language').value,
+                reportTimezone: 'Asia/Seoul',
+                notificationEmailOptIn: document.getElementById('emailOptIn').checked
+            };
+
+            const registerBtn = document.getElementById('registerBtn');
+            const loading = document.getElementById('registerLoading');
+
+            // 버튼 비활성화 및 로딩 표시
+            registerBtn.disabled = true;
+            loading.style.display = 'block';
+            clearAlerts();
+
+            try {
+                const response = await fetch('/api/auth/signup/complete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(registerData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    showAlert('registerAlert', '회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.', 'success');
+                    
+                    // 로그인 탭으로 전환 (2초 후)
+                    setTimeout(() => {
+                        showTab('login');
+                        // 로그인 폼에 이메일 미리 입력
+                        document.getElementById('loginEmail').value = registerData.email;
+                    }, 2000);
+                } else {
+                    showAlert('registerAlert', result.message || '회원가입에 실패했습니다.', 'error');
+                }
+            } catch (error) {
+                console.error('회원가입 오류:', error);
+                showAlert('registerAlert', '서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.', 'error');
+            } finally {
+                registerBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        });
+
+        // 알림 표시 함수
+        function showAlert(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+        }
+
+        // 알림 제거 함수
+        function clearAlerts() {
+            document.getElementById('loginAlert').innerHTML = '';
+            document.getElementById('registerAlert').innerHTML = '';
+        }
+
+        // 페이지 로드 시 기본값 설정
+        document.addEventListener('DOMContentLoaded', function() {
+            // 오늘 날짜를 기본값으로 설정 (생년월일은 사용자가 직접 입력)
+            const today = new Date();
+            const timeString = today.toTimeString().slice(0, 5);
+            document.getElementById('birthTime').value = timeString;
+        });
+    </script>
+</body>
+</html>

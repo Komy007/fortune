@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>운명 해석소 - 지인 등록 테스트</title>
+    <style>
+        /* 홈 버튼 스타일 */
+        .home-button-wrapper {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1000;
+        }
+
+        .home-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .home-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #5a6de8 0%, #6b4a9e 100%);
+        }
+
+        .home-btn:active {
+            transform: translateY(0);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1rem;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        
+        .container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.875rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            min-height: 48px;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            min-height: 52px;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #5a6de8;
+        }
+        
+        .result {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            border-left: 4px solid #667eea;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left-color: #dc3545;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border-left-color: #28a745;
+        }
+        
+        .contact-list {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .contact-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .contact-header {
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .contact-details {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 0.5rem;
+            line-height: 1.5;
+        }
+
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            body {
+                padding: 0.75rem;
+            }
+
+            .container {
+                padding: 1rem;
+                margin-bottom: 1rem;
+                border-radius: 6px;
+            }
+
+            h1 {
+                font-size: 1.5rem !important;
+            }
+
+            h2 {
+                font-size: 1.25rem;
+                margin-bottom: 1rem;
+            }
+
+            h3 {
+                font-size: 1.1rem;
+                margin: 1rem 0 0.75rem;
+            }
+
+            .form-group {
+                margin-bottom: 0.875rem;
+            }
+
+            label {
+                font-size: 0.9rem;
+                margin-bottom: 0.375rem;
+            }
+
+            input, select, textarea {
+                padding: 0.75rem;
+                font-size: 16px; /* iOS zoom 방지 */
+            }
+
+            button {
+                padding: 0.875rem 1.5rem;
+                font-size: 1rem;
+                margin-top: 0.5rem;
+            }
+
+            .contact-list {
+                gap: 0.75rem;
+            }
+
+            .contact-item {
+                padding: 0.875rem;
+            }
+
+            .contact-header {
+                font-size: 1rem;
+            }
+
+            .contact-details {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 0.5rem;
+            }
+
+            .container {
+                padding: 0.75rem;
+                border-radius: 4px;
+            }
+
+            h1 {
+                font-size: 1.3rem !important;
+            }
+
+            h2 {
+                font-size: 1.1rem;
+            }
+
+            h3 {
+                font-size: 1rem;
+            }
+
+            input, select, textarea {
+                padding: 0.625rem;
+            }
+
+            button {
+                padding: 0.75rem 1rem;
+                font-size: 0.95rem;
+            }
+
+            .contact-item {
+                padding: 0.75rem;
+            }
+        }
+
+        /* iOS Safari 전용 스타일 */
+        @supports (-webkit-touch-callout: none) {
+            input, select, textarea {
+                -webkit-appearance: none;
+                border-radius: 4px;
+            }
+
+            input[type="date"], input[type="time"] {
+                -webkit-appearance: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 홈 버튼 -->
+    <div class="home-button-wrapper">
+        <a href="/" class="home-btn" title="홈으로 돌아가기">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9 22V12H15V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </a>
+    </div>
+    
+    <div class="container">
+        <h1 style="font-size: 1.8rem;">🔮 포춘텔러/FortuneTeller - 지인 등록 시스템</h1>
+        <p>새로운 지인 등록 기능을 테스트해보세요!</p>
+        
+        <!-- 로그인 섹션 -->
+        <div id="loginSection">
+            <h2>로그인</h2>
+            <div class="form-group">
+                <label for="loginEmail">이메일</label>
+                <input type="email" id="loginEmail" placeholder="이메일을 입력하세요">
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">비밀번호</label>
+                <input type="password" id="loginPassword" placeholder="비밀번호를 입력하세요">
+            </div>
+            <button onclick="login()">로그인</button>
+            <div id="loginResult" class="result" style="display: none;"></div>
+        </div>
+        
+        <!-- 지인 등록 섹션 -->
+        <div id="contactSection" style="display: none;">
+            <h2>지인 등록</h2>
+            <form id="contactForm">
+                <div class="form-group">
+                    <label for="contactName">이름 *</label>
+                    <input type="text" id="contactName" required placeholder="지인의 이름을 입력하세요">
+                </div>
+                
+                <div class="form-group">
+                    <label for="contactRelationship">관계 *</label>
+                    <select id="contactRelationship" required>
+                        <option value="">관계를 선택하세요</option>
+                        <option value="가족">가족</option>
+                        <option value="친구">친구</option>
+                        <option value="동료">동료</option>
+                        <option value="연인">연인</option>
+                        <option value="배우자">배우자</option>
+                        <option value="기타">기타</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="contactEmail">이메일</label>
+                    <input type="email" id="contactEmail" placeholder="지인의 이메일 (선택사항)">
+                </div>
+                
+                <div class="form-group">
+                    <label for="contactPhone">전화번호</label>
+                    <input type="tel" id="contactPhone" placeholder="지인의 전화번호 (선택사항)">
+                </div>
+                
+                <h3>출생 정보 (선택사항)</h3>
+                <div class="form-group">
+                    <label for="contactBirthDate">생년월일</label>
+                    <input type="date" id="contactBirthDate">
+                </div>
+                
+                <div class="form-group">
+                    <label for="contactBirthTime">출생시간</label>
+                    <input type="time" id="contactBirthTime">
+                </div>
+                
+                <div class="form-group">
+                    <label for="contactBirthPlace">출생지</label>
+                    <input type="text" id="contactBirthPlace" placeholder="출생 도시">
+                </div>
+                
+                <div class="form-group">
+                    <label for="contactSex">성별</label>
+                    <select id="contactSex">
+                        <option value="">선택하세요</option>
+                        <option value="male">남성</option>
+                        <option value="female">여성</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="contactNotes">메모</label>
+                    <textarea id="contactNotes" rows="3" placeholder="추가 정보나 메모"></textarea>
+                </div>
+                
+                <button type="submit">지인 등록</button>
+            </form>
+            
+            <div id="contactResult" class="result" style="display: none;"></div>
+        </div>
+        
+        <!-- 지인 목록 섹션 -->
+        <div id="contactListSection" style="display: none;">
+            <h2>내 지인 목록</h2>
+            <button onclick="loadContacts()">목록 새로고침</button>
+            <div id="contactList" class="contact-list"></div>
+        </div>
+    </div>
+
+    <script>
+        let authToken = null;
+        
+        // 로그인 함수
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                showResult('loginResult', '이메일과 비밀번호를 입력해주세요.', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/auth/login-extended', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    authToken = result.token;
+                    showResult('loginResult', `환영합니다, ${result.user.displayName}님!`, 'success');
+                    
+                    // 로그인 성공 시 지인 등록 섹션 표시
+                    document.getElementById('loginSection').style.display = 'none';
+                    document.getElementById('contactSection').style.display = 'block';
+                    document.getElementById('contactListSection').style.display = 'block';
+                    
+                    // 기존 지인 목록 로드
+                    loadContacts();
+                } else {
+                    showResult('loginResult', result.message || '로그인에 실패했습니다.', 'error');
+                }
+            } catch (error) {
+                console.error('로그인 오류:', error);
+                showResult('loginResult', '서버 연결에 실패했습니다.', 'error');
+            }
+        }
+        
+        // 지인 등록 폼 이벤트
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const contactData = {
+                name: document.getElementById('contactName').value,
+                relationship: document.getElementById('contactRelationship').value,
+                email: document.getElementById('contactEmail').value || undefined,
+                phone: document.getElementById('contactPhone').value || undefined,
+                birthDate: document.getElementById('contactBirthDate').value || undefined,
+                birthTime: document.getElementById('contactBirthTime').value || undefined,
+                birthPlace: document.getElementById('contactBirthPlace').value || undefined,
+                birthCountry: '대한민국',
+                birthTimezone: 'Asia/Seoul',
+                sexAtBirth: document.getElementById('contactSex').value || undefined,
+                notes: document.getElementById('contactNotes').value || undefined
+            };
+            
+            try {
+                const response = await fetch('/api/contacts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(contactData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    showResult('contactResult', '지인이 성공적으로 등록되었습니다!', 'success');
+                    document.getElementById('contactForm').reset();
+                    loadContacts(); // 목록 새로고침
+                } else {
+                    showResult('contactResult', result.message || '지인 등록에 실패했습니다.', 'error');
+                }
+            } catch (error) {
+                console.error('지인 등록 오류:', error);
+                showResult('contactResult', '서버 연결에 실패했습니다.', 'error');
+            }
+        });
+        
+        // 지인 목록 로드
+        async function loadContacts() {
+            if (!authToken) return;
+            
+            try {
+                const response = await fetch('/api/contacts', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    renderContactList(result.data.contacts);
+                } else {
+                    console.error('지인 목록 로드 실패:', result.message);
+                }
+            } catch (error) {
+                console.error('지인 목록 로드 오류:', error);
+            }
+        }
+        
+        // 지인 목록 렌더링
+        function renderContactList(contacts) {
+            const listContainer = document.getElementById('contactList');
+            
+            if (contacts.length === 0) {
+                listContainer.innerHTML = '<p>등록된 지인이 없습니다.</p>';
+                return;
+            }
+            
+            listContainer.innerHTML = contacts.map(contact => `
+                <div class="contact-item">
+                    <div class="contact-header">
+                        ${contact.name} (${contact.relationship})
+                        ${contact.user ? '✅ 가입됨' : ''}
+                    </div>
+                    <div class="contact-details">
+                        ${contact.email ? `📧 ${contact.email}` : ''}
+                        ${contact.phone ? `📱 ${contact.phone}` : ''}
+                        ${contact.birthDate ? `🎂 ${contact.birthDate}` : ''}
+                        ${contact.birthPlace ? `📍 ${contact.birthPlace}` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // 결과 메시지 표시
+        function showResult(elementId, message, type) {
+            const resultElement = document.getElementById(elementId);
+            resultElement.textContent = message;
+            resultElement.className = `result ${type}`;
+            resultElement.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
